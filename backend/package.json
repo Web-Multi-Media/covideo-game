@@ -1,0 +1,22 @@
+{
+  "name": "wildcard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "author": "worms19",
+  "license": "ISC",
+  "dependencies": {
+    "@wildcard-api/server": "^0.2.10",
+    "body-parser": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "mongoose": "^5.9.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

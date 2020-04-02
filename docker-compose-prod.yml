@@ -1,0 +1,43 @@
+version:  '3'
+
+volumes:
+  frontend-volume:
+
+services:
+##############################################################
+#         Setup node container
+##############################################################
+
+  backend:
+    build: ./backend
+    expose:
+      - ${APP_SERVER_PORT}
+    environment:
+      API_HOST: ${API_HOST}
+      APP_SERVER_PORT: ${APP_SERVER_PORT}
+      DB_CONNECTION: ${DB_CONNECTION}
+    ports:
+    - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
+    volumes:
+    - ./backend/:/srv/app/wildcard-backend/
+    - frontend-volume:/srv/app/wildcard-front/
+    command: npm run dev
+
+##############################################################
+#         Setup client container
+##############################################################
+
+  frontend:
+    build: ./frontend
+    expose:
+      - ${REACT_APP_PORT}
+    environment:
+      REACT_APP_PORT: ${REACT_APP_PORT}
+    ports:
+    - ${REACT_APP_PORT}:${REACT_APP_PORT}
+    volumes:
+    - frontend-volume:/srv/app/wildcard-front/
+    links:
+      - backend
+    command: sh -c "npm install && npm run build"
+
