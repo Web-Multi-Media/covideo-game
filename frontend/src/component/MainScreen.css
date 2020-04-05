@@ -1,0 +1,15 @@
+.teamScreens{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    grid-auto-rows: minmax(100px, auto);
+}
+
+.topBar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0px;
+    margin: 10px;
+    border: 2px solid #1C6EA4;
+}

@@ -1,0 +1,7 @@
+.round {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    border: 2px solid #1C6EA4;
+}

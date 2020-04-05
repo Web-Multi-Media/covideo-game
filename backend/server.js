@@ -1,7 +1,5 @@
-
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config();
 const wildcard = require('@wildcard-api/server/express'); // npm install @wildcard-api/server
@@ -14,7 +12,6 @@ var port = 8000;
 
 // We install the Wildcard middleware
 
-
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
@@ -24,13 +21,13 @@ app.use((req, res, next) => {
     }
     next();
 });
+
 app.use(wildcard(getContext));
 
 // `getContext` is called on every API request. It defines the `context` object.
 // `req` is Express' request object
 async function getContext(req) {
     const context = {};
-
     // Authentication middlewares usually make user information available at `req.user`.
     context.user = req.user;
     return context;
