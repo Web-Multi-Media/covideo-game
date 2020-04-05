@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './WordInput.css'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
+const io = require('socket.io-client');
+const socket = io('http://localhost:8000');
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -13,11 +15,42 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function WordInput() {
+
+    const [inRoom, setInRoom] = useState(false);
+
+    useEffect(() => {
+        console.log('use effect');
+        if(inRoom) {
+            console.log('joining room');
+            socket.emit('room', {room: 'test-room'});
+        }
+
+        return () => {
+            if(inRoom) {
+                console.log('leaving room');
+                socket.emit('leave room', {
+                    room: 'test-room'
+                })
+            }
+        }
+    });
     const classes = useStyles();
+
+    const handleInRoom = () => {
+        inRoom
+            ? setInRoom(false)
+            : setInRoom(true);
+    }
+
 
     return (
 
         <div className="navBar">
+            <h1>
+                {inRoom && `You Have Entered The Room` }
+                {!inRoom && `Outside Room` }
+            </h1>
+
             <form className={classes.root} noValidate autoComplete="off">
                 <TextField id="outlined-basic" label="Input" variant="outlined" />
             </form>
@@ -27,6 +60,12 @@ function WordInput() {
             <Button className="margButt" variant="contained" color="primary">
                 Next Word
             </Button>
+
+            <Button className="margButt" variant="contained" color="primary" onClick={() => handleInRoom()}>
+                {inRoom && `Leave Room` }
+                {!inRoom && `Enter Room` }
+            </Button>
+
         </div>
     );
 }

@@ -1,22 +1,23 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
-import wildcardClient from '@wildcard-api/client';
 import MainScreen from "./component/MainScreen";
-
+import ConnectionScreen from "./component/ConnectionScreen";
+const io = require('socket.io-client');
 
 function App() {
 
-wildcardClient.serverUrl = 'http://localhost:8000'; // Default value is `null`
-
     useEffect(() => {
         console.log('use effect');
+        console.log(inRoom)
     }, []);
 
+    const [inRoom, setInRoom] = useState(false);
 
-  return (
 
+    return (
     <div className="App">
-      <MainScreen/>
+        {!inRoom && <ConnectionScreen/>}
+        {inRoom && <MainScreen/>}
     </div>
   );
 }

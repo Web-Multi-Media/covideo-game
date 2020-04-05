@@ -3,6 +3,7 @@ import Round from "./Round";
 import TeamScreen from "./TeamScreen";
 import "./MainScreen.css";
 import WordInput from "./WordInput";
+import Timer from "./Timer";
 
 
 function MainScreen() {
@@ -10,7 +11,12 @@ function MainScreen() {
     return (
         <React.Fragment>
             <div className="topBar">
-            <Round/>
+                <div className="roundGrid">
+                    <Round/>
+                </div>
+                <div className="timerGrid">
+                    <Timer/>
+                </div>
             </div>
             <div className="teamScreens">
                 <TeamScreen/>

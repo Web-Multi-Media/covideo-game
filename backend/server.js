@@ -1,14 +1,29 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
-require('dotenv').config();
-const wildcard = require('@wildcard-api/server/express'); // npm install @wildcard-api/server
 
-const app = express();
+// Import the Express module
+const bodyParser = require('body-parser');
+
+
+// Import the 'path' module (packaged with Node.js)
+const path = require('path');
+
+// Create a new instance of Express
+const express = require('express');
+const http = require('http');
+let app = express();
+
+const server = http.createServer(app);
+const socketIo = require('socket.io');
+const io = socketIo(server);
+
+
+require('dotenv').config();
+
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
-var port = 8000;
+const port = 8000;
+
+const  tug = require('./timesUpGame');
 
 // We install the Wildcard middleware
 
@@ -22,24 +37,22 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(wildcard(getContext));
+app.use(express.static(__dirname+'/../frontend/build/'));
 
-// `getContext` is called on every API request. It defines the `context` object.
-// `req` is Express' request object
-async function getContext(req) {
-    const context = {};
-    // Authentication middlewares usually make user information available at `req.user`.
-    context.user = req.user;
-    return context;
-}
-
-//app.use(express.static(__dirname+'/../wildcard-front/build/'));
-//app.use(express.static(path.join(__dirname, 'frontend/build')));
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname+'/../wildcard-front/build/index.html'));
-// });
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname+'/../frontend/build/index.html'));
+});
 
 
-app.listen(port);
+io.on('connection', socket => {
+    console.log('salut');
+    socket.on('enter Name', ({name})  => {
+        io.emit('user Added', { users: 'users' });
+    })
+});
+
+
+server.listen(port, () => {
+    console.log(`server listening to port ${port}`);
+});
 
