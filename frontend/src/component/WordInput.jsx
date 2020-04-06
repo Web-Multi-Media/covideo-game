@@ -3,8 +3,6 @@ import './WordInput.css'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
-const io = require('socket.io-client');
-const socket = io('http://localhost:8000');
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,15 +20,12 @@ function WordInput() {
         console.log('use effect');
         if(inRoom) {
             console.log('joining room');
-            socket.emit('room', {room: 'test-room'});
         }
 
         return () => {
             if(inRoom) {
                 console.log('leaving room');
-                socket.emit('leave room', {
-                    room: 'test-room'
-                })
+
             }
         }
     });

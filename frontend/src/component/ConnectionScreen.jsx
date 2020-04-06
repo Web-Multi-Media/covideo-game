@@ -2,10 +2,9 @@ import React, {useEffect, useState} from 'react';
 import "./ConnectionScreen.css";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-const socket = io('http://localhost:8000');
 
 
-function ConnectionScreen() {
+function ConnectionScreen(props) {
 
     const [textInput, setTextInput] = useState('');
 
@@ -14,22 +13,14 @@ function ConnectionScreen() {
     };
 
     useEffect(() => {
-        socket.on('connected', ({message}) => {
-            console.log('message');
-            console.log(message);
-            setTextInput(message)
-        });
-        socket.on('user Added', (obj) => {
-            console.log('user Added');
-            console.log(obj);
-        });
+
     });
 
 
 
     const enterRoom = () => {
         console.log('enter room');
-         socket.emit('enter Name', {name: textInput});
+        props.onSend(textInput);
     };
 
     return (

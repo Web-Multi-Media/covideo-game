@@ -8,13 +8,20 @@ let users = [];
  * @param sio The Socket.IO library
  * @param socket The socket object for the connected client.
  */
-exports.initGame = function(sio, socket){
-    io = sio;
-    gameSocket = socket;
-    console.log('init')
-    gameSocket.emit('connected', { message: "You are connected!" });
-    // Host Events
-
+exports.initGame = function(message, ws){
+    const obj = JSON.parse(message);
+    console.log('received');
+    switch(obj.type) {
+        case 'add user':
+            // code block
+            console.log('add user server');
+            addName(obj.value, ws);
+            break;
+        default:
+        // code block
+            console.log('type inconnu');
+            break;
+    }
 
 };
 
@@ -24,9 +31,11 @@ exports.initGame = function(sio, socket){
  * @param wordPoolIndex
  * @param gameId The room identifier
  */
-function addName({name}) {
+function addName(name, ws) {
+        let response = {};
+        response.type ='added user'
         users = [...users, name];
-        console.log(users);
-        gameSocket.emit('user Added', { users: users });
+        response.value = users;
+        ws.send(JSON.stringify(response));
 }
 

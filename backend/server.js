@@ -8,12 +8,14 @@ const path = require('path');
 
 // Create a new instance of Express
 const express = require('express');
-const http = require('http');
+const { createServer } = require('http');
 let app = express();
 
-const server = http.createServer(app);
-const socketIo = require('socket.io');
-const io = socketIo(server);
+const server = createServer(app);
+const WebSocket = require('ws');
+
+const wss = new WebSocket.Server({ server });
+
 
 
 require('dotenv').config();
@@ -44,13 +46,13 @@ app.get('*', (req, res) => {
 });
 
 
-io.on('connection', socket => {
-    console.log('salut');
-    socket.on('enter Name', ({name})  => {
-        io.emit('user Added', { users: 'users' });
-    })
-});
+wss.on('connection', function connection(ws) {
+    let obj = {};
+    ws.on('message', function incoming( message) {
+        tug.initGame(message, ws);
+    });
 
+});
 
 server.listen(port, () => {
     console.log(`server listening to port ${port}`);
