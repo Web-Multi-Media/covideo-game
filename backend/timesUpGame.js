@@ -1,41 +1,41 @@
-let io;
-let gameSocket;
 let users = [];
-
+let internWss = {};
+let rootingFunction = {
+    'addName': addName,
+    'getUsers': getUsers
+};
 /**
  * This function is called by index.js to initialize a new game instance.
  *
  * @param sio The Socket.IO library
  * @param socket The socket object for the connected client.
+ *
  */
-exports.initGame = function(message, ws){
+exports.initGame = function(message, ws, wss){
+    internWss = wss;
     const obj = JSON.parse(message);
-    console.log('received');
-    switch(obj.type) {
-        case 'add user':
-            // code block
-            console.log('add user server');
-            addName(obj.value, ws);
-            break;
-        default:
-        // code block
-            console.log('type inconnu');
-            break;
-    }
-
+    rootingFunction[obj.type](ws, obj.value);
 };
 
-/**
- * Get a word for the host, and a list of words for the player.
- *
- * @param wordPoolIndex
- * @param gameId The room identifier
- */
-function addName(name, ws) {
-        let response = {};
-        response.type ='added user'
-        users = [...users, name];
-        response.value = users;
-        ws.send(JSON.stringify(response));
+
+function addName(ws, name) {
+    let response = {};
+    response.type ='getUsers'
+    users = [...users, name];
+    response.value = users
+    broadcast(JSON.stringify(response));
 }
 
+function getUsers(ws) {
+    let response = {};
+    response.type ='getUsers';
+    response.value = users
+    ws.send(JSON.stringify(response));
+}
+
+function broadcast(msg) {
+    console.log(msg);
+    internWss.clients.forEach(function each(client) {
+        client.send(msg);
+    });
+};

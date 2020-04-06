@@ -47,12 +47,12 @@ app.get('*', (req, res) => {
 
 
 wss.on('connection', function connection(ws) {
-    let obj = {};
     ws.on('message', function incoming( message) {
-        tug.initGame(message, ws);
+        tug.initGame(message, ws, wss);
     });
-
 });
+
+
 
 server.listen(port, () => {
     console.log(`server listening to port ${port}`);

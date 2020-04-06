@@ -2,53 +2,50 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
-const URL = 'ws://localhost:8000'
+const {handleServerResponse} = require("./webSocket/rootedFunctions");
+const URL = 'ws://localhost:8000';
 
 function App() {
 
-    let ws = new WebSocket(URL)
+    let ws = new WebSocket(URL);
+    const [inRoom, setInRoom] = useState(false);
+    const [gameState, setGameState] = useState({users : []});
 
-    useEffect(() => {
-        console.log('use effect');
-        console.log(inRoom)
-        ws.onopen = () => {
-            // on connecting, do nothing but log it to the console
-            console.log('connected prout')
-        }
-    }, []);
+   useEffect(() => {
+       ws.onopen = function() {
+           console.log('service Connected');
+            ws.send(JSON.stringify({type: 'getUsers'}));
+       };
+   }, []);
 
    useEffect(() => {
        ws.onmessage = (message) => {
            const obj = JSON.parse(message.data);
-           switch(obj.type) {
-               case 'added user':
-                   // code block
-                   console.log('user added');
-                   console.log(obj.value);
-                   break;
-               default:
-                   // code block
-                   console.log('type inconnu');
-                   break;
-           }
-       }
+           console.log('new event : ' + obj.type);
+           handleServerResponse(obj, gameState, setGameState);
+       };
    });
 
     const sendMessage =  (name) => {
-        console.log('sending message');
-        ws.send(JSON.stringify({type: 'add user', value: name}));
+        ws.send(JSON.stringify({type: 'addName', value: name}));
     };
 
-    const [inRoom, setInRoom] = useState(false);
-
+    const users = gameState.users;
+    const player = gameState.player;
 
     return (
-    <div className="App">
+
+        <div className="App">
         {!inRoom &&
-        <ConnectionScreen
-            // webSocket = {ws}
-            onSend = {sendMessage}
-        />}
+            <React.Fragment>
+            <p>GAMESTATE {JSON.stringify(gameState)}</p>
+            <ConnectionScreen
+                player = {player}
+                users = {users}
+                onSend = {sendMessage}
+            />
+            </React.Fragment>
+        }
         {inRoom && <MainScreen/>}
     </div>
   );
