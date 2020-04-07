@@ -9,7 +9,7 @@ function App() {
 
     let ws = new WebSocket(URL);
     const [inRoom, setInRoom] = useState(false);
-    const [gameState, setGameState] = useState({users : []});
+    const [gameState, setGameState] = useState({users : [], isGameMaster: false});
 
    useEffect(() => {
        ws.onopen = function() {
@@ -27,11 +27,15 @@ function App() {
    });
 
     const sendMessage =  (name) => {
-        ws.send(JSON.stringify({type: 'addName', value: name}));
+        ws.send(JSON.stringify({type: 'addName', name: name}));
+    };
+
+    const sendWord =  (word) => {
+        ws.send(JSON.stringify({type: 'addWord', word: word}));
     };
 
     const users = gameState.users;
-    const player = gameState.player;
+    const gameMaster = gameState.isGameMaster;
 
     return (
 
@@ -40,9 +44,10 @@ function App() {
             <React.Fragment>
             <p>GAMESTATE {JSON.stringify(gameState)}</p>
             <ConnectionScreen
-                player = {player}
                 users = {users}
+                isGameMaster = {gameMaster}
                 onSend = {sendMessage}
+                onSendWord = {sendWord}
             />
             </React.Fragment>
         }

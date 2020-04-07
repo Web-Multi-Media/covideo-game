@@ -5,7 +5,7 @@ let rootingFunction = {
 };
 
 exports.handleServerResponse = function(message, gameState, setGameState){
-    return rootingFunction[message.type](message.value, gameState,  setGameState);
+    return rootingFunction[message.type](message, gameState,  setGameState);
 };
 
 /**
@@ -14,7 +14,12 @@ exports.handleServerResponse = function(message, gameState, setGameState){
  * @param wordPoolIndex
  * @param gameId The room identifier
  */
-function getUsers(users, gameState, setGameState) {
-    setGameState({...gameState, users : users})
+function getUsers(message, gameState, setGameState) {
+    if(message.gameMaster === true){
+    setGameState({...gameState, users : message.value, isGameMaster: true});
+    }
+    else{
+        setGameState({...gameState, users : message.value});
+    }
 }
 
