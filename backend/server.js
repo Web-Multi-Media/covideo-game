@@ -1,7 +1,5 @@
-
 // Import the Express module
 const bodyParser = require('body-parser');
-
 
 // Import the 'path' module (packaged with Node.js)
 const path = require('path');
@@ -16,10 +14,7 @@ const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ server });
 
-
-
 require('dotenv').config();
-
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
@@ -51,8 +46,6 @@ wss.on('connection', function connection(ws) {
         tug.initGame(message, ws, wss);
     });
 });
-
-
 
 server.listen(port, () => {
     console.log(`server listening to port ${port}`);

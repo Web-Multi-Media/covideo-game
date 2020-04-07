@@ -1,7 +1,9 @@
 
 
 let rootingFunction = {
-    'getUsers': getUsers
+    'getUsers': getUsers,
+    'gameIsReady': gameIsReady,
+
 };
 
 exports.handleServerResponse = function(message, gameState, setGameState){
@@ -23,3 +25,6 @@ function getUsers(message, gameState, setGameState) {
     }
 }
 
+function gameIsReady(message, gameState, setGameState) {
+    setGameState({...gameState, gameIsReady : true, teams: message.teams, words: message.words});
+}

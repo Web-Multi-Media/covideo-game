@@ -6,10 +6,18 @@ import WordInput from "./WordInput";
 import Timer from "./Timer";
 
 
-function MainScreen() {
+function MainScreen(props) {
+
+    const teamScreens = props.gameState.teams.map(team => {
+        return (
+            <TeamScreen
+                team ={team}
+            />);
+        });
 
     return (
         <React.Fragment>
+            <p>GAMESTATE {JSON.stringify(props.gameState)}</p>
             <div className="topBar">
                 <div className="roundGrid">
                     <Round/>
@@ -19,8 +27,7 @@ function MainScreen() {
                 </div>
             </div>
             <div className="teamScreens">
-                <TeamScreen/>
-                <TeamScreen/>
+                {teamScreens}
             </div>
             <div>
                 <WordInput/>

@@ -1,12 +1,17 @@
 let users = [];
 let words = [];
-let hasAGameMaster = false;
-let internWss = {};
 let teams = [];
+let hasAGameMaster = false;
+let round = 0;
+let set = 0;
+let internWss = {};
+let numberOfPlayer = 0;
+
 let rootingFunction = {
     'addName': addName,
     'addWord': addWord,
-    'getUsers': getUsers
+    'getUsers': getUsers,
+    'gameIsReady': gameIsReady
 };
 /**
  * This function is called by index.js to initialize a new game instance.
@@ -21,13 +26,33 @@ exports.initGame = function(message, ws, wss){
     rootingFunction[obj.type](ws, obj);
 };
 
-
 function addName(ws, obj) {
     let response = {};
     const name = obj.name;
     response.type ='getUsers'
     users = [...users, obj.name];
     response.value = users;
+    broadcast(JSON.stringify(response));
+}
+
+function handleRound(){
+    let response = {};
+    response.type ='handleRound';
+    response.activePlayer = choosePlayer(round);
+    round = round + 1;
+    broadcast(JSON.stringify(response));
+}
+
+
+function gameIsReady() {
+    let response = {};
+    teams = sortTeam(users);
+    const shuffleWords = shuffle(words);
+    numberOfPlayer = users.length;
+
+    response.type ='gameIsReady'
+    response.teams = teams;
+    response.words = shuffleWords;
     broadcast(JSON.stringify(response));
 }
 
@@ -53,7 +78,7 @@ function broadcast(msg) {
     internWss.clients.forEach(function each(client) {
         client.send(msg);
     });
-};
+}
 
 /**
  * Shuffles array in place. ES6 version
@@ -67,9 +92,16 @@ function shuffle(a) {
     return a;
 }
 
-function sortTeam(){
-    const randomizedUsers = shuffle(users);
+function sortTeam(players){
+    const randomizedUsers = shuffle(players);
     const teamA = randomizedUsers.slice(0, Math.floor(randomizedUsers.length /2));
     const teamB = randomizedUsers.slice(Math.floor(randomizedUsers.length /2), randomizedUsers.length);
     return [teamA, teamB];
+}
+
+function choosePlayer(round){
+    const player = round % numberOfPlayer;
+    const idx0 = Math.trunc(player % 2);
+    const idx1 = Math.trunc(player / 2);
+    return teams[idx0][idx1];
 }

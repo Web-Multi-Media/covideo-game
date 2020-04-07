@@ -9,7 +9,7 @@ function App() {
 
     let ws = new WebSocket(URL);
     const [inRoom, setInRoom] = useState(false);
-    const [gameState, setGameState] = useState({users : [], isGameMaster: false});
+    const [gameState, setGameState] = useState({users : [], isGameMaster: false, gameIsReady:false, teams: [], words: []});
 
    useEffect(() => {
        ws.onopen = function() {
@@ -34,24 +34,33 @@ function App() {
         ws.send(JSON.stringify({type: 'addWord', word: word}));
     };
 
+    const sendGameIsReady =  () => {
+        ws.send(JSON.stringify({type: 'gameIsReady'}));
+    };
+
     const users = gameState.users;
     const gameMaster = gameState.isGameMaster;
 
     return (
 
         <div className="App">
-        {!inRoom &&
+        {!gameState.gameIsReady &&
             <React.Fragment>
             <p>GAMESTATE {JSON.stringify(gameState)}</p>
             <ConnectionScreen
                 users = {users}
                 isGameMaster = {gameMaster}
+                onGameReady = {sendGameIsReady}
                 onSend = {sendMessage}
                 onSendWord = {sendWord}
             />
             </React.Fragment>
         }
-        {inRoom && <MainScreen/>}
+        {gameState.gameIsReady &&
+        <MainScreen
+            gameState={gameState}
+        />
+        }
     </div>
   );
 }

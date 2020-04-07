@@ -32,6 +32,10 @@ function ConnectionScreen(props) {
         setWordSent(wordSent + 1);
     };
 
+    const gameIsReady = () => {
+        props.onGameReady();
+    };
+
     const onkeydown = ( event) => {
     if (event.keyCode === 13) {
         document.getElementById("outlined-basic-name").click();
@@ -62,7 +66,7 @@ function ConnectionScreen(props) {
             <React.Fragment>
                 <p>Is game Ready</p>
                 <div  className="inputLine">
-                    <Button className="margButt" variant="contained" color="primary" onClick={() => {}} disabled={false}>
+                    <Button className="margButt" variant="contained" color="primary" onClick={gameIsReady} disabled={false}>
                         Ready
                     </Button>
                 </div>
