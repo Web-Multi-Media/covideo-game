@@ -1,5 +1,8 @@
 // Import the Express module
+
+const game = require('./timesUpGame.js');
 const bodyParser = require('body-parser');
+
 
 // Import the 'path' module (packaged with Node.js)
 const path = require('path');
@@ -20,9 +23,8 @@ require('dotenv').config();
 // process.env.PORT lets the port be set by Heroku
 const port = 8000;
 
-const  tug = require('./timesUpGame');
+// const  tug = require();
 
-// We install the Wildcard middleware
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -43,9 +45,10 @@ app.get('*', (req, res) => {
 
 wss.on('connection', function connection(ws) {
     ws.on('message', function incoming( message) {
-        tug.initGame(message, ws, wss);
+        game.initGame(message, ws, wss);
     });
 });
+
 
 server.listen(port, () => {
     console.log(`server listening to port ${port}`);

@@ -5,17 +5,15 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "author": "worms19",
   "license": "ISC",
   "dependencies": {
-    "@wildcard-api/server": "^0.2.10",
     "body-parser": "latest",
     "dotenv": "latest",
     "express": "latest",
-    "mongoose": "^5.9.2",
-    "socket.io": "^2.3.0",
     "ws": "^7.2.3",
     "lodash": "latest"
   },

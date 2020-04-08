@@ -1,5 +1,5 @@
-const _ = require('lodash');
 
+const _ = require('lodash');
 let users = [];
 let words = [];
 let wordsOfRound = [];
@@ -22,26 +22,29 @@ let rootingFunction = {
     'validateWord': validateWord,
     'nextWord': nextWord,
 };
+
 /**
  * This function is called by index.js to initialize a new game instance.
  *
  * @param sio The Socket.IO library
  * @param socket The socket object for the connected client.
- *
- */
-exports.initGame = function(message, ws, wss){
-    internWss = wss;
-    const obj = JSON.parse(message);
-    rootingFunction[obj.type](ws, obj);
-};
+*
+*/
+
+    function initGame (message, ws, wss)
+    {
+        internWss = wss;
+        const obj = JSON.parse(message);
+        rootingFunction[obj.type](ws, obj);
+    }
 
 function addName(ws, obj) {
     let response = {};
     let response2 = {};
-    response.type ='getUsers'
+    response.type ='getUsers';
     users = [...users, obj.player];
     response.value = users;
-    response2.type ='addName'
+    response2.type ='addName';
     response2.player = obj.player;
     ws.send(JSON.stringify(response2));
     broadcast(JSON.stringify(response));
@@ -49,7 +52,7 @@ function addName(ws, obj) {
 
 function startSet(ws, obj){
     let response = {};
-    response.type ='startSet'
+    response.type ='startSet';
     response.startTimer = true;
     broadcast(JSON.stringify(response));
 }
@@ -159,3 +162,5 @@ function firstToLastIndex (arr) {
     newArray.push(arr[0]);
     return newArray;
 }
+
+module.exports.initGame = initGame;

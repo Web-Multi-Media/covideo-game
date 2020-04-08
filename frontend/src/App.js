@@ -1,10 +1,10 @@
+"use strict";
+
 import React, {useEffect, useState} from 'react';
 import './App.css';
 import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
-import Timer from "./component/Timer";
-import Button from "@material-ui/core/Button";
-const {handleServerResponse} = require("./webSocket/rootedFunctions");
+import handleServerResponse from "./webSocket/rootedFunctions";
 const URL = 'ws://localhost:8000';
 let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);

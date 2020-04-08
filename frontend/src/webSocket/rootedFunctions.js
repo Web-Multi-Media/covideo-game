@@ -10,9 +10,10 @@ let rootingFunction = {
 
 };
 
-exports.handleServerResponse = function(message, gameState, setGameState){
-    return rootingFunction[message.type](message, gameState,  setGameState);
-};
+
+export default function handleServerResponse(message, gameState, setGameState) {
+        return rootingFunction[message.type](message, gameState, setGameState);
+    }
 
 /**
  * Get a word for the host, and a list of words for the player.
@@ -87,3 +88,4 @@ function handleRound(message, gameState, setGameState){
         round: message.round
     });
 }
+

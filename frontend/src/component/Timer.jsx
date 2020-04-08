@@ -17,10 +17,9 @@ function Timer(props) {
         let interval = null;
         if (isActive && seconds > 0 ) {
             if (props.setFinished === true){
-                interval = setInterval(() => {
                 setSeconds(0);
                 props.timerEnd();
-                }, 50);
+                clearInterval(interval)
             } else{
             interval = setInterval(() => {
                 setSeconds(seconds => seconds - 1);
