@@ -21,6 +21,7 @@ let rootingFunction = {
     'handleRound': handleRound,
     'validateWord': validateWord,
     'nextWord': nextWord,
+    'resetGame': resetGame
 };
 
 /**
@@ -129,6 +130,26 @@ function broadcast(msg) {
     internWss.clients.forEach(function each(client) {
         client.send(msg);
     });
+}
+
+function resetGame() {
+    users = [];
+    words = [];
+    wordsOfRound = [];
+    teams = [];
+    hasAGameMaster = false;
+    round = 0;
+    set = 1;
+    scoreFirstTeam = 0;
+    scoreSecondTeam = 0;
+    internWss = {};
+    numberOfPlayer = 0;
+    console.log('fin de partie');
+    if(internWss.clients){
+    internWss.clients.forEach(function each(client) {
+        client.close();
+    });
+    }
 }
 
 /**

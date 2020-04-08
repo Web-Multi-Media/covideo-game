@@ -12,8 +12,6 @@ function Timer(props) {
     }
 
     useEffect(() => {
-        console.log(props.setFinished);
-        console.log(isActive);
         let interval = null;
         if (isActive && seconds > 0 ) {
             if (props.setFinished === true){
@@ -26,7 +24,7 @@ function Timer(props) {
             }, 100);
             }
         }
-        else if (isActive &&seconds === 0 ) {
+        else if (isActive && seconds === 0 ) {
             props.timerEnd();
         }
         return () => clearInterval(interval);

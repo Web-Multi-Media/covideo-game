@@ -5,6 +5,7 @@ import './App.css';
 import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
+import Button from "@material-ui/core/Button";
 const URL = 'ws://localhost:8000';
 let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
@@ -76,6 +77,10 @@ function App() {
         ws.send(JSON.stringify({type: 'validateWord', team: gameState.playerTeam}));
     };
 
+    const resetSockets =  () => {
+        ws.send(JSON.stringify({type: 'resetGame'}));
+    };
+
     const users = gameState.users;
     const gameMaster = gameState.isGameMaster;
 
@@ -103,6 +108,11 @@ function App() {
             nextWord = {nextWord}
         />
         }
+            {gameMaster &&
+            <Button className="margButt" variant="contained" color="primary" onClick={resetSockets} >
+                RESET GAME
+            </Button>
+            }
 
     </div>
   );
