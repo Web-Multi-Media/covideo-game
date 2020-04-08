@@ -24,7 +24,7 @@ function Timer(props) {
             }, 100);
             }
         }
-        else if (isActive && seconds === 0 ) {
+        if (isActive && seconds <= 0 ) {
             props.timerEnd();
         }
         return () => clearInterval(interval);
