@@ -18,11 +18,17 @@ function App() {
         isGameMaster: false,
         gameIsReady:false,
         teams: [],
+        playerTeam: 0,
+        team1Score: 0,
+        team2Score: 0,
         words: [],
+        setFinished: false,
+        set: 1,
         activePlayer: '',
-        startTimer: ''
+        startTimer: '',
+        timerDuration: 15,
+        round: 0,
     });
-    const [timer, setTimer] = useState(false);
 
    useEffect(() => {
        ws.onopen = function() {
@@ -41,12 +47,10 @@ function App() {
    const timerIsDone = () => {
        console.log('timer Is Done');
        setGameState({...gameState, startTimer: false})
+       if(gameState.player === gameState.activePlayer){
+           ws.send(JSON.stringify({type: 'handleRound'}));
+       }
    };
-
-    const startTimer = () => {
-        console.log('setTimer');
-       setGameState({...gameState, startTimer: true})
-    }
 
     const sendMessage =  (name) => {
         ws.send(JSON.stringify({type: 'addName', player: name}));
@@ -60,6 +64,18 @@ function App() {
         ws.send(JSON.stringify({type: 'gameIsReady'}));
     };
 
+    const startSet =  () => {
+        ws.send(JSON.stringify({type: 'startSet'}));
+    };
+
+    const nextWord =  () => {
+        ws.send(JSON.stringify({type: 'nextWord'}));
+    };
+
+    const validateWord =  () => {
+        ws.send(JSON.stringify({type: 'validateWord', team: gameState.playerTeam}));
+    };
+
     const users = gameState.users;
     const gameMaster = gameState.isGameMaster;
 
@@ -68,14 +84,6 @@ function App() {
         <div className="App">
         {!gameState.gameIsReady &&
             <React.Fragment>
-                <Timer
-                    timerDuration
-                    timerEnd = {timerIsDone}
-                    startTimer = {gameState.startTimer}
-                />
-                <Button  id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={startTimer}>
-                    Timer
-                </Button>
             <p>GAMESTATE {JSON.stringify(gameState)}</p>
             <ConnectionScreen
                 users = {users}
@@ -88,7 +96,11 @@ function App() {
         }
         {gameState.gameIsReady &&
         <MainScreen
+            finishTimer = {timerIsDone}
             gameState={gameState}
+            startSet = {startSet}
+            validateWord = {validateWord}
+            nextWord = {nextWord}
         />
         }
 

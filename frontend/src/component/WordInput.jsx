@@ -3,18 +3,27 @@ import './WordInput.css'
 import Button from "@material-ui/core/Button";
 
 
-function WordInput() {
+function WordInput(props) {
 
 
     return (
-
         <div className="navBar">
-            <Button className="margButt" variant="contained" color="primary">
-                Validate
-            </Button>
-            <Button className="margButt" variant="contained" color="primary">
-                Next Word
-            </Button>
+            {props.displayWord &&
+            <React.Fragment>
+                <p>Word to guess : {props.wordToGuess} </p>
+                <Button className="margButt" variant="contained" color="primary" onClick={props.validation}>
+                    Validate
+                </Button>
+                <Button className="margButt" variant="contained" color="primary" onClick={props.next}>
+                    Next Word
+                </Button>
+            </React.Fragment>
+            }
+            {!props.displayWord &&
+                <Button className="margButt" variant="contained" color="primary" onClick={props.startRound}>
+                    startSet
+                </Button>
+            }
         </div>
     );
 }

@@ -16,7 +16,8 @@
     "express": "latest",
     "mongoose": "^5.9.2",
     "socket.io": "^2.3.0",
-    "ws": "^7.2.3"
+    "ws": "^7.2.3",
+    "lodash": "latest"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

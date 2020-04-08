@@ -1,12 +1,12 @@
 import React from 'react';
 import './Round.css'
 
-function Round() {
+function Round(props) {
 
     return (
 
         <div className="round">
-                <p>Round 1</p>
+                <p>Round {props.set}</p>
         </div>
     );
 }

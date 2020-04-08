@@ -15,7 +15,8 @@ function TeamScreen(props) {
     });
     return (
         <div className="TeamBorder">
-            <p>Team Name !</p>
+            <p>Team {props.teamNumber}</p>
+            <p>Score :  {props.teamNumber === 1 ? props.gameState.team1Score : props.gameState.team2Score}</p>
             <div className="teamMembers">
                 {teamMembers}
             </div>

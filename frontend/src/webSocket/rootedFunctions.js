@@ -4,6 +4,9 @@ let rootingFunction = {
     'getUsers': getUsers,
     'addName': addName,
     'gameIsReady': gameIsReady,
+    'startSet': startSet,
+    'updateWord': updateWord,
+    'handleRound': handleRound
 
 };
 
@@ -18,25 +21,23 @@ exports.handleServerResponse = function(message, gameState, setGameState){
  * @param  The room identifier
  */
 function getUsers(message, gameState, setGameState) {
-    let objToSend = {};
-    objToSend.users =  message.value;
+    let objToUpdate = {};
+    objToUpdate.users =  message.value;
     if(message.gameMaster === true){
-        objToSend.isGameMaster = true;
+        objToUpdate.isGameMaster = true;
     }
         setGameState({
             ...gameState,
-            ...objToSend
+            ...objToUpdate
         });
 }
 
 function addName(message, gameState, setGameState) {
-    let objToSend = {};
-    console.log('message.player');
-    console.log(message.player);
-    objToSend.player =  message.player;
+    let objToUpdate = {};
+    objToUpdate.player =  message.player;
     setGameState({
         ...gameState,
-       ...objToSend
+       ...objToUpdate
     });
 }
 
@@ -45,7 +46,44 @@ function gameIsReady(message, gameState, setGameState) {
         ...gameState,
         gameIsReady : true,
         teams: message.teams,
+        playerTeam: message.teams[0].findIndex((element) => element === gameState.player) !== -1 ? 1 : 2,
         words: message.words,
         activePlayer: message.activePlayer
+    });
+}
+
+function startSet(message, gameState, setGameState){
+    setGameState({
+        ...gameState,
+        startTimer: message.startTimer
+    });
+}
+
+function updateWord(message, gameState, setGameState){
+    let objToUpdate = {};
+    objToUpdate.words =  message.words;
+    if(message.scoreFirstTeam){
+        objToUpdate.team1Score = message.scoreFirstTeam;
+    }
+    if(message.setFinished){
+        objToUpdate.setFinished = message.setFinished;
+    }
+    if(message.set){
+        objToUpdate.set = message.set;
+    }
+    if(message.scoreSecondTeam){
+        objToUpdate.team2Score = message.scoreSecondTeam;
+    }
+    setGameState({
+        ...gameState,
+        ...objToUpdate
+    });
+}
+
+function handleRound(message, gameState, setGameState){
+    setGameState({
+        ...gameState,
+        activePlayer: message.activePlayer,
+        round: message.round
     });
 }

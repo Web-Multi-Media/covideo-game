@@ -1,11 +1,14 @@
+const _ = require('lodash');
+
 let users = [];
 let words = [];
+let wordsOfRound = [];
 let teams = [];
 let hasAGameMaster = false;
 let round = 0;
-let set = 0;
+let set = 1;
 let scoreFirstTeam = 0;
-let scoreSercondTeam = 0;
+let scoreSecondTeam = 0;
 let internWss = {};
 let numberOfPlayer = 0;
 
@@ -13,7 +16,11 @@ let rootingFunction = {
     'addName': addName,
     'addWord': addWord,
     'getUsers': getUsers,
-    'gameIsReady': gameIsReady
+    'gameIsReady': gameIsReady,
+    'startSet': startSet,
+    'handleRound': handleRound,
+    'validateWord': validateWord,
+    'nextWord': nextWord,
 };
 /**
  * This function is called by index.js to initialize a new game instance.
@@ -40,10 +47,18 @@ function addName(ws, obj) {
     broadcast(JSON.stringify(response));
 }
 
+function startSet(ws, obj){
+    let response = {};
+    response.type ='startSet'
+    response.startTimer = true;
+    broadcast(JSON.stringify(response));
+}
+
 function handleRound(){
     let response = {};
     response.type ='handleRound';
-    response.activePlayer = choosePlayer(round);
+    const nextPlayer = choosePlayer(round);
+    response.activePlayer = nextPlayer;
     round = round + 1;
     broadcast(JSON.stringify(response));
 }
@@ -52,11 +67,11 @@ function handleRound(){
 function gameIsReady() {
     let response = {};
     teams = sortTeam(users);
-    const shuffleWords = shuffle(words);
+    wordsOfRound = shuffle(words);
     numberOfPlayer = users.length;
     response.type ='gameIsReady'
     response.teams = teams;
-    response.words = shuffleWords;
+    response.words = wordsOfRound;
     response.activePlayer = choosePlayer(round);
     round = round + 1;
     broadcast(JSON.stringify(response));
@@ -65,6 +80,36 @@ function gameIsReady() {
 function addWord(ws, obj) {
     words = [...words, obj.word];
 }
+
+function validateWord (ws, obj) {
+    let response = {};
+    if(obj.team === 1) {
+        scoreFirstTeam++;
+    }else{
+        scoreSecondTeam++;
+    }
+    response.type ='updateWord';
+    wordsOfRound = _.tail(wordsOfRound);
+    response.words = wordsOfRound;
+    if(wordsOfRound.length === 0){
+        response.setFinished = true;
+        set ++;
+        response.set = set;
+        response.activePlayer = choosePlayer(round);
+        round = 0;
+    }
+    response.scoreFirstTeam = scoreFirstTeam;
+    response.scoreSecondTeam = scoreSecondTeam;
+    broadcast(JSON.stringify(response));
+};
+
+function nextWord () {
+    let response = {};
+    response.type ='updateWord';
+    wordsOfRound = firstToLastIndex(wordsOfRound);
+    response.words = wordsOfRound;
+    broadcast(JSON.stringify(response));
+};
 
 function getUsers(ws) {
     let response = {};
@@ -107,4 +152,10 @@ function choosePlayer(round){
     const idx0 = Math.trunc(player % 2);
     const idx1 = Math.trunc(player / 2);
     return teams[idx0][idx1];
+}
+
+function firstToLastIndex (arr) {
+    let newArray = arr.slice(1, arr.length);
+    newArray.push(arr[0]);
+    return newArray;
 }
