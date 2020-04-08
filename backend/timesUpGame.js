@@ -4,6 +4,8 @@ let teams = [];
 let hasAGameMaster = false;
 let round = 0;
 let set = 0;
+let scoreFirstTeam = 0;
+let scoreSercondTeam = 0;
 let internWss = {};
 let numberOfPlayer = 0;
 
@@ -28,10 +30,13 @@ exports.initGame = function(message, ws, wss){
 
 function addName(ws, obj) {
     let response = {};
-    const name = obj.name;
+    let response2 = {};
     response.type ='getUsers'
-    users = [...users, obj.name];
+    users = [...users, obj.player];
     response.value = users;
+    response2.type ='addName'
+    response2.player = obj.player;
+    ws.send(JSON.stringify(response2));
     broadcast(JSON.stringify(response));
 }
 
@@ -49,17 +54,16 @@ function gameIsReady() {
     teams = sortTeam(users);
     const shuffleWords = shuffle(words);
     numberOfPlayer = users.length;
-
     response.type ='gameIsReady'
     response.teams = teams;
     response.words = shuffleWords;
+    response.activePlayer = choosePlayer(round);
+    round = round + 1;
     broadcast(JSON.stringify(response));
 }
 
 function addWord(ws, obj) {
     words = [...words, obj.word];
-    console.log('word');
-    console.log(words);
 }
 
 function getUsers(ws) {
@@ -74,7 +78,6 @@ function getUsers(ws) {
 }
 
 function broadcast(msg) {
-    console.log(msg);
     internWss.clients.forEach(function each(client) {
         client.send(msg);
     });

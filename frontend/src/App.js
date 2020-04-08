@@ -2,18 +2,30 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
+import Timer from "./component/Timer";
+import Button from "@material-ui/core/Button";
 const {handleServerResponse} = require("./webSocket/rootedFunctions");
 const URL = 'ws://localhost:8000';
+let ws = new WebSocket(URL);
+const id = Math.floor(Math.random() * 1000);
 
 function App() {
 
-    let ws = new WebSocket(URL);
-    const [inRoom, setInRoom] = useState(false);
-    const [gameState, setGameState] = useState({users : [], isGameMaster: false, gameIsReady:false, teams: [], words: []});
+    console.log(id);
+    const [gameState, setGameState] = useState({
+        player: '',
+        users : [],
+        isGameMaster: false,
+        gameIsReady:false,
+        teams: [],
+        words: [],
+        activePlayer: '',
+        startTimer: ''
+    });
+    const [timer, setTimer] = useState(false);
 
    useEffect(() => {
        ws.onopen = function() {
-           console.log('service Connected');
             ws.send(JSON.stringify({type: 'getUsers'}));
        };
    }, []);
@@ -26,8 +38,18 @@ function App() {
        };
    });
 
+   const timerIsDone = () => {
+       console.log('timer Is Done');
+       setGameState({...gameState, startTimer: false})
+   };
+
+    const startTimer = () => {
+        console.log('setTimer');
+       setGameState({...gameState, startTimer: true})
+    }
+
     const sendMessage =  (name) => {
-        ws.send(JSON.stringify({type: 'addName', name: name}));
+        ws.send(JSON.stringify({type: 'addName', player: name}));
     };
 
     const sendWord =  (word) => {
@@ -46,6 +68,14 @@ function App() {
         <div className="App">
         {!gameState.gameIsReady &&
             <React.Fragment>
+                <Timer
+                    timerDuration
+                    timerEnd = {timerIsDone}
+                    startTimer = {gameState.startTimer}
+                />
+                <Button  id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={startTimer}>
+                    Timer
+                </Button>
             <p>GAMESTATE {JSON.stringify(gameState)}</p>
             <ConnectionScreen
                 users = {users}
@@ -61,6 +91,7 @@ function App() {
             gameState={gameState}
         />
         }
+
     </div>
   );
 }

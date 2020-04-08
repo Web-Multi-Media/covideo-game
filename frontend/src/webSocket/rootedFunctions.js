@@ -2,6 +2,7 @@
 
 let rootingFunction = {
     'getUsers': getUsers,
+    'addName': addName,
     'gameIsReady': gameIsReady,
 
 };
@@ -13,18 +14,38 @@ exports.handleServerResponse = function(message, gameState, setGameState){
 /**
  * Get a word for the host, and a list of words for the player.
  *
- * @param wordPoolIndex
- * @param gameId The room identifier
+ * @param
+ * @param  The room identifier
  */
 function getUsers(message, gameState, setGameState) {
+    let objToSend = {};
+    objToSend.users =  message.value;
     if(message.gameMaster === true){
-    setGameState({...gameState, users : message.value, isGameMaster: true});
+        objToSend.isGameMaster = true;
     }
-    else{
-        setGameState({...gameState, users : message.value});
-    }
+        setGameState({
+            ...gameState,
+            ...objToSend
+        });
+}
+
+function addName(message, gameState, setGameState) {
+    let objToSend = {};
+    console.log('message.player');
+    console.log(message.player);
+    objToSend.player =  message.player;
+    setGameState({
+        ...gameState,
+       ...objToSend
+    });
 }
 
 function gameIsReady(message, gameState, setGameState) {
-    setGameState({...gameState, gameIsReady : true, teams: message.teams, words: message.words});
+    setGameState({
+        ...gameState,
+        gameIsReady : true,
+        teams: message.teams,
+        words: message.words,
+        activePlayer: message.activePlayer
+    });
 }

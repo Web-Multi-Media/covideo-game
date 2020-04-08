@@ -18,20 +18,25 @@ function MainScreen(props) {
     return (
         <React.Fragment>
             <p>GAMESTATE {JSON.stringify(props.gameState)}</p>
+            <p>ACTIVE PLAYER : {props.gameState.activePlayer}</p>
             <div className="topBar">
                 <div className="roundGrid">
                     <Round/>
                 </div>
                 <div className="timerGrid">
-                    <Timer/>
+                    {/*<Timer/>*/}
                 </div>
             </div>
             <div className="teamScreens">
                 {teamScreens}
             </div>
+            {props.gameState.player === props.gameState.activePlayer &&
             <div>
-                <WordInput/>
+                <WordInput
+                    wordList
+                />
             </div>
+            }
         </React.Fragment>
     );
 }
