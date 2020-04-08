@@ -22,8 +22,8 @@ function Timer(props) {
                 clearInterval(interval)
             } else{
             interval = setInterval(() => {
-                setSeconds(seconds => seconds - 1);
-            }, 1000);
+                setSeconds(seconds => seconds - 0.1);
+            }, 100);
             }
         }
         else if (isActive &&seconds === 0 ) {
@@ -40,7 +40,7 @@ function Timer(props) {
 
     return (
         <div className="timer">
-            <p>Timer : {seconds} sec</p>
+            <p>Timer : {Math.trunc(seconds)} sec</p>
         </div>
     );
 }
