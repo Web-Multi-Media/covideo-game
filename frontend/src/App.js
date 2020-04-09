@@ -108,11 +108,11 @@ function App() {
             nextWord = {nextWord}
         />
         }
-            {gameMaster &&
+
             <Button className="margButt" variant="contained" color="primary" onClick={resetSockets} >
                 RESET GAME
             </Button>
-            }
+            
 
     </div>
   );
