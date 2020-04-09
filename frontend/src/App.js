@@ -6,7 +6,7 @@ import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
 import Button from "@material-ui/core/Button";
-const URL = 'ws://localhost:8000';
+const URL = 'ws://51.178.18.81';
 let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
 
