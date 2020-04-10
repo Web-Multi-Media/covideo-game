@@ -7,10 +7,14 @@ let teams = [];
 let hasAGameMaster = false;
 let round = 0;
 let set = 1;
+let setFinished = false;
 let scoreFirstTeam = 0;
 let scoreSecondTeam = 0;
 let internWss = {};
 let numberOfPlayer = 0;
+let Players = [];
+const playerFunction = require('./Player.js');
+const utils = require('./utils')
 
 let rootingFunction = {
     'addName': addName,
@@ -18,7 +22,6 @@ let rootingFunction = {
     'getUsers': getUsers,
     'gameIsReady': gameIsReady,
     'startSet': startSet,
-    'handleRound': handleRound,
     'validateWord': validateWord,
     'nextWord': nextWord,
     'resetGame': resetGame
@@ -32,53 +35,62 @@ let rootingFunction = {
 *
 */
 
-    function initGame (message, ws, wss)
-    {
-        internWss = wss;
-        const obj = JSON.parse(message);
-        rootingFunction[obj.type](ws, obj);
-    }
+function initGame (message, ws, wss) {
+
+    internWss = wss;
+    const obj = JSON.parse(message);
+    console.log('React request : ' + obj.type);
+    rootingFunction[obj.type](ws, obj);
+}
 
 function addName(ws, obj) {
     let response = {};
-    let response2 = {};
-    response.type ='getUsers';
     users = [...users, obj.player];
-    response.value = users;
-    response2.type ='addName';
-    response2.player = obj.player;
-    ws.send(JSON.stringify(response2));
-    broadcast(JSON.stringify(response));
+    response.type ='updateState';
+    response.users = _.cloneDeep(users);
+    Players.push(new playerFunction.Player(ws.id, obj.player));
+    broadcast(response);
 }
 
 function startSet(ws, obj){
     let response = {};
-    response.type ='startSet';
-    response.startTimer = true;
-    broadcast(JSON.stringify(response));
-}
+    response.type ='updateState';
+    setFinished = false;
+    let counter = 4;
+    let WinnerCountdown = setInterval(function(){
+        counter= counter - 0.1;
+        response.setFinished = setFinished;
+        if (counter <= 0 || setFinished === true) {
+            round = round + 1;
+            if(setFinished === true){
+                wordsOfRound = words;
+                response.words = wordsOfRound;
+                counter = 0;
+            }
+            response.activePlayer = utils.choosePlayer(round, teams, numberOfPlayer);
+            response.timeLeft = counter;
+            broadcast(response);
+            clearInterval(WinnerCountdown);
+        }else{
+            response.timeLeft = counter;
+            broadcast(response);
+        }
+    }, 100);
 
-function handleRound(){
-    let response = {};
-    response.type ='handleRound';
-    const nextPlayer = choosePlayer(round);
-    response.activePlayer = nextPlayer;
-    round = round + 1;
-    broadcast(JSON.stringify(response));
+    broadcast(response);
 }
 
 
 function gameIsReady() {
     let response = {};
-    teams = sortTeam(users);
-    wordsOfRound = shuffle(words);
+    teams = utils.sortTeam(users);
+    wordsOfRound = utils.shuffle(words);
     numberOfPlayer = users.length;
-    response.type ='gameIsReady'
+    response.type ='gameIsReady';
     response.teams = teams;
     response.words = wordsOfRound;
-    response.activePlayer = choosePlayer(round);
-    round = round + 1;
-    broadcast(JSON.stringify(response));
+    response.activePlayer = utils.choosePlayer(round, teams, numberOfPlayer);
+    broadcast(response);
 }
 
 function addWord(ws, obj) {
@@ -92,45 +104,53 @@ function validateWord (ws, obj) {
     }else{
         scoreSecondTeam++;
     }
-    response.type ='updateWord';
+    response.type ='updateState';
     wordsOfRound = _.tail(wordsOfRound);
     response.words = wordsOfRound;
     if(wordsOfRound.length === 0){
+        setFinished = true;
         response.setFinished = true;
         set ++;
         response.set = set;
-        response.activePlayer = choosePlayer(round);
-        round = 0;
     }
-    response.scoreFirstTeam = scoreFirstTeam;
-    response.scoreSecondTeam = scoreSecondTeam;
-    broadcast(JSON.stringify(response));
+    response.team1Score = scoreFirstTeam;
+    response.team2Score = scoreSecondTeam;
+    broadcast(response);
 };
 
 function nextWord () {
     let response = {};
-    response.type ='updateWord';
-    wordsOfRound = firstToLastIndex(wordsOfRound);
+    response.type ='updateState';
+    wordsOfRound = utils.firstToLastIndex(wordsOfRound);
     response.words = wordsOfRound;
-    broadcast(JSON.stringify(response));
+    broadcast(response);
 };
+
+
 
 function getUsers(ws) {
     let response = {};
-    response.type ='getUsers';
-    response.value = users;
+    response.type ='updateState';
+    response.users = users;
     if(hasAGameMaster === false){
         hasAGameMaster = true;
-        response.gameMaster = true;
+        response.isGameMaster = true;
     }
     ws.send(JSON.stringify(response));
 }
 
-function broadcast(msg) {
+
+function broadcast(msg, senderId) {
     internWss.clients.forEach(function each(client) {
-        client.send(msg);
+        const player = Players.find(player => player.id === client.id);
+        msg.player = player ? player.name : '';
+        if(senderId !== client.id){
+            client.send(JSON.stringify(msg));
+        }
     });
 }
+
+
 
 function resetGame() {
     users = [];
@@ -150,38 +170,6 @@ function resetGame() {
         client.close();
     });
     }
-}
-
-/**
- * Shuffles array in place. ES6 version
- * @param {Array} a items An array containing the items.
- */
-function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-}
-
-function sortTeam(players){
-    const randomizedUsers = shuffle(players);
-    const teamA = randomizedUsers.slice(0, Math.floor(randomizedUsers.length /2));
-    const teamB = randomizedUsers.slice(Math.floor(randomizedUsers.length /2), randomizedUsers.length);
-    return [teamA, teamB];
-}
-
-function choosePlayer(round){
-    const player = round % numberOfPlayer;
-    const idx0 = Math.trunc(player % 2);
-    const idx1 = Math.trunc(player / 2);
-    return teams[idx0][idx1];
-}
-
-function firstToLastIndex (arr) {
-    let newArray = arr.slice(1, arr.length);
-    newArray.push(arr[0]);
-    return newArray;
 }
 
 module.exports.initGame = initGame;

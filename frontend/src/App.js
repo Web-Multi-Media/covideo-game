@@ -29,6 +29,7 @@ function App() {
         startTimer: '',
         timerDuration: 15,
         round: 0,
+        timeLeft: 0,
     });
 
    useEffect(() => {
@@ -108,12 +109,9 @@ function App() {
             nextWord = {nextWord}
         />
         }
-
             <Button className="margButt" variant="contained" color="primary" onClick={resetSockets} >
                 RESET GAME
             </Button>
-            
-
     </div>
   );
 }

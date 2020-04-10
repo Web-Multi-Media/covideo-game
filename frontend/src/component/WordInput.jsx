@@ -8,7 +8,7 @@ function WordInput(props) {
 
     return (
         <div className="navBar">
-            {props.displayWord &&
+            {props.timeLeft > 0 &&
             <React.Fragment>
                 <p>Word to guess : {props.wordToGuess} </p>
                 <Button className="margButt" variant="contained" color="primary" onClick={props.validation}>
@@ -19,7 +19,7 @@ function WordInput(props) {
                 </Button>
             </React.Fragment>
             }
-            {!props.displayWord &&
+            {props.timeLeft <= 0 &&
                 <Button className="margButt" variant="contained" color="primary" onClick={props.startRound}>
                     startSet
                 </Button>
