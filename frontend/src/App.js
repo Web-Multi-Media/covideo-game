@@ -26,8 +26,8 @@ function App() {
         setFinished: false,
         set: 1,
         activePlayer: '',
-        startTimer: '',
-        timerDuration: 15,
+        startTimer: false,
+        duration: 0,
         round: 0,
         timeLeft: 0,
     });
@@ -90,7 +90,7 @@ function App() {
         <div className="App">
         {!gameState.gameIsReady &&
             <React.Fragment>
-            <p>GAMESTATE {JSON.stringify(gameState)}</p>
+            {/*<p>GAMESTATE {JSON.stringify(gameState)}</p>*/}
             <ConnectionScreen
                 users = {users}
                 isGameMaster = {gameMaster}
@@ -108,10 +108,11 @@ function App() {
             validateWord = {validateWord}
             nextWord = {nextWord}
         />
-        }
+        }{gameState.isGameMaster &&
             <Button className="margButt" variant="contained" color="primary" onClick={resetSockets} >
                 RESET GAME
             </Button>
+        }
     </div>
   );
 }

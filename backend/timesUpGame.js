@@ -56,7 +56,7 @@ function startSet(ws, obj){
     let response = {};
     response.type ='updateState';
     setFinished = false;
-    let counter = 4;
+    let counter = 30;
     let WinnerCountdown = setInterval(function(){
         counter= counter - 0.1;
         response.setFinished = setFinished;
@@ -67,16 +67,14 @@ function startSet(ws, obj){
                 response.words = wordsOfRound;
                 counter = 0;
             }
+            response.startTimer = false;
             response.activePlayer = utils.choosePlayer(round, teams, numberOfPlayer);
-            response.timeLeft = counter;
             broadcast(response);
             clearInterval(WinnerCountdown);
-        }else{
-            response.timeLeft = counter;
-            broadcast(response);
         }
     }, 100);
-
+    response.duration = counter;
+    response.startTimer = true;
     broadcast(response);
 }
 
@@ -116,7 +114,7 @@ function validateWord (ws, obj) {
     response.team1Score = scoreFirstTeam;
     response.team2Score = scoreSecondTeam;
     broadcast(response);
-};
+}
 
 function nextWord () {
     let response = {};
@@ -124,9 +122,7 @@ function nextWord () {
     wordsOfRound = utils.firstToLastIndex(wordsOfRound);
     response.words = wordsOfRound;
     broadcast(response);
-};
-
-
+}
 
 function getUsers(ws) {
     let response = {};
@@ -149,7 +145,6 @@ function broadcast(msg, senderId) {
         }
     });
 }
-
 
 
 function resetGame() {
