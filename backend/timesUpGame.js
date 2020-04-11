@@ -1,27 +1,18 @@
-
 const _ = require('lodash');
-let users = [];
-let words = [];
-let wordsOfRound = [];
-let teams = [];
-let hasAGameMaster = false;
-let round = 0;
-let set = 1;
-let setFinished = false;
-let scoreFirstTeam = 0;
-let scoreSecondTeam = 0;
-let internWss = {};
-let numberOfPlayer = 0;
-let Players = [];
 const playerFunction = require('./Player.js');
 const utils = require('./utils')
+const roomFunction = require('./Room.js');
+
+let internWss = {};
+// let rooms = []; // TODO: create several rooms
+let room = new roomFunction.Room(0);
 
 let rootingFunction = {
     'addName': addName,
     'addWord': addWord,
     'getUsers': getUsers,
     'gameIsReady': gameIsReady,
-    'startSet': startSet,
+    'startSet': startRound,  // TODO: change startSet to startRound
     'validateWord': validateWord,
     'nextWord': nextWord,
     'resetGame': resetGame
@@ -36,7 +27,6 @@ let rootingFunction = {
 */
 
 function initGame (message, ws, wss) {
-
     internWss = wss;
     const obj = JSON.parse(message);
     console.log('React request : ' + obj.type);
@@ -45,30 +35,30 @@ function initGame (message, ws, wss) {
 
 function addName(ws, obj) {
     let response = {};
-    users = [...users, obj.player];
+    room.addUser(obj.player);
     response.type ='updateState';
-    response.users = _.cloneDeep(users);
-    Players.push(new playerFunction.Player(ws.id, obj.player));
+    response.users = _.cloneDeep(room.getUsers());
+    room.addPlayer(new playerFunction.Player(ws.id, obj.player))
     broadcast(response);
 }
 
-function startSet(ws, obj){
+function startRound(ws, obj){
     let response = {};
     response.type ='updateState';
-    setFinished = false;
+    room.startRound();
     let counter = 30;
-    let WinnerCountdown = setInterval(function(){
-        counter= counter - 0.1;
-        response.setFinished = setFinished;
-        if (counter <= 0 || setFinished === true) {
-            round = round + 1;
-            if(setFinished === true){
-                wordsOfRound = words;
-                response.words = wordsOfRound;
+    let WinnerCountdown = setInterval(function() {
+        counter = counter - 0.1;
+        let isSetfinished = room.isSetFinished();
+        response.setFinished = isSetfinished;
+        if (counter <= 0 || isSetfinished === true) {
+            if (isSetfinished === true) {
+                room.startSet();
                 counter = 0;
             }
             response.startTimer = false;
-            response.activePlayer = utils.choosePlayer(round, teams, numberOfPlayer);
+            response.activePlayer = room.choosePlayer();
+            response.words =  room.getWordsOfRound();
             broadcast(response);
             clearInterval(WinnerCountdown);
         }
@@ -78,67 +68,54 @@ function startSet(ws, obj){
     broadcast(response);
 }
 
-
 function gameIsReady() {
     let response = {};
-    teams = utils.sortTeam(users);
-    wordsOfRound = utils.shuffle(words);
-    numberOfPlayer = users.length;
+    room.startGame();
+    room.startSet();
+    room.startRound();
     response.type ='gameIsReady';
-    response.teams = teams;
-    response.words = wordsOfRound;
-    response.activePlayer = utils.choosePlayer(round, teams, numberOfPlayer);
+    response.teams = room.getTeams();
+    response.words = room.getWordsOfRound();
+    response.activePlayer = room.choosePlayer();
     broadcast(response);
 }
 
 function addWord(ws, obj) {
-    words = [...words, obj.word];
+    room.addWord(obj.word);
 }
 
 function validateWord (ws, obj) {
     let response = {};
-    if(obj.team === 1) {
-        scoreFirstTeam++;
-    }else{
-        scoreSecondTeam++;
-    }
     response.type ='updateState';
-    wordsOfRound = _.tail(wordsOfRound);
-    response.words = wordsOfRound;
-    if(wordsOfRound.length === 0){
-        setFinished = true;
-        response.setFinished = true;
-        set ++;
-        response.set = set;
-    }
-    response.team1Score = scoreFirstTeam;
-    response.team2Score = scoreSecondTeam;
+    room.validateWord(obj.team);
+    response.words = room.getWordsOfRound();
+    response.team1Score = room.getScoreFirstTeam();
+    response.team2Score = room.getScoreSecondTeam();
     broadcast(response);
 }
 
 function nextWord () {
     let response = {};
     response.type ='updateState';
-    wordsOfRound = utils.firstToLastIndex(wordsOfRound);
-    response.words = wordsOfRound;
+    room.skipWord();
+    response.words = room.getWordsOfRound();
     broadcast(response);
 }
 
 function getUsers(ws) {
     let response = {};
     response.type ='updateState';
-    response.users = users;
-    if(hasAGameMaster === false){
-        hasAGameMaster = true;
+    response.users = room.getUsers();
+    if (room.hasAGameMaster === false) {
+        room.setGameMaster();
         response.isGameMaster = true;
     }
     ws.send(JSON.stringify(response));
 }
 
-
 function broadcast(msg, senderId) {
     internWss.clients.forEach(function each(client) {
-        const player = Players.find(player => player.id === client.id);
+        const player = room.players.find(player => player.id === client.id);
         msg.player = player ? player.name : '';
         if(senderId !== client.id){
             client.send(JSON.stringify(msg));
@@ -146,19 +123,9 @@ function broadcast(msg, senderId) {
     });
 }
 
-
 function resetGame() {
-    users = [];
-    words = [];
-    wordsOfRound = [];
-    teams = [];
-    hasAGameMaster = false;
-    round = 0;
-    set = 1;
-    scoreFirstTeam = 0;
-    scoreSecondTeam = 0;
     internWss = {};
-    numberOfPlayer = 0;
+    room.resetGame();
     console.log('fin de partie');
     if(internWss.clients){
     internWss.clients.forEach(function each(client) {
@@ -166,5 +133,6 @@ function resetGame() {
     });
     }
 }
+
 
 module.exports.initGame = initGame;
