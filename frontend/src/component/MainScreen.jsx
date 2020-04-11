@@ -29,10 +29,8 @@ function MainScreen(props) {
                 </div>
                 <div className="timerGrid">
                     <Timer
-                        timerDuration = {props.gameState.timerDuration}
-                        timerEnd = {props.finishTimer}
                         startTimer = {props.gameState.startTimer}
-                        setFinished = {props.gameState.setFinished}
+                        duration = {props.gameState.duration}
                     />
                 </div>
             </div>
@@ -42,7 +40,7 @@ function MainScreen(props) {
             {props.gameState.player === props.gameState.activePlayer &&
             <div>
                 <WordInput
-                    displayWord = {props.gameState.startTimer}
+                    startTimer = {props.gameState.startTimer}
                     wordToGuess = {props.gameState.words[0]}
                     startRound = {props.startSet}
                     validation = {props.validateWord}

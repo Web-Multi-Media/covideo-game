@@ -6,7 +6,7 @@ import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
 import Button from "@material-ui/core/Button";
-const URL = 'ws://localhost:8000/';
+const URL = 'ws://localhost:8000';
 let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
 
@@ -26,9 +26,10 @@ function App() {
         setFinished: false,
         set: 1,
         activePlayer: '',
-        startTimer: '',
-        timerDuration: 15,
+        startTimer: false,
+        duration: 0,
         round: 0,
+        timeLeft: 0,
     });
 
    useEffect(() => {
@@ -89,7 +90,7 @@ function App() {
         <div className="App">
         {!gameState.gameIsReady &&
             <React.Fragment>
-            <p>GAMESTATE {JSON.stringify(gameState)}</p>
+            {/*<p>GAMESTATE {JSON.stringify(gameState)}</p>*/}
             <ConnectionScreen
                 users = {users}
                 isGameMaster = {gameMaster}
@@ -107,13 +108,11 @@ function App() {
             validateWord = {validateWord}
             nextWord = {nextWord}
         />
-        }
-
+        }{gameState.isGameMaster &&
             <Button className="margButt" variant="contained" color="primary" onClick={resetSockets} >
                 RESET GAME
             </Button>
-
-
+        }
     </div>
   );
 }

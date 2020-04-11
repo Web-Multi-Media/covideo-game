@@ -42,8 +42,22 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname+'/../frontend/build/index.html'));
 });
 
+wss.getUniqueID = function () {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4();
+};
+
 
 wss.on('connection', function connection(ws) {
+
+    ws.id = wss.getUniqueID();
+
+    wss.clients.forEach(function each(client) {
+        console.log('Client.ID: ' + client.id);
+    });
+
     ws.on('message', function incoming( message) {
         game.initGame(message, ws, wss);
     });
