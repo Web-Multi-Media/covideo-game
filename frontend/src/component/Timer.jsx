@@ -25,6 +25,10 @@ function Timer(props) {
     if(props.startTimer === true){
       reset(props.duration);
     }
+    if(props.startTimer === false){
+      setSeconds(0);
+    }
+
   }, [props.startTimer]);
 
   return (
