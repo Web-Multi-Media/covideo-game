@@ -6,6 +6,7 @@ import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
 import Button from "@material-ui/core/Button";
+import SelectRoomScreen from "./component/SelectRoomScreen";
 const URL = 'ws://localhost:8000';
 let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
@@ -17,7 +18,7 @@ function App() {
         player: '',
         users : [],
         isGameMaster: false,
-        gameIsReady:false,
+        gameIsReady: false,
         teams: [],
         playerTeam: 0,
         team1Score: 0,
@@ -30,11 +31,13 @@ function App() {
         duration: 0,
         round: 0,
         timeLeft: 0,
+        joinedRoom: false,
+        roomId: '',
     });
 
    useEffect(() => {
        ws.onopen = function() {
-            ws.send(JSON.stringify({type: 'getUsers'}));
+            //ws.send(JSON.stringify({type: 'getUsers'}));
        };
    }, []);
 
@@ -53,6 +56,14 @@ function App() {
            ws.send(JSON.stringify({type: 'handleRound'}));
        }
    };
+
+    const createNewRoom = () => {
+        ws.send(JSON.stringify({type: 'createRoom'}));
+    };
+
+    const joinRoom = (roomId) => {
+        ws.send(JSON.stringify({type: 'joinRoom', roomId: roomId}));
+    };
 
     const sendMessage =  (name) => {
         ws.send(JSON.stringify({type: 'addName', player: name}));
@@ -84,11 +95,19 @@ function App() {
 
     const users = gameState.users;
     const gameMaster = gameState.isGameMaster;
+    const roomId = gameState.roomId;
 
     return (
 
         <div className="App">
-        {!gameState.gameIsReady &&
+        {!gameState.gameIsReady & !gameState.joinedRoom &&
+        <SelectRoomScreen
+            createNewRoom = {createNewRoom}
+            roomId = {roomId}
+            joinRoom = {joinRoom}
+        />
+        }
+        {!gameState.gameIsReady & gameState.joinedRoom &&
             <React.Fragment>
             {/*<p>GAMESTATE {JSON.stringify(gameState)}</p>*/}
             <ConnectionScreen
@@ -103,7 +122,7 @@ function App() {
         {gameState.gameIsReady &&
         <MainScreen
             finishTimer = {timerIsDone}
-            gameState={gameState}
+            gameState= {gameState}
             startSet = {startSet}
             validateWord = {validateWord}
             nextWord = {nextWord}

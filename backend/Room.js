@@ -2,6 +2,7 @@ const utils = require('./utils')
 const _ = require('lodash');
 
 function Room(id){
+    this.name = "";
     this.id = id;
     this.users = [];
     this.words = [];
@@ -44,6 +45,9 @@ Room.prototype = {
     },
     getScoreSecondTeam: function() {
         return this.scoreSecondTeam;
+    },
+    setName: function(name) {
+        this.name = name;
     },
     setGameMaster: function() {
         this.hasAGameMaster = true;

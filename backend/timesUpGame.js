@@ -4,8 +4,7 @@ const utils = require('./utils')
 const roomFunction = require('./Room.js');
 
 let internWss = {};
-// let rooms = []; // TODO: create several rooms
-let room = new roomFunction.Room(0);
+var rooms = new Map();
 
 let rootingFunction = {
     'addName': addName,
@@ -15,7 +14,8 @@ let rootingFunction = {
     'startSet': startRound,  // TODO: change startSet to startRound
     'validateWord': validateWord,
     'nextWord': nextWord,
-    'resetGame': resetGame
+    'resetGame': resetGame,
+    'createRoom': createRoom
 };
 
 /**
@@ -26,23 +26,46 @@ let rootingFunction = {
 *
 */
 
-function initGame (message, ws, wss) {
+function messageHandler(message, ws, wss) {
     internWss = wss;
     const obj = JSON.parse(message);
     console.log('React request : ' + obj.type);
-    rootingFunction[obj.type](ws, obj);
+    const room = ws.roomId ? rooms.get(ws.roomId): {};
+    rootingFunction[obj.type](ws, obj, room);
 }
 
-function addName(ws, obj) {
+function createRoom(ws, obj) {
+    let roomId = utils.getUniqueID();
+    while (rooms.has(roomId)) {
+        roomId = utils.getUniqueID();
+    }
+    let room = new roomFunction.Room(roomId);
+    rooms.set(roomId, room);
+
+    console.log('Create room with id: ' + roomId);
+
+    let response = {};
+    response.type = 'updateState'
+    response.roomId = roomId;
+    broadcast(response, room);
+}
+
+function joinRoom(ws, obj) {
+    let roomId = obj.roomId;
+    let room = rooms.get(roomId);
+    ws.roomId = roomId;
+}
+
+function addName(ws, obj, room) {
     let response = {};
     room.addUser(obj.player);
     response.type ='updateState';
     response.users = _.cloneDeep(room.getUsers());
     room.addPlayer(new playerFunction.Player(ws.id, obj.player))
-    broadcast(response);
+    broadcast(response, room);
 }
 
-function startRound(ws, obj){
+function startRound(ws, obj, room){
     let response = {};
     response.type ='updateState';
     room.startRound();
@@ -58,17 +81,17 @@ function startRound(ws, obj){
             }
             response.startTimer = false;
             response.activePlayer = room.choosePlayer();
-            response.words =  room.getWordsOfRound();
-            broadcast(response);
+            response.words = room.getWordsOfRound();
+            broadcast(response, room);
             clearInterval(WinnerCountdown);
         }
     }, 100);
     response.duration = counter;
     response.startTimer = true;
-    broadcast(response);
+    broadcast(response, room);
 }
 
-function gameIsReady() {
+function gameIsReady(ws, obj, room) {
     let response = {};
     room.startGame();
     room.startSet();
@@ -77,32 +100,32 @@ function gameIsReady() {
     response.teams = room.getTeams();
     response.words = room.getWordsOfRound();
     response.activePlayer = room.choosePlayer();
-    broadcast(response);
+    broadcast(response, room);
 }
 
-function addWord(ws, obj) {
+function addWord(ws, obj, room) {
     room.addWord(obj.word);
 }
 
-function validateWord (ws, obj) {
+function validateWord (ws, obj, room) {
     let response = {};
     response.type ='updateState';
     room.validateWord(obj.team);
     response.words = room.getWordsOfRound();
     response.team1Score = room.getScoreFirstTeam();
     response.team2Score = room.getScoreSecondTeam();
-    broadcast(response);
+    broadcast(response, room);
 }
 
-function nextWord () {
+function nextWord (ws, obj, room) {
     let response = {};
     response.type ='updateState';
     room.skipWord();
     response.words = room.getWordsOfRound();
-    broadcast(response);
+    broadcast(response, room);
 }
 
-function getUsers(ws) {
+function getUsers(ws, obj, room) {
     let response = {};
     response.type ='updateState';
     response.users = room.getUsers();
@@ -113,7 +136,7 @@ function getUsers(ws) {
     ws.send(JSON.stringify(response));
 }
 
-function broadcast(msg, senderId) {
+function broadcast(msg, room, senderId) {
     internWss.clients.forEach(function each(client) {
         const player = room.players.find(player => player.id === client.id);
         msg.player = player ? player.name : '';
@@ -123,7 +146,7 @@ function broadcast(msg, senderId) {
     });
 }
 
-function resetGame() {
+function resetGame(ws, obj, room) {
     internWss = {};
     room.resetGame();
     console.log('fin de partie');
@@ -135,4 +158,4 @@ function resetGame() {
 }
 
 
-module.exports.initGame = initGame;
+module.exports.messageHandler = messageHandler;
