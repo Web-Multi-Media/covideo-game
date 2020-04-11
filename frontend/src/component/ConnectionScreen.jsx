@@ -72,6 +72,7 @@ function ConnectionScreen(props) {
                 </div>
             </React.Fragment>
             }
+            <p> link to join the room : http://localhost:3000/{props.roomId}</p>
         </React.Fragment>
     );
 }

@@ -1,6 +1,7 @@
 "use strict";
 
 import React, {useEffect, useState} from 'react';
+import { useLocation } from 'react-router-dom'
 import './App.css';
 import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
@@ -12,8 +13,6 @@ let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
 
 function App() {
-
-    console.log(id);
     const [gameState, setGameState] = useState({
         player: '',
         users : [],
@@ -33,7 +32,16 @@ function App() {
         timeLeft: 0,
         joinedRoom: false,
         roomId: '',
+        socketConnected: false
     });
+
+    const location = useLocation();
+
+    useEffect(() => {
+        ws.onopen = function() {
+           setGameState({...gameState, socketConnected: true})
+        }
+        }, []);
 
    useEffect(() => {
         if (gameState.joinedRoom === true) {
@@ -42,7 +50,15 @@ function App() {
    }, [gameState.joinedRoom]);
 
     useEffect(() => {
-        if (gameState.roomId !== '') {
+        if (location.pathname !== '/' && gameState.socketConnected) {
+            console.log('has pathe name');
+            console.log(location.pathname);
+            ws.send(JSON.stringify({type: 'joinRoom',roomId: location.pathname.substring(1)}));
+        }
+    }, [gameState.socketConnected]);
+
+    useEffect(() => {
+        if (gameState.roomId !== '' && gameState.joinedRoom === false) {
             joinRoom(gameState.roomId);
         }
    }, [gameState.roomId]);
@@ -110,19 +126,19 @@ function App() {
         {!gameState.gameIsReady & !gameState.joinedRoom &&
         <SelectRoomScreen
             createNewRoom = {createNewRoom}
-            roomId = {roomId}
             joinRoom = {joinRoom}
         />
         }
         {!gameState.gameIsReady & gameState.joinedRoom &&
             <React.Fragment>
-            
+
             <ConnectionScreen
                 users = {users}
                 isGameMaster = {gameMaster}
                 onGameReady = {sendGameIsReady}
                 onSend = {sendMessage}
                 onSendWord = {sendWord}
+                roomId = {roomId}
             />
             </React.Fragment>
         }

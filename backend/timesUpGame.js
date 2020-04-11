@@ -30,7 +30,7 @@ let rootingFunction = {
 function messageHandler(message, ws, wss) {
     internWss = wss;
     const obj = JSON.parse(message);
-    console.log('React request : ' + obj.type);
+    console.log(ws.id + ' React request : ' + obj.type);
     const room = ws.roomId ? rooms.get(ws.roomId): {};
     rootingFunction[obj.type](ws, obj, room);
 }
@@ -42,9 +42,7 @@ function createRoom(ws, obj) {
     }
     let room = new roomFunction.Room(roomId);
     rooms.set(roomId, room);
-
     console.log('Create room with id: ' + roomId);
-
     let response = {};
     response.type = 'updateState'
     response.roomId = roomId;
@@ -58,6 +56,7 @@ function joinRoom(ws, obj) {
     let response = {};
     response.type = 'updateState';
     response.joinedRoom = true;
+    response.roomId = roomId;
     ws.send(JSON.stringify(response));
 }
 
