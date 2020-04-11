@@ -36,10 +36,16 @@ function App() {
     });
 
    useEffect(() => {
-       ws.onopen = function() {
-            //ws.send(JSON.stringify({type: 'getUsers'}));
-       };
-   }, []);
+        if (gameState.joinedRoom === true) {
+            ws.send(JSON.stringify({type: 'getUsers'}));
+        }
+   }, [gameState.joinedRoom]);
+
+    useEffect(() => {
+        if (gameState.roomId !== '') {
+            joinRoom(gameState.roomId);
+        }
+   }, [gameState.roomId]);
 
    useEffect(() => {
        ws.onmessage = (message) => {
@@ -100,6 +106,7 @@ function App() {
     return (
 
         <div className="App">
+        <p>GAMESTATE {JSON.stringify(gameState)}</p>
         {!gameState.gameIsReady & !gameState.joinedRoom &&
         <SelectRoomScreen
             createNewRoom = {createNewRoom}
@@ -109,7 +116,7 @@ function App() {
         }
         {!gameState.gameIsReady & gameState.joinedRoom &&
             <React.Fragment>
-            {/*<p>GAMESTATE {JSON.stringify(gameState)}</p>*/}
+            
             <ConnectionScreen
                 users = {users}
                 isGameMaster = {gameMaster}

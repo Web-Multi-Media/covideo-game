@@ -15,7 +15,8 @@ let rootingFunction = {
     'validateWord': validateWord,
     'nextWord': nextWord,
     'resetGame': resetGame,
-    'createRoom': createRoom
+    'createRoom': createRoom,
+    'joinRoom': joinRoom
 };
 
 /**
@@ -54,12 +55,16 @@ function joinRoom(ws, obj) {
     let roomId = obj.roomId;
     let room = rooms.get(roomId);
     ws.roomId = roomId;
+    let response = {};
+    response.type = 'updateState';
+    response.joinedRoom = true;
+    ws.send(JSON.stringify(response));
 }
 
 function addName(ws, obj, room) {
     let response = {};
     room.addUser(obj.player);
-    response.type ='updateState';
+    response.type = 'updateState';
     response.users = _.cloneDeep(room.getUsers());
     room.addPlayer(new playerFunction.Player(ws.id, obj.player))
     broadcast(response, room);
