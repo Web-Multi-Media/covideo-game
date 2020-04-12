@@ -46,7 +46,7 @@ function createRoom(ws, obj) {
     let response = {};
     response.type = 'updateState'
     response.roomId = roomId;
-    broadcast(response, room);
+    ws.send(JSON.stringify(response));
 }
 
 function joinRoom(ws, obj) {
