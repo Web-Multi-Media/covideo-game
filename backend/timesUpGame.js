@@ -177,7 +177,7 @@ function broadcast(msg, room, senderId) {
     msg.player = player
       ? player.name
       : '';
-    if (senderId !== client.id) {
+    if (senderId !== client.id && room.id === client.roomId) {
       client.send(JSON.stringify(msg));
     }
   });
