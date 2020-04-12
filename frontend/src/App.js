@@ -7,6 +7,7 @@ import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
 import Button from "@material-ui/core/Button";
+import GifScreen from "./component/Gif/GifScreen";
 import SelectRoomScreen from "./component/SelectRoomScreen";
 const URL = 'ws://localhost:8000';
 let ws = new WebSocket(URL);
@@ -32,8 +33,11 @@ function App() {
         timeLeft: 0,
         joinedRoom: false,
         roomId: '',
-        socketConnected: false
+        socketConnected: false,
+        gifUrl: ''
     });
+    const [img, setImg] = useState('');
+
 
     const location = useLocation();
 
@@ -115,6 +119,11 @@ function App() {
         ws.send(JSON.stringify({type: 'resetGame'}));
     };
 
+    const chooseGif =  (gifUrl) => {
+        ws.send(JSON.stringify({type: 'setGif', gifUrl: gifUrl}));
+    };
+
+
     const users = gameState.users;
     const gameMaster = gameState.isGameMaster;
     const roomId = gameState.roomId;
@@ -149,12 +158,21 @@ function App() {
             startSet = {startSet}
             validateWord = {validateWord}
             nextWord = {nextWord}
+            sendGif = { chooseGif }
         />
         }{gameState.isGameMaster &&
             <Button className="margButt" variant="contained" color="primary" onClick={resetSockets} >
                 RESET GAME
             </Button>
         }
+
+            {gameState.gifUrl !== '' &&
+
+            <img
+                src={gameState.gifUrl}
+                className="gif"
+            />
+            }
     </div>
   );
 }

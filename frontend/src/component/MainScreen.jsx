@@ -4,6 +4,7 @@ import TeamScreen from "./TeamScreen";
 import "./MainScreen.css";
 import WordInput from "./WordInput";
 import Timer from "./Timer";
+import GifScreen from "./Gif/GifScreen";
 
 
 function MainScreen(props) {
@@ -16,6 +17,19 @@ function MainScreen(props) {
                 teamNumber = {index + 1}
             />);
         });
+
+    const teamScreens1 =
+        <TeamScreen
+                gameState = {props.gameState}
+                team ={props.gameState.teams[0]}
+                teamNumber = {1}
+            />;
+    const teamScreens2 =
+        <TeamScreen
+            gameState = {props.gameState}
+            team ={props.gameState.teams[1]}
+            teamNumber = {2}
+        />;
 
     return (
         <React.Fragment>
@@ -35,7 +49,13 @@ function MainScreen(props) {
                 </div>
             </div>
             <div className="teamScreens">
-                {teamScreens}
+                {teamScreens1}
+                <div className="gifGrid">
+                    <GifScreen
+                        sendGif = { props.sendGif }
+                    />
+                </div>
+                {teamScreens2}
             </div>
             {props.gameState.player === props.gameState.activePlayer &&
             <div>

@@ -15,6 +15,7 @@ function Room(id){
     this.scoreFirstTeam = 0;
     this.scoreSecondTeam = 0;
     this.numberOfPlayer = 0;
+    this.gifUrl = '';
     this.players = [];
     this.lastActivity = Date.now();
 }
@@ -60,6 +61,10 @@ Room.prototype = {
         this.updateAcitvity();
         this.name = name;
     },
+    setGifUrl: function(gifUrl) {
+        this.updateAcitvity();
+        this.gifUrl = gifUrl;
+    },
     setGameMaster: function() {
         this.updateAcitvity();
         this.hasAGameMaster = true;
@@ -76,7 +81,7 @@ Room.prototype = {
     addWord: function(word) {
         this.updateAcitvity();
         this.words = [...this.words, word];
-    }, 
+    },
     startGame: function() {
         this.updateAcitvity();
         this.teams = utils.sortTeam(this.users);

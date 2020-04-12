@@ -7,7 +7,6 @@ function TeamScreen(props) {
         return(
             <React.Fragment key={0}>
                 <div>
-                    <p className="teamMember">a</p>
                     <p className="">{player}</p>
                 </div>
             </React.Fragment>

@@ -16,7 +16,8 @@ let rootingFunction = {
     'nextWord': nextWord,
     'resetGame': resetGame,
     'createRoom': createRoom,
-    'joinRoom': joinRoom
+    'joinRoom': joinRoom,
+    'setGif': setGif,
 };
 
 /**
@@ -140,11 +141,19 @@ function getUsers(ws, obj, room) {
     ws.send(JSON.stringify(response));
 }
 
+function setGif(ws, obj, room) {
+    let response = {};
+    response.type ='updateState';
+    response.gifUrl = obj.gifUrl;
+    room.setGifUrl(obj.gifUrl);
+    broadcast(response, room);
+}
+
 function broadcast(msg, room, senderId) {
     internWss.clients.forEach(function each(client) {
         const player = room.players.find(player => player.id === client.id);
         msg.player = player ? player.name : '';
-        if(senderId !== client.id){
+        if(senderId !== client.id && (room.id === client.roomId)){
             client.send(JSON.stringify(msg));
         }
     });
