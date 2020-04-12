@@ -1,170 +1,198 @@
-
 const _ = require('lodash');
-let users = [];
-let words = [];
-let wordsOfRound = [];
-let teams = [];
-let hasAGameMaster = false;
-let round = 0;
-let set = 1;
-let setFinished = false;
-let scoreFirstTeam = 0;
-let scoreSecondTeam = 0;
-let internWss = {};
-let numberOfPlayer = 0;
-let Players = [];
 const playerFunction = require('./Player.js');
 const utils = require('./utils')
+const roomFunction = require('./Room.js');
+
+let internWss = {};
+var rooms = new Map();
 
 let rootingFunction = {
-    'addName': addName,
-    'addWord': addWord,
-    'getUsers': getUsers,
-    'gameIsReady': gameIsReady,
-    'startSet': startSet,
-    'validateWord': validateWord,
-    'nextWord': nextWord,
-    'resetGame': resetGame
+  'addName': addName,
+  'addWord': addWord,
+  'getUsers': getUsers,
+  'gameIsReady': gameIsReady,
+  'startSet': startRound, // TODO: change startSet to startRound
+  'validateWord': validateWord,
+  'nextWord': nextWord,
+  'resetGame': resetGame,
+  'createRoom': createRoom,
+  'joinRoom': joinRoom,
+  'getRooms': getRooms,
+  'leaveRoom': leaveRoom
 };
 
-/**
- * This function is called by index.js to initialize a new game instance.
- *
- * @param sio The Socket.IO library
- * @param socket The socket object for the connected client.
-*
-*/
-
-function initGame (message, ws, wss) {
-
-    internWss = wss;
-    const obj = JSON.parse(message);
-    console.log('React request : ' + obj.type);
-    rootingFunction[obj.type](ws, obj);
+function messageHandler(message, ws, wss) {
+  internWss = wss;
+  const obj = JSON.parse(message);
+  console.log(ws.id + ' React request : ' + obj.type);
+  const room = ws.roomId
+    ? rooms.get(ws.roomId)
+    : {};
+  rootingFunction[obj.type](ws, obj, room);
 }
 
-function addName(ws, obj) {
-    let response = {};
-    users = [...users, obj.player];
-    response.type ='updateState';
-    response.users = _.cloneDeep(users);
-    Players.push(new playerFunction.Player(ws.id, obj.player));
-    broadcast(response);
+function getRooms(ws, obj) {
+  var rooms_data = [];
+  for (const [id, room] of rooms.entries()) {
+    console.log('Found room id ' + id + '');
+    rooms_data.push(room.serialize());
+  }
+  let response = {
+    type: 'updateState',
+    rooms: rooms_data
+  };
+  ws.send(JSON.stringify(response));
 }
 
-function startSet(ws, obj){
-    let response = {};
-    response.type ='updateState';
-    setFinished = false;
-    let counter = 30;
-    let WinnerCountdown = setInterval(function(){
-        counter= counter - 0.1;
-        response.setFinished = setFinished;
-        if (counter <= 0 || setFinished === true) {
-            round = round + 1;
-            if(setFinished === true){
-                wordsOfRound = words;
-                response.words = wordsOfRound;
-                counter = 0;
-            }
-            response.startTimer = false;
-            response.activePlayer = utils.choosePlayer(round, teams, numberOfPlayer);
-            broadcast(response);
-            clearInterval(WinnerCountdown);
-        }
-    }, 100);
-    response.duration = counter;
-    response.startTimer = true;
-    broadcast(response);
+function createRoom(ws, obj) {
+  let roomId = utils.getUniqueID();
+  while (rooms.has(roomId)) {
+    roomId = utils.getUniqueID();
+  }
+  let room = new roomFunction.Room(roomId);
+  rooms.set(roomId, room);
+  console.log('Create room ' + roomId);
+  let response = {
+    type: 'updateState',
+    roomId: roomId
+  };
+  ws.send(JSON.stringify(response));
 }
 
-
-function gameIsReady() {
-    let response = {};
-    teams = utils.sortTeam(users);
-    wordsOfRound = utils.shuffle(words);
-    numberOfPlayer = users.length;
-    response.type ='gameIsReady';
-    response.teams = teams;
-    response.words = wordsOfRound;
-    response.activePlayer = utils.choosePlayer(round, teams, numberOfPlayer);
-    broadcast(response);
+function joinRoom(ws, obj) {
+  let roomId = obj.roomId;
+  let room = rooms.get(roomId);
+  ws.roomId = roomId;
+  let response = {
+    type: 'updateState',
+    joinedRoom: true,
+    roomId: roomId
+  };
+  ws.send(JSON.stringify(response));
 }
 
-function addWord(ws, obj) {
-    words = [...words, obj.word];
+function leaveRoom(ws, obj, room) {
+  let roomId = ws.roomId;
+  let name = obj.name;
+  var room = rooms.get(roomId);
+  console.log('Removing ' + name + ' from room ' + roomId);
+  room.removePlayer(name);
+  ws.roomId = null;
+  let response = {
+    type: 'updateState',
+    joinedRoom: false,
+    roomId: roomId
+  }
+  ws.send(JSON.stringify(response));
 }
 
-function validateWord (ws, obj) {
-    let response = {};
-    if(obj.team === 1) {
-        scoreFirstTeam++;
-    }else{
-        scoreSecondTeam++;
+function addName(ws, obj, room) {
+  room.addUser(obj.player);
+  room.addPlayer(new playerFunction.Player(ws.id, obj.player));
+  let response = {
+    type: 'updateState',
+    users: _.cloneDeep(room.getUsers())
+  };
+  broadcast(response, room);
+}
+
+function startRound(ws, obj, room) {
+  let response = {};
+  response.type = 'updateState';
+  room.startRound();
+  let counter = 30;
+  let WinnerCountdown = setInterval(function() {
+    counter = counter - 0.1;
+    let isSetfinished = room.isSetFinished();
+    response.setFinished = isSetfinished;
+    if (counter <= 0 || isSetfinished === true) {
+      if (isSetfinished === true) {
+        room.startSet();
+        counter = 0;
+      }
+      response.startTimer = false;
+      response.activePlayer = room.choosePlayer();
+      response.words = room.getWordsOfRound();
+      broadcast(response, room);
+      clearInterval(WinnerCountdown);
     }
-    response.type ='updateState';
-    wordsOfRound = _.tail(wordsOfRound);
-    response.words = wordsOfRound;
-    if(wordsOfRound.length === 0){
-        setFinished = true;
-        response.setFinished = true;
-        set ++;
-        response.set = set;
+  }, 100);
+  response.duration = counter;
+  response.startTimer = true;
+  broadcast(response, room);
+}
+
+function gameIsReady(ws, obj, room) {
+  room.startGame();
+  room.startSet();
+  room.startRound();
+  let response = {
+    type: 'gameIsReady',
+    teams: room.getTeams(),
+    words: room.getWordsOfRound(),
+    activePlayer: room.choosePlayer()
+  }
+  broadcast(response, room);
+}
+
+function addWord(ws, obj, room) {
+  room.addWord(obj.word);
+}
+
+function validateWord(ws, obj, room) {
+  room.validateWord(obj.team);
+  let response = {
+    type: 'updateState',
+    words: room.getWordsOfRound(),
+    team1Score: room.getScoreFirstTeam(),
+    team2Score: room.getScoreSecondTeam()
+  };
+  broadcast(response, room);
+}
+
+function nextWord(ws, obj, room) {
+  room.skipWord();
+  let response = {
+    type: 'updateState',
+    words: room.getWordsOfRound()
+  };
+  broadcast(response, room);
+}
+
+function getUsers(ws, obj, room) {
+  let response = {
+    type: 'updateState',
+    users: room.getUsers()
+  };
+  if (room.hasAGameMaster === false) {
+    room.setGameMaster();
+    response.isGameMaster = true;
+  }
+  ws.send(JSON.stringify(response));
+}
+
+function broadcast(msg, room, senderId) {
+  internWss.clients.forEach(function each(client) {
+    const player = room.players.find(player => player.id === client.id);
+    msg.player = player
+      ? player.name
+      : '';
+    if (senderId !== client.id) {
+      client.send(JSON.stringify(msg));
     }
-    response.team1Score = scoreFirstTeam;
-    response.team2Score = scoreSecondTeam;
-    broadcast(response);
+  });
 }
 
-function nextWord () {
-    let response = {};
-    response.type ='updateState';
-    wordsOfRound = utils.firstToLastIndex(wordsOfRound);
-    response.words = wordsOfRound;
-    broadcast(response);
-}
-
-function getUsers(ws) {
-    let response = {};
-    response.type ='updateState';
-    response.users = users;
-    if(hasAGameMaster === false){
-        hasAGameMaster = true;
-        response.isGameMaster = true;
-    }
-    ws.send(JSON.stringify(response));
-}
-
-
-function broadcast(msg, senderId) {
+function resetGame(ws, obj, room) {
+  internWss = {};
+  room.resetGame();
+  console.log('fin de partie');
+  if (internWss.clients) {
     internWss.clients.forEach(function each(client) {
-        const player = Players.find(player => player.id === client.id);
-        msg.player = player ? player.name : '';
-        if(senderId !== client.id){
-            client.send(JSON.stringify(msg));
-        }
+      client.close();
     });
+  }
 }
 
-
-function resetGame() {
-    users = [];
-    words = [];
-    wordsOfRound = [];
-    teams = [];
-    hasAGameMaster = false;
-    round = 0;
-    set = 1;
-    scoreFirstTeam = 0;
-    scoreSecondTeam = 0;
-    internWss = {};
-    numberOfPlayer = 0;
-    console.log('fin de partie');
-    if(internWss.clients){
-    internWss.clients.forEach(function each(client) {
-        client.close();
-    });
-    }
-}
-
-module.exports.initGame = initGame;
+module.exports.messageHandler = messageHandler;
+module.exports.rooms = rooms;

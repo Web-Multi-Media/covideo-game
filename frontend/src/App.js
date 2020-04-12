@@ -1,11 +1,13 @@
 "use strict";
 
 import React, {useEffect, useState} from 'react';
+import { useLocation } from 'react-router-dom'
 import './App.css';
 import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
 import Button from "@material-ui/core/Button";
+import SelectRoomScreen from "./component/SelectRoomScreen";
 const config = require('./env.json')[process.env.NODE_ENV || 'development']
 const WS_PORT = config.WS_PORT;
 const HOST = config.HOST;
@@ -14,13 +16,11 @@ let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
 
 function App() {
-
-    console.log(id);
     const [gameState, setGameState] = useState({
         player: '',
         users : [],
         isGameMaster: false,
-        gameIsReady:false,
+        gameIsReady: false,
         teams: [],
         playerTeam: 0,
         team1Score: 0,
@@ -33,13 +33,40 @@ function App() {
         duration: 0,
         round: 0,
         timeLeft: 0,
+        joinedRoom: false,
+        roomId: '',
+        rooms: [],
+        socketConnected: false
     });
 
-   useEffect(() => {
-       ws.onopen = function() {
+    const location = useLocation();
+
+    useEffect(() => {
+        ws.onopen = function() {
+           getRooms();
+           setGameState({...gameState, socketConnected: true})
+        }
+        }, []);
+
+    useEffect(() => {
+        if (gameState.joinedRoom === true) {
             ws.send(JSON.stringify({type: 'getUsers'}));
-       };
-   }, []);
+        }
+   }, [gameState.joinedRoom]);
+
+    useEffect(() => {
+        if (location.pathname !== '/' && gameState.socketConnected) {
+            console.log('has pathe name');
+            console.log(location.pathname);
+            ws.send(JSON.stringify({type: 'joinRoom',roomId: location.pathname.substring(1)}));
+        }
+    }, [gameState.socketConnected]);
+
+    useEffect(() => {
+        if (gameState.roomId !== '' && gameState.joinedRoom === false) {
+            joinRoom(gameState.roomId);
+        }
+   }, [gameState.roomId]);
 
    useEffect(() => {
        ws.onmessage = (message) => {
@@ -57,56 +84,88 @@ function App() {
        }
    };
 
-    const sendMessage =  (name) => {
+   const getRooms = () => {
+        ws.send(JSON.stringify({type: 'getRooms'}));
+   };
+
+    const createNewRoom = () => {
+        ws.send(JSON.stringify({type: 'createRoom'}));
+    };
+
+    const joinRoom = (roomId) => {
+        ws.send(JSON.stringify({type: 'joinRoom', roomId: roomId}));
+    };
+
+    const sendMessage = (name) => {
         ws.send(JSON.stringify({type: 'addName', player: name}));
     };
 
-    const sendWord =  (word) => {
+    const sendWord = (word) => {
         ws.send(JSON.stringify({type: 'addWord', word: word}));
     };
 
-    const sendGameIsReady =  () => {
+    const sendGameIsReady = () => {
         ws.send(JSON.stringify({type: 'gameIsReady'}));
     };
 
-    const startSet =  () => {
+    const startSet = () => {
         ws.send(JSON.stringify({type: 'startSet'}));
     };
 
-    const nextWord =  () => {
+    const nextWord = () => {
         ws.send(JSON.stringify({type: 'nextWord'}));
     };
 
-    const validateWord =  () => {
+    const validateWord = () => {
         ws.send(JSON.stringify({type: 'validateWord', team: gameState.playerTeam}));
     };
 
-    const resetSockets =  () => {
+    const resetSockets = () => {
         ws.send(JSON.stringify({type: 'resetGame'}));
     };
 
+    const leaveRoom = (name) => {
+        ws.send(JSON.stringify({type: 'leaveRoom', player: name}));
+    }
+
+    const kickPlayer = (name) => {
+        ws.send(JSON.stringify({type: 'leaveRoom', player: name}))
+    }
+
     const users = gameState.users;
     const gameMaster = gameState.isGameMaster;
+    const roomId = gameState.roomId;
+    const rooms = gameState.rooms;
+    const debug = process.env.NODE_ENV == 'development';
 
     return (
-
         <div className="App">
-        {!gameState.gameIsReady &&
+        {debug && JSON.stringify(gameState, null, 2)}
+        {!gameState.gameIsReady & !gameState.joinedRoom &&
+        <SelectRoomScreen
+            createNewRoom = {createNewRoom}
+            joinRoom = {joinRoom}
+            getRooms = {getRooms}
+            rooms = {rooms}
+        />
+        }
+        {!gameState.gameIsReady & gameState.joinedRoom &&
             <React.Fragment>
-            {/*<p>GAMESTATE {JSON.stringify(gameState)}</p>*/}
             <ConnectionScreen
                 users = {users}
                 isGameMaster = {gameMaster}
                 onGameReady = {sendGameIsReady}
                 onSend = {sendMessage}
                 onSendWord = {sendWord}
+                roomId = {roomId}
+                kickPlayer = {kickPlayer}
             />
             </React.Fragment>
         }
         {gameState.gameIsReady &&
         <MainScreen
             finishTimer = {timerIsDone}
-            gameState={gameState}
+            gameState= {gameState}
             startSet = {startSet}
             validateWord = {validateWord}
             nextWord = {nextWord}
