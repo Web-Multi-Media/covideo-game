@@ -33,7 +33,15 @@ function firstToLastIndex (arr) {
     return newArray;
 }
 
+function getUniqueID () {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4();
+};
+
 module.exports.shuffle = shuffle;
 module.exports.sortTeam = sortTeam;
 module.exports.choosePlayer = choosePlayer;
 module.exports.firstToLastIndex = firstToLastIndex;
+module.exports.getUniqueID = getUniqueID;

@@ -1,23 +1,23 @@
 "use strict";
 
 import React, {useEffect, useState} from 'react';
+import { useLocation } from 'react-router-dom'
 import './App.css';
 import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
 import Button from "@material-ui/core/Button";
+import SelectRoomScreen from "./component/SelectRoomScreen";
 const URL = 'ws://localhost:8000';
 let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
 
 function App() {
-
-    console.log(id);
     const [gameState, setGameState] = useState({
         player: '',
         users : [],
         isGameMaster: false,
-        gameIsReady:false,
+        gameIsReady: false,
         teams: [],
         playerTeam: 0,
         team1Score: 0,
@@ -30,13 +30,38 @@ function App() {
         duration: 0,
         round: 0,
         timeLeft: 0,
+        joinedRoom: false,
+        roomId: '',
+        socketConnected: false
     });
 
+    const location = useLocation();
+
+    useEffect(() => {
+        ws.onopen = function() {
+           setGameState({...gameState, socketConnected: true})
+        }
+        }, []);
+
    useEffect(() => {
-       ws.onopen = function() {
+        if (gameState.joinedRoom === true) {
             ws.send(JSON.stringify({type: 'getUsers'}));
-       };
-   }, []);
+        }
+   }, [gameState.joinedRoom]);
+
+    useEffect(() => {
+        if (location.pathname !== '/' && gameState.socketConnected) {
+            console.log('has pathe name');
+            console.log(location.pathname);
+            ws.send(JSON.stringify({type: 'joinRoom',roomId: location.pathname.substring(1)}));
+        }
+    }, [gameState.socketConnected]);
+
+    useEffect(() => {
+        if (gameState.roomId !== '' && gameState.joinedRoom === false) {
+            joinRoom(gameState.roomId);
+        }
+   }, [gameState.roomId]);
 
    useEffect(() => {
        ws.onmessage = (message) => {
@@ -53,6 +78,14 @@ function App() {
            ws.send(JSON.stringify({type: 'handleRound'}));
        }
    };
+
+    const createNewRoom = () => {
+        ws.send(JSON.stringify({type: 'createRoom'}));
+    };
+
+    const joinRoom = (roomId) => {
+        ws.send(JSON.stringify({type: 'joinRoom', roomId: roomId}));
+    };
 
     const sendMessage =  (name) => {
         ws.send(JSON.stringify({type: 'addName', player: name}));
@@ -84,26 +117,35 @@ function App() {
 
     const users = gameState.users;
     const gameMaster = gameState.isGameMaster;
+    const roomId = gameState.roomId;
 
     return (
 
         <div className="App">
-        {!gameState.gameIsReady &&
+        <p>GAMESTATE {JSON.stringify(gameState)}</p>
+        {!gameState.gameIsReady & !gameState.joinedRoom &&
+        <SelectRoomScreen
+            createNewRoom = {createNewRoom}
+            joinRoom = {joinRoom}
+        />
+        }
+        {!gameState.gameIsReady & gameState.joinedRoom &&
             <React.Fragment>
-            {/*<p>GAMESTATE {JSON.stringify(gameState)}</p>*/}
+
             <ConnectionScreen
                 users = {users}
                 isGameMaster = {gameMaster}
                 onGameReady = {sendGameIsReady}
                 onSend = {sendMessage}
                 onSendWord = {sendWord}
+                roomId = {roomId}
             />
             </React.Fragment>
         }
         {gameState.gameIsReady &&
         <MainScreen
             finishTimer = {timerIsDone}
-            gameState={gameState}
+            gameState= {gameState}
             startSet = {startSet}
             validateWord = {validateWord}
             nextWord = {nextWord}

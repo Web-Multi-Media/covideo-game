@@ -3,7 +3,6 @@
 let rootingFunction = {
     'updateState': updateState,
     'gameIsReady': gameIsReady
-
 };
 
 
