@@ -20,10 +20,8 @@ require('dotenv').config();
 // process.env.PORT lets the port be set by Heroku
 const port = 8000;
 
-const AUTO_DELETE_ROOM_TASK_EVERY = 60;
-const AUTO_DELETE_ROOM_TASK_TIME_OUT = 30;
-
-// const  tug = require();
+const AUTO_DELETE_ROOM_TASK_EVERY = "0 * * * *";
+const AUTO_DELETE_ROOM_TASK_TIME_OUT = 30*60*1000;
 
 
 app.use((req, res, next) => {
@@ -55,10 +53,7 @@ wss.on('connection', function connection(ws) {
 });
 
 // task schedule for auto removing inactive rooms
-var rule = new schedule.RecurrenceRule();
-rule.minute = AUTO_DELETE_ROOM_TASK_EVERY;
- 
-schedule.scheduleJob(rule, function(){
+schedule.scheduleJob(AUTO_DELETE_ROOM_TASK_EVERY, function(){
     console.log('Run scheduled job auto room delete')
     game.rooms.forEach(function(room, roomId, map) {
         if (Date.now() - room.lastActivity > AUTO_DELETE_ROOM_TASK_TIME_OUT) {
