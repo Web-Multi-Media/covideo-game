@@ -12,6 +12,7 @@ const express = require('express');
 const { createServer } = require('http');
 let app = express();
 
+const config = require('./env.json')[process.env.NODE_ENV || 'development']
 const server = createServer(app);
 const WebSocket = require('ws');
 
@@ -21,7 +22,7 @@ require('dotenv').config();
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
-const port = 8000;
+const port = config.PORT;
 
 // const  tug = require();
 
@@ -67,4 +68,3 @@ wss.on('connection', function connection(ws) {
 server.listen(port, () => {
     console.log(`server listening to port ${port}`);
 });
-
