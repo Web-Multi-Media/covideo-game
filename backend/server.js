@@ -1,18 +1,16 @@
-// Import the Express module
-const game = require('./timesUpGame.js');
 const bodyParser = require('body-parser');
-const utils = require('./utils');
-
-// Import the 'path' module (packaged with Node.js)
 const path = require('path');
-
-// Create a new instance of Express
+var schedule = require('node-schedule');
+const WebSocket = require('ws');
 const express = require('express');
 const { createServer } = require('http');
-let app = express();
 
+const game = require('./timesUpGame.js');
+const utils = require('./utils');
+
+// Create a new instance of Express
+let app = express();
 const server = createServer(app);
-const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ server });
 
@@ -21,6 +19,9 @@ require('dotenv').config();
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
 const port = 8000;
+
+const AUTO_DELETE_ROOM_TASK_EVERY = 60;
+const AUTO_DELETE_ROOM_TASK_TIME_OUT = 30;
 
 // const  tug = require();
 
@@ -51,6 +52,20 @@ wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(message) {
         game.messageHandler(message, ws, wss);
     });
+});
+
+// task schedule for auto removing inactive rooms
+var rule = new schedule.RecurrenceRule();
+rule.minute = AUTO_DELETE_ROOM_TASK_EVERY;
+ 
+schedule.scheduleJob(rule, function(){
+    console.log('Run scheduled job auto room delete')
+    game.rooms.forEach(function(room, roomId, map) {
+        if (Date.now() - room.lastActivity > AUTO_DELETE_ROOM_TASK_TIME_OUT) {
+            map.delete(roomId);
+            console.log('Deleted room with id: ' + roomId);
+        }
+    })
 });
 
 

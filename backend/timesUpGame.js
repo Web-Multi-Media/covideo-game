@@ -163,3 +163,4 @@ function resetGame(ws, obj, room) {
 
 
 module.exports.messageHandler = messageHandler;
+module.exports.rooms = rooms;
