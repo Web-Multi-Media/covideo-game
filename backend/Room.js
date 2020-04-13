@@ -39,7 +39,7 @@ Room.prototype = {
   },
   removePlayer: function(name) {
     this.updateActivity();
-    this.players = this.players.filter(function(item){
+    this.players = this.players.filter(function(item) {
       return item.name != name;
     });
     this.numberOfPlayer = this.players.length;
@@ -78,7 +78,9 @@ Room.prototype = {
       this.scoreSecondTeam++;
     }
     this.wordsOfRound = _.tail(this.wordsOfRound);
-    this.gifUrl = this.gifUrl === '' ? this.gifUrl : '';
+    this.gifUrl = this.gifUrl === ''
+      ? this.gifUrl
+      : '';
     if (this.wordsOfRound.length === 0) {
       this.setFinished = true;
       this.set++;
@@ -88,7 +90,7 @@ Room.prototype = {
     this.updateActivity();
     this.wordsOfRound = utils.firstToLastIndex(this.wordsOfRound);
   },
-  setGifUrl: function(gifUrl){
+  setGifUrl: function(gifUrl) {
     this.updateActivity();
     this.gifUrl = gifUrl;
   },

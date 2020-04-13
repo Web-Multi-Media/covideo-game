@@ -33,39 +33,40 @@ function Players(props) {
 
   return (<div>
     <h1>Players</h1>
-    {players.length > 0 && <TableContainer component={Paper}>
-      <Table className={classes.table} size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              <b>Player</b>
-            </TableCell>
-            <TableCell align="left">
-              <b>ID</b>
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {
-            players.map((p) => (<TableRow key={p.id}>
-              <TableCell component="th" scope="row">
-                <PlayerAvatar player={p} gameMaster={gameMaster}/>
-              </TableCell>
-              <TableCell align="left">{p.id}</TableCell>
-              <TableCell align="left">
-                {
-                  p.id !== gameMaster && isGameMaster && <React.Fragment>
-                      <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={kickPlayer.bind(this, p.name)}>
-                        Kick player
-                      </Button>
-                    </React.Fragment>
-                }
-              </TableCell>
-            </TableRow>))
-          }
-        </TableBody>
-      </Table>
-    </TableContainer>
+    {
+      players.length > 0 && <TableContainer component={Paper}>
+          <Table className={classes.table} size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <b>Player</b>
+                </TableCell>
+                <TableCell align="left">
+                  <b>ID</b>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+                players.map((p) => (<TableRow key={p.id}>
+                  <TableCell component="th" scope="row">
+                    <PlayerAvatar player={p} gameMaster={gameMaster}/>
+                  </TableCell>
+                  <TableCell align="left">{p.id}</TableCell>
+                  <TableCell align="left">
+                    {
+                      p.id !== gameMaster && isGameMaster && <React.Fragment>
+                          <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={kickPlayer.bind(this, p.name)}>
+                            Kick player
+                          </Button>
+                        </React.Fragment>
+                    }
+                  </TableCell>
+                </TableRow>))
+              }
+            </TableBody>
+          </Table>
+        </TableContainer>
     }
     {players.length === 0 && <div>No players yet</div>}
   </div>);

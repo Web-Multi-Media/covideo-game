@@ -160,23 +160,21 @@ function App() {
     console.log(debugGameState);
   }
 
-  return (
-    <React.Fragment>
+  return (<React.Fragment>
     <CssBaseline/>
-    <Container fixed className="App" maxWidth="xl">
-    <Header/>
-    {!gameState.gameIsReady && !gameState.joinedRoom && <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>}
-    {
-      !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
-          <ConnectionScreen players={players} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
-        </React.Fragment>
-    }
-    {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}{
-      gameState.isGameMaster && <Button className="margButt" variant="contained" color="primary" onClick={resetSockets}>
-          RESET GAME
-        </Button>
-    }
-  </Container>
+    <Container fixed="fixed" className="App" maxWidth="xl">
+      <Header/> {!gameState.gameIsReady && !gameState.joinedRoom && <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>}
+      {
+        !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
+            <ConnectionScreen players={players} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
+          </React.Fragment>
+      }
+      {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}{
+        gameState.isGameMaster && <Button className="margButt" variant="contained" color="primary" onClick={resetSockets}>
+            RESET GAME
+          </Button>
+      }
+    </Container>
   </React.Fragment>);
 }
 

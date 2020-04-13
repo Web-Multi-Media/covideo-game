@@ -27,12 +27,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     '& > *': {
-      margin: theme.spacing(1),
-    },
+      margin: theme.spacing(1)
+    }
   },
   small: {
     width: theme.spacing(4),
-    height: theme.spacing(4),
+    height: theme.spacing(4)
   }
 }));
 
@@ -42,30 +42,30 @@ function PlayerAvatar(props) {
   const classes = useStyles();
 
   return (<React.Fragment>
-    <Grid container alignItems="center">
-    {
-      player.id !== gameMaster && <React.Fragment>
-          <Grid item>
-          <Avatar style={{
-              'backgroundColor' : stringToColor(player.name)
-            }} className={classes.small}>
-          {player.name.charAt(0).toUpperCase()}
-          </Avatar>
-          </Grid>
-        </React.Fragment>
-    }
-    {
-      player.id === gameMaster && <React.Fragment>
-        <Grid item>
-        <Avatar style={{
-            'backgroundColor' : '#f2ed94',
-          }} src='https://api.iconify.design/mdi-crown.svg' className={classes.small}/>
-        </Grid>
-        </React.Fragment>
-    }
-    <Grid item>
-    {player.name.capitalize()}
-    </Grid>
+    <Grid container="container" alignItems="center">
+      {
+        player.id !== gameMaster && <React.Fragment>
+            <Grid item="item">
+              <Avatar style={{
+                  'backgroundColor' : stringToColor(player.name)
+                }} className={classes.small}>
+                {player.name.charAt(0).toUpperCase()}
+              </Avatar>
+            </Grid>
+          </React.Fragment>
+      }
+      {
+        player.id === gameMaster && <React.Fragment>
+            <Grid item="item">
+              <Avatar style={{
+                  'backgroundColor' : '#f2ed94'
+                }} src='https://api.iconify.design/mdi-crown.svg' className={classes.small}/>
+            </Grid>
+          </React.Fragment>
+      }
+      <Grid item="item">
+        {player.name.capitalize()}
+      </Grid>
     </Grid>
   </React.Fragment>);
 }

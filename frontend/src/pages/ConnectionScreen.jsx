@@ -89,7 +89,7 @@ function ConnectionScreen(props) {
       props.isGameMaster && <React.Fragment>
           <div className="inputLine">
             <Button className="margButt" variant="contained" color="primary" onClick={gameIsReady} disabled={false}>
-            Start game
+              Start game
             </Button>
           </div>
         </React.Fragment>

@@ -5,10 +5,7 @@ function Player(id, name) {
 
 Player.prototype = {
   serialize: function() {
-    return {
-      name: this.name,
-      id: this.id
-    }
+    return {name: this.name, id: this.id}
   }
 };
 

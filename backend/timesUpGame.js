@@ -91,7 +91,7 @@ function joinRoom(ws, obj) {
   };
 
   // Set user as game master if none exist
-  if (room.gameMaster === null){
+  if (room.gameMaster === null) {
     console.log("No game master in room. Appointing " + ws.id);
     room.setGameMaster(ws.id);
     response.gameMaster = room.gameMaster;
@@ -120,9 +120,9 @@ function leaveRoom(ws, obj, room) {
 
   // If player leaving is the game master, appoint a new game master
   // If no more players are left, set gameMaster to null.
-  if (ws.id == gameMaster){
+  if (ws.id == gameMaster) {
     response2 = {}
-    if (length(room.players) > 0){
+    if (length(room.players) > 0) {
       newGameMaster = room.players[0].id;
       console.log("Game master left the room. Appointing " + newGameMaster + " as gameMaster.");
       room.setGameMaster(newGameMaster);
@@ -223,11 +223,11 @@ function getPlayers(ws, obj, room) {
 }
 
 function setGif(ws, obj, room) {
-    let response = {};
-    response.type ='updateState';
-    response.gifUrl = obj.gifUrl;
-    room.setGifUrl(obj.gifUrl);
-    broadcast(response, room);
+  let response = {};
+  response.type = 'updateState';
+  response.gifUrl = obj.gifUrl;
+  room.setGifUrl(obj.gifUrl);
+  broadcast(response, room);
 }
 
 function broadcast(msg, room, senderId) {
