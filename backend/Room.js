@@ -15,7 +15,6 @@ function Room(id) {
   this.scoreFirstTeam = 0;
   this.scoreSecondTeam = 0;
   this.numberOfPlayer = 0;
-  this.players = [];
   this.lastActivity = Date.now();
 }
 
@@ -85,6 +84,7 @@ Room.prototype = {
     this.players = this.players.filter(function(item){
       return item.name != name;
     });
+    this.numberOfPlayer = this.players.length;
   },
   addWord: function(word) {
     this.updateActivity();

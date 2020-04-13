@@ -50,14 +50,28 @@ function createRoom(ws, obj) {
   while (rooms.has(roomId)) {
     roomId = utils.getUniqueID();
   }
+
+  // Set current room
   let room = new roomFunction.Room(roomId);
   rooms.set(roomId, room);
   console.log('Create room ' + roomId);
+  console.log('Rooms ' + rooms);
   let response = {
     type: 'updateState',
     roomId: roomId
   };
   ws.send(JSON.stringify(response));
+
+  // Broadcast rooms
+  var rooms_data = [];
+  for (const [id, room] of rooms.entries()) {
+    rooms_data.push(room.serialize());
+  }
+  let response2 = {
+    type: 'updateState',
+    rooms: rooms_data
+  }
+  broadcast(response2);
 }
 
 function joinRoom(ws, obj) {
@@ -83,7 +97,7 @@ function leaveRoom(ws, obj, room) {
     type: 'updateState',
     joinedRoom: false,
     roomId: roomId
-  }
+  };
   ws.send(JSON.stringify(response));
 }
 
@@ -113,6 +127,7 @@ function startRound(ws, obj, room) {
       response.startTimer = false;
       response.activePlayer = room.choosePlayer();
       response.words = room.getWordsOfRound();
+      response.gifUrl = '';
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
@@ -156,7 +171,8 @@ function nextWord(ws, obj, room) {
   room.skipWord();
   let response = {
     type: 'updateState',
-    words: room.getWordsOfRound()
+    words: room.getWordsOfRound(),
+    gifUrl: ''
   };
   broadcast(response, room);
 }
@@ -183,11 +199,13 @@ function setGif(ws, obj, room) {
 
 function broadcast(msg, room, senderId) {
   internWss.clients.forEach(function each(client) {
-    const player = room.players.find(player => player.id === client.id);
-    msg.player = player
-      ? player.name
-      : '';
-    if (senderId !== client.id && room.id === client.roomId) {
+    if (room === undefined && client.roomId === undefined){
+      client.send(JSON.stringify(msg));
+    } else if (senderId !== client.id && room !== undefined && room.id === client.roomId) {
+      const player = room.players.find(player => player.id === client.id);
+      msg.player = player
+        ? player.name
+        : '';
       client.send(JSON.stringify(msg));
     }
   });

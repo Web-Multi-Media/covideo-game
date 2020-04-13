@@ -48,10 +48,13 @@ function MainScreen(props) {
                 <div className="gifGrid">
                     {props.gameState.player === props.gameState.activePlayer &&
                     <React.Fragment>
-                        {props.gameState.set >= 3 ?
+                        {(props.gameState.set >= 3 && props.gameState.gifUrl === '') ?
                         <GifScreen
                             sendGif={props.sendGif}
-                        /> : <GuesserScreen />
+                            startTimer = {props.gameState.startTimer}
+                        /> : <GuesserScreen
+                                gifUrl={props.gameState.gifUrl}
+                            />
                         }
                     </React.Fragment>
                     }
