@@ -1,0 +1,14 @@
+.GuesserScreen{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #1C6EA4;
+    width: 100%;
+
+}
+
+
+.GuesserImg{
+    width: 100%;
+}

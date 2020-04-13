@@ -145,7 +145,9 @@ function validateWord(ws, obj, room) {
     type: 'updateState',
     words: room.getWordsOfRound(),
     team1Score: room.getScoreFirstTeam(),
-    team2Score: room.getScoreSecondTeam()
+    team2Score: room.getScoreSecondTeam(),
+    set: room.getSet(),
+    gifUrl: room.getGifUrl()
   };
   broadcast(response, room);
 }

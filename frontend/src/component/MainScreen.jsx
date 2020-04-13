@@ -5,6 +5,8 @@ import "./MainScreen.css";
 import WordInput from "./WordInput";
 import Timer from "./Timer";
 import GifScreen from "./Gif/GifScreen";
+import GuessScreen from "./GuessScreen";
+import GuesserScreen from "./GuesserScreen";
 
 function MainScreen(props) {
 
@@ -27,7 +29,6 @@ function MainScreen(props) {
 
     return (
         <React.Fragment>
-            <p>GAMESTATE {JSON.stringify(props.gameState)}</p>
             <p>ACTIVE PLAYER : {props.gameState.activePlayer}</p>
             <div className="topBar">
                 <div className="roundGrid">
@@ -45,9 +46,20 @@ function MainScreen(props) {
             <div className="teamScreens">
                 {teamScreens1}
                 <div className="gifGrid">
-                    <GifScreen
-                        sendGif = { props.sendGif }
+                    {props.gameState.player === props.gameState.activePlayer &&
+                    <React.Fragment>
+                        {props.gameState.set >= 3 ?
+                        <GifScreen
+                            sendGif={props.sendGif}
+                        /> : <GuesserScreen />
+                        }
+                    </React.Fragment>
+                    }
+                    {props.gameState.player !== props.gameState.activePlayer &&
+                    <GuessScreen
+                        gifUrl={props.gameState.gifUrl}
                     />
+                    }
                 </div>
                 {teamScreens2}
             </div>

@@ -36,7 +36,7 @@ function App() {
         timeLeft: 0,
         joinedRoom: false,
         roomId: '',
-        rooms: []
+        rooms: [],
         socketConnected: false,
         gifUrl: ''
     });
@@ -146,7 +146,7 @@ function App() {
     const gameMaster = gameState.isGameMaster;
     const roomId = gameState.roomId;
     const rooms = gameState.rooms;
-    const debug = process.env.NODE_ENV == 'development';
+    const debug = process.env.NODE_ENV === 'development';
 
     return (
         <div className="App">
@@ -186,14 +186,6 @@ function App() {
                 RESET GAME
             </Button>
         }
-
-            {gameState.gifUrl !== '' &&
-
-            <img
-                src={gameState.gifUrl}
-                className="gif"
-            />
-            }
     </div>
   );
 }
