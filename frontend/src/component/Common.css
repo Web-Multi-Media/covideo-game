@@ -1,4 +1,9 @@
 .App {
-  margin-left: 500px;
-  margin-right: 500px;
+  margin-left: 200px;
+  margin-right: 200px;
+}
+
+.MuiAvatar-root {
+  display: inline-flex !important;
+  margin-right: 5px !important;
 }

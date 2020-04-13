@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import "./ConnectionScreen.css";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
+import Link from "@material-ui/core/Link";
 import Players from "./Players";
+import TextField from "@material-ui/core/TextField";
 
 function ConnectionScreen(props) {
   const [textInput, setTextInput] = useState('');
@@ -78,7 +79,9 @@ function ConnectionScreen(props) {
           </React.Fragment>
       }
       <h2>Room URL</h2>
-      <p>{room_url}</p>
+      <Link href="#">
+        {room_url}
+      </Link>
   </React.Fragment>);
 }
 

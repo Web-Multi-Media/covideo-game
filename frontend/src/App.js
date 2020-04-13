@@ -136,12 +136,14 @@ function App() {
     const gameMaster = gameState.isGameMaster;
     const roomId = gameState.roomId;
     const rooms = gameState.rooms;
-    const debug = process.env.NODE_ENV == 'development';
+    const debug = process.env.NODE_ENV === 'production';
+    if (debug){
+      console.log(gameState);
+    }
 
     return (
         <div className="App">
-        {debug && JSON.stringify(gameState, null, 2)}
-        {!gameState.gameIsReady & !gameState.joinedRoom &&
+        {!gameState.gameIsReady && !gameState.joinedRoom &&
         <SelectRoomScreen
             createNewRoom = {createNewRoom}
             joinRoom = {joinRoom}
@@ -149,7 +151,7 @@ function App() {
             rooms = {rooms}
         />
         }
-        {!gameState.gameIsReady & gameState.joinedRoom &&
+        {!gameState.gameIsReady && gameState.joinedRoom &&
             <React.Fragment>
             <ConnectionScreen
                 players = {players}
