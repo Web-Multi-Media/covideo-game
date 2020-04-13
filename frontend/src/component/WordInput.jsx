@@ -19,7 +19,7 @@ function WordInput(props) {
     }
     {
       !props.startTimer && <Button className="margButt" variant="contained" color="primary" onClick={props.startRound}>
-          startSet
+          startRound
         </Button>
     }
   </div>);

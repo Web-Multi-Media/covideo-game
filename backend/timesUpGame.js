@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const playerFunction = require('./Player.js');
 const utils = require('./utils')
-const roomFunction = require('./Room.js');
+const room = require('./Room.js');
 
-let internWss = {};
+let webSockets = {};
 var rooms = new Map();
 
 let rootingFunction = {
@@ -11,7 +11,7 @@ let rootingFunction = {
   'addWord': addWord,
   'getPlayers': getPlayers,
   'gameIsReady': gameIsReady,
-  'startSet': startRound, // TODO: change startSet to startRound
+  'startRound': startRound, // TODO: change startRound to startRound
   'validateWord': validateWord,
   'nextWord': nextWord,
   'resetGame': resetGame,
@@ -22,7 +22,7 @@ let rootingFunction = {
 };
 
 function messageHandler(message, ws, wss) {
-  internWss = wss;
+  webSockets = wss;
   const obj = JSON.parse(message);
   console.log(ws.id + ' React request : ' + obj.type);
   const room = ws.roomId
@@ -51,7 +51,7 @@ function createRoom(ws, obj) {
   }
 
   // Set current room
-  let room = new roomFunction.Room(roomId);
+  let room = new room.Room(roomId);
   rooms.set(roomId, room);
   console.log('Create room ' + roomId);
   console.log('Rooms ' + rooms);
@@ -61,7 +61,7 @@ function createRoom(ws, obj) {
   };
   ws.send(JSON.stringify(response));
 
-  // Broadcast rooms
+  // Broadcast rooms to all clients
   var rooms_data = [];
   for (const [id, room] of rooms.entries()) {
     rooms_data.push(room.serialize());
@@ -185,8 +185,8 @@ function getPlayers(ws, obj, room) {
 }
 
 function broadcast(msg, room, senderId) {
-  internWss.clients.forEach(function each(client) {
-    if (room === undefined && client.roomId === undefined){
+  webSockets.clients.forEach(function each(client) {
+    if (room === undefined && client.roomId === undefined) {
       client.send(JSON.stringify(msg));
     } else if (senderId !== client.id && room !== undefined && room.id === client.roomId) {
       const player = room.players.find(player => player.id === client.id);
@@ -199,14 +199,13 @@ function broadcast(msg, room, senderId) {
 }
 
 function resetGame(ws, obj, room) {
-  internWss = {};
   room.resetGame();
-  console.log('fin de partie');
-  if (internWss.clients) {
-    internWss.clients.forEach(function each(client) {
+  webSockets.clients.forEach(function each(client) {
+    if (client.roomId === room.id) {
       client.close();
-    });
-  }
+    }
+  });
+  console.log('fin de partie');
 }
 
 module.exports.messageHandler = messageHandler;

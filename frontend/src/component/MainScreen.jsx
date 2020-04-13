@@ -26,7 +26,7 @@ function MainScreen(props) {
     </div>
     {
       props.gameState.player === props.gameState.activePlayer && <div>
-          <WordInput startTimer={props.gameState.startTimer} wordToGuess={props.gameState.words[0]} startRound={props.startSet} validation={props.validateWord} next={props.nextWord}/>
+          <WordInput startTimer={props.gameState.startTimer} wordToGuess={props.gameState.words[0]} startRound={props.startRound} validation={props.validateWord} next={props.nextWord}/>
         </div>
     }
   </React.Fragment>);

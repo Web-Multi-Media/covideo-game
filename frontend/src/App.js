@@ -108,8 +108,8 @@ function App() {
         ws.send(JSON.stringify({type: 'gameIsReady'}));
     };
 
-    const startSet = () => {
-        ws.send(JSON.stringify({type: 'startSet'}));
+    const startRound = () => {
+        ws.send(JSON.stringify({type: 'startRound'}));
     };
 
     const nextWord = () => {
@@ -168,7 +168,7 @@ function App() {
         <MainScreen
             finishTimer = {timerIsDone}
             gameState= {gameState}
-            startSet = {startSet}
+            startRound = {startRound}
             validateWord = {validateWord}
             nextWord = {nextWord}
         />
