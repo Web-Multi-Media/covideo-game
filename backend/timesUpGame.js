@@ -18,7 +18,8 @@ let rootingFunction = {
   'createRoom': createRoom,
   'joinRoom': joinRoom,
   'getRooms': getRooms,
-  'leaveRoom': leaveRoom
+  'leaveRoom': leaveRoom,
+  'setGif': setGif
 };
 
 function messageHandler(message, ws, wss) {
@@ -96,7 +97,7 @@ function leaveRoom(ws, obj, room) {
     type: 'updateState',
     joinedRoom: false,
     roomId: roomId
-  }
+  };
   ws.send(JSON.stringify(response));
 }
 
@@ -126,6 +127,7 @@ function startRound(ws, obj, room) {
       response.startTimer = false;
       response.activePlayer = room.choosePlayer();
       response.words = room.getWordsOfRound();
+      response.gifUrl = '';
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
@@ -158,7 +160,9 @@ function validateWord(ws, obj, room) {
     type: 'updateState',
     words: room.getWordsOfRound(),
     team1Score: room.getScoreFirstTeam(),
-    team2Score: room.getScoreSecondTeam()
+    team2Score: room.getScoreSecondTeam(),
+    set: room.getSet(),
+    gifUrl: room.getGifUrl()
   };
   broadcast(response, room);
 }
@@ -167,7 +171,8 @@ function nextWord(ws, obj, room) {
   room.skipWord();
   let response = {
     type: 'updateState',
-    words: room.getWordsOfRound()
+    words: room.getWordsOfRound(),
+    gifUrl: ''
   };
   broadcast(response, room);
 }
@@ -182,6 +187,14 @@ function getPlayers(ws, obj, room) {
     response.isGameMaster = true;
   }
   ws.send(JSON.stringify(response));
+}
+
+function setGif(ws, obj, room) {
+    let response = {};
+    response.type ='updateState';
+    response.gifUrl = obj.gifUrl;
+    room.setGifUrl(obj.gifUrl);
+    broadcast(response, room);
 }
 
 function broadcast(msg, room, senderId) {

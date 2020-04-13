@@ -1,8 +1,9 @@
 .teamScreens{
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(9, 1fr);
     grid-gap: 10px;
     grid-auto-rows: minmax(100px, auto);
+    min-height: 60vh;
 }
 
 .topBar{
@@ -19,4 +20,10 @@
 }
 .timerGrid {
     grid-column: 10 / 12;
+}
+
+.gifGrid {
+    margin: 10px 10px;
+    display: flex;
+    grid-column: 2/9;
 }

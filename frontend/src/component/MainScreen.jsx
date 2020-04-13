@@ -4,6 +4,9 @@ import TeamScreen from "./TeamScreen";
 import "./MainScreen.css";
 import WordInput from "./WordInput";
 import Timer from "./Timer";
+import GifScreen from "./Gif/GifScreen";
+import GuessScreen from "./GuessScreen";
+import GuesserScreen from "./GuesserScreen";
 
 function MainScreen(props) {
 
@@ -11,8 +14,11 @@ function MainScreen(props) {
     return (<TeamScreen gameState={props.gameState} team={team} teamNumber={index + 1}/>);
   });
 
+  const teamScreens1 = <TeamScreen gameState={props.gameState} team="team" ={props.gameState.teams[0]} teamNumber={1}/>;
+  const teamScreens2 = <TeamScreen gameState={props.gameState} team="team" ={props.gameState.teams[1]} teamNumber={2}/>;
+
   return (<React.Fragment>
-    <h2>Active player : {props.gameState.activePlayer}</h2>
+    <p>ACTIVE PLAYER : {props.gameState.activePlayer}</p>
     <div className="topBar">
       <div className="roundGrid">
         <Round set={props.gameState.set}/>
@@ -22,11 +28,24 @@ function MainScreen(props) {
       </div>
     </div>
     <div className="teamScreens">
-      {teamScreens}
+      {teamScreens1}
+      <div className="gifGrid">
+        {
+          props.gameState.player === props.gameState.activePlayer && <React.Fragment>
+              {
+                (props.gameState.set >= 3 && props.gameState.gifUrl === '')
+                  ? <GifScreen sendGif={props.sendGif} startTimer={props.gameState.startTimer}/>
+                  : <GuesserScreen gifUrl={props.gameState.gifUrl}/>
+              }
+            </React.Fragment>
+        }
+        {props.gameState.player !== props.gameState.activePlayer && <GuessScreen gifUrl={props.gameState.gifUrl}/>}
+      </div>
+      {teamScreens2}
     </div>
     {
       props.gameState.player === props.gameState.activePlayer && <div>
-          <WordInput startTimer={props.gameState.startTimer} wordToGuess={props.gameState.words[0]} startRound={props.startRound} validation={props.validateWord} next={props.nextWord}/>
+          <WordInput startTimer={props.gameState.startTimer} wordToGuess={props.gameState.words[0]} startRound={props.startSet} validation={props.validateWord} next={props.nextWord}/>
         </div>
     }
   </React.Fragment>);

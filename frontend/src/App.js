@@ -7,7 +7,10 @@ import MainScreen from "./component/MainScreen";
 import ConnectionScreen from "./component/ConnectionScreen";
 import handleServerResponse from "./webSocket/rootedFunctions";
 import Button from "@material-ui/core/Button";
+import GifScreen from "./component/Gif/GifScreen";
 import SelectRoomScreen from "./component/SelectRoomScreen";
+
+const _ = require("lodash");
 const config = require('./env.json')[process.env.NODE_ENV || 'development']
 const WS_PORT = config.WS_PORT;
 const HOST = config.HOST;
@@ -36,8 +39,11 @@ function App() {
         joinedRoom: false,
         roomId: '',
         rooms: [],
-        socketConnected: false
+        socketConnected: false,
+        gifUrl: ''
     });
+    const [img, setImg] = useState('');
+
 
     const location = useLocation();
 
@@ -76,13 +82,6 @@ function App() {
        };
    });
 
-   const timerIsDone = () => {
-       console.log('timer Is Done');
-       setGameState({...gameState, startTimer: false})
-       if(gameState.player === gameState.activePlayer){
-           ws.send(JSON.stringify({type: 'handleRound'}));
-       }
-   };
 
    const getRooms = () => {
         ws.send(JSON.stringify({type: 'getRooms'}));
@@ -126,23 +125,32 @@ function App() {
 
     const leaveRoom = (name) => {
         ws.send(JSON.stringify({type: 'leaveRoom', player: name}));
-    }
+    };
 
     const kickPlayer = (name) => {
         ws.send(JSON.stringify({type: 'leaveRoom', player: name}))
-    }
+    };
 
     const players = gameState.players;
+    const chooseGif =  (gifUrl) => {
+        ws.send(JSON.stringify({type: 'setGif', gifUrl: gifUrl}));
+    };
+
+
+    const users = gameState.users;
+    let debugGameState = _.cloneDeep(gameState);
+    delete debugGameState.rooms;
     const gameMaster = gameState.isGameMaster;
     const roomId = gameState.roomId;
     const rooms = gameState.rooms;
-    const debug = process.env.NODE_ENV === 'production';
+    const debug = process.env.NODE_ENV === 'development';
     if (debug){
-      console.log(gameState);
+      console.log(debugGameState);
     }
 
     return (
         <div className="App">
+            {!debug && <p>GAME STATE : {JSON.stringify(debugGameState)}</p>}
         {!gameState.gameIsReady && !gameState.joinedRoom &&
         <SelectRoomScreen
             createNewRoom = {createNewRoom}
@@ -153,25 +161,25 @@ function App() {
         }
         {!gameState.gameIsReady && gameState.joinedRoom &&
             <React.Fragment>
-            <ConnectionScreen
-                players = {players}
-                isGameMaster = {gameMaster}
-                onGameReady = {sendGameIsReady}
-                onSend = {sendMessage}
-                onSendWord = {sendWord}
-                roomId = {roomId}
-                kickPlayer = {kickPlayer}
-            />
+                <ConnectionScreen
+                    players = {players}
+                    isGameMaster = {gameMaster}
+                    onGameReady = {sendGameIsReady}
+                    onSend = {sendMessage}
+                    onSendWord = {sendWord}
+                    roomId = {roomId}
+                    kickPlayer = {kickPlayer}
+                />
             </React.Fragment>
         }
         {gameState.gameIsReady &&
-        <MainScreen
-            finishTimer = {timerIsDone}
-            gameState= {gameState}
-            startRound = {startRound}
-            validateWord = {validateWord}
-            nextWord = {nextWord}
-        />
+            <MainScreen
+                gameState= {gameState}
+                startSet = {startSet}
+                validateWord = {validateWord}
+                nextWord = {nextWord}
+                sendGif = { chooseGif }
+            />
         }{gameState.isGameMaster &&
             <Button className="margButt" variant="contained" color="primary" onClick={resetSockets} >
                 RESET GAME
