@@ -13,29 +13,27 @@ function Timer(props) {
 
   useEffect(() => {
     let interval = null;
-    if (isActive && seconds > 0 ) {
-        interval = setInterval(() => {
-          setSeconds(seconds => seconds - 1);
-        }, 1000);
-      }
-    return () => clearInterval(interval);
+    if (isActive && seconds > 0) {
+      interval = setInterval(() => {
+        setSeconds(seconds => seconds - 1);
+      }, 1000);
+    }
+    return() => clearInterval(interval);
   }, [isActive, seconds]);
 
   useEffect(() => {
-    if(props.startTimer === true){
+    if (props.startTimer === true) {
       reset(props.duration);
     }
-    if(props.startTimer === false){
+    if (props.startTimer === false) {
       setSeconds(0);
     }
 
   }, [props.startTimer]);
 
-  return (
-      <div className="timer">
-        <p>Timer : {seconds}</p>
-      </div>
-  );
+  return (<div className="timer">
+    <p>Timer : {seconds}</p>
+  </div>);
 }
 
 export default Timer;

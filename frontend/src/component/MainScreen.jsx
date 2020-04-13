@@ -6,17 +6,11 @@ import WordInput from "./WordInput";
 import Timer from "./Timer";
 import GifScreen from "./Gif/GifScreen";
 
-
 function MainScreen(props) {
 
-    const teamScreens = props.gameState.teams.map((team, index) => {
-        return (
-            <TeamScreen
-                gameState = {props.gameState}
-                team ={team}
-                teamNumber = {index + 1}
-            />);
-        });
+  const teamScreens = props.gameState.teams.map((team, index) => {
+    return (<TeamScreen gameState={props.gameState} team={team} teamNumber={index + 1}/>);
+  });
 
     const teamScreens1 =
         <TeamScreen
