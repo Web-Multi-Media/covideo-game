@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import Button from "@material-ui/core/Button";
+import Rooms from "../component/Room/Rooms";
 import './SelectRoomScreen.css';
 import './Common.css';
-import Rooms from "./Rooms";
 
 function SelectRoomScreen(props) {
   const [roomId, setRoomId] = useState('');
+  const rooms = props.rooms;
 
   const createNewRoom = () => {
     props.createNewRoom();
@@ -23,22 +24,13 @@ function SelectRoomScreen(props) {
     props.getRooms();
   }
 
-  const rooms = props.rooms;
-
   return (<React.Fragment>
-    <h1>Welcome to Time's Up server</h1>
     <Rooms rooms={rooms} joinRoom={joinRoom}/>
     <div className="inputLine">
-      <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={getRooms}>
-        Refresh rooms
-      </Button>
       <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={createNewRoom}>
-        Create new room
+        New room
       </Button>
     </div>
-    <p>
-      Share the room id: {roomId}
-    </p>
   </React.Fragment>);
 }
 

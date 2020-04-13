@@ -1,0 +1,9 @@
+.inputLine{
+    display: flex;
+    margin: 10px;
+    box-shadow: inset 0px 0px 0px 0px red;
+}
+
+input:focus {
+    outline:none !important;
+}

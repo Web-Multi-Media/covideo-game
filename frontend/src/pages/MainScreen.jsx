@@ -1,19 +1,13 @@
 import React from 'react';
-import Round from "./Round";
+import GuesserScreen from "../component/GuesserScreen/GuesserScreen";
+import GifScreen from "../component/Gif/GifScreen";
+import Round from "../component/Round/Round";
+import Timer from "../component/Timer/Timer";
+import WordInput from "../component/WordInput/WordInput";
 import TeamScreen from "./TeamScreen";
 import "./MainScreen.css";
-import WordInput from "./WordInput";
-import Timer from "./Timer";
-import GifScreen from "./Gif/GifScreen";
-import GuessScreen from "./GuessScreen";
-import GuesserScreen from "./GuesserScreen";
 
 function MainScreen(props) {
-
-  const teamScreens = props.gameState.teams.map((team, index) => {
-    return (<TeamScreen gameState={props.gameState} team={team} teamNumber={index + 1}/>);
-  });
-
   const teamScreens1 = <TeamScreen gameState={props.gameState} team={props.gameState.teams[0]} teamNumber={1}/>;
   const teamScreens2 = <TeamScreen gameState={props.gameState} team={props.gameState.teams[1]} teamNumber={2}/>;
 
@@ -39,7 +33,7 @@ function MainScreen(props) {
               }
             </React.Fragment>
         }
-        {props.gameState.player !== props.gameState.activePlayer && <GuessScreen gifUrl={props.gameState.gifUrl}/>}
+        {props.gameState.player !== props.gameState.activePlayer && <GuesserScreen gifUrl={props.gameState.gifUrl}/>}
       </div>
       {teamScreens2}
     </div>

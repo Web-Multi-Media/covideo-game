@@ -53,16 +53,18 @@ function createRoom(ws, obj) {
 
   // Set current room
   let room = new roomfunc.Room(roomId);
+  room.gameMaster = ws.id;
   rooms.set(roomId, room);
   console.log('Create room ' + roomId);
-  console.log('Rooms ' + rooms);
   let response = {
     type: 'updateState',
-    roomId: roomId
+    roomId: room.id,
+    gameMaster: room.gameMaster,
+    isGameMaster: true
   };
   ws.send(JSON.stringify(response));
 
-  // Broadcast rooms to all clients
+  // Broadcast new room to all clients
   var rooms_data = [];
   for (const [id, room] of rooms.entries()) {
     rooms_data.push(room.serialize());
@@ -75,14 +77,26 @@ function createRoom(ws, obj) {
 }
 
 function joinRoom(ws, obj) {
+  // Get room
   let roomId = obj.roomId;
   let room = rooms.get(roomId);
+
+  // Set room id in web socket and update state
   ws.roomId = roomId;
   let response = {
     type: 'updateState',
     joinedRoom: true,
+    gameMaster: room.gameMaster,
     roomId: roomId
   };
+
+  // Set user as game master if none exist
+  if (room.gameMaster === null){
+    console.log("No game master in room. Appointing " + ws.id);
+    room.setGameMaster(ws.id);
+    response.gameMaster = room.gameMaster;
+    response.isGameMaster = true;
+  }
   ws.send(JSON.stringify(response));
 }
 
@@ -90,6 +104,10 @@ function leaveRoom(ws, obj, room) {
   let roomId = ws.roomId;
   let name = obj.name;
   var room = rooms.get(roomId);
+  var gameMaster = room.gameMaster;
+
+  // Remove player from room
+  // Set state back to room list
   console.log('Removing ' + name + ' from room ' + roomId);
   room.removePlayer(name);
   ws.roomId = null;
@@ -99,6 +117,23 @@ function leaveRoom(ws, obj, room) {
     roomId: roomId
   };
   ws.send(JSON.stringify(response));
+
+  // If player leaving is the game master, appoint a new game master
+  // If no more players are left, set gameMaster to null.
+  if (ws.id == gameMaster){
+    response2 = {}
+    if (length(room.players) > 0){
+      newGameMaster = room.players[0].id;
+      console.log("Game master left the room. Appointing " + newGameMaster + " as gameMaster.");
+      room.setGameMaster(newGameMaster);
+      response2.gameMaster = newGameMaster;
+    } else {
+      console.log("No more players in room. Room gameMaster set to null.")
+      room.setGameMaster(null);
+      response2.gameMaster = null;
+    }
+    broadcast(response2, room);
+  }
 }
 
 function addName(ws, obj, room) {
@@ -183,10 +218,7 @@ function getPlayers(ws, obj, room) {
     type: 'updateState',
     players: room.players
   };
-  if (room.hasAGameMaster === false) {
-    room.setGameMaster(ws.id);
-    response.isGameMaster = true;
-  }
+  response.gameMaster = room.gameMaster;
   ws.send(JSON.stringify(response));
 }
 

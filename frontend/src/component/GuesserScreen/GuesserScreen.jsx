@@ -2,7 +2,6 @@ import React from 'react';
 import './GuesserScreen.css'
 
 function GuesserScreen(props) {
-
     return (<div className="GuesserScreen">
         <img className="GuesserImg"
              src={

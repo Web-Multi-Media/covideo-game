@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import "./GifScreen.css";
-import SearchInput from "./SearchInput";
 import Loader from "./Loader";
 import SearchOutput from "./SearchOutput";
 import Button from "@material-ui/core/Button";

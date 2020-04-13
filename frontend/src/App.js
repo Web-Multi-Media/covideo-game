@@ -2,13 +2,21 @@
 
 import React, {useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom'
-import './App.css';
-import MainScreen from "./component/MainScreen";
-import ConnectionScreen from "./component/ConnectionScreen";
+
 import handleServerResponse from "./webSocket/rootedFunctions";
+
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+
 import GifScreen from "./component/Gif/GifScreen";
-import SelectRoomScreen from "./component/SelectRoomScreen";
+
+import MainScreen from "./pages/MainScreen";
+import SelectRoomScreen from "./pages/SelectRoomScreen";
+import ConnectionScreen from "./pages/ConnectionScreen";
+import Header from "./component/Header";
+
+import './App.css';
 
 const _ = require("lodash");
 const config = require('./env.json')[process.env.NODE_ENV || 'development']
@@ -24,6 +32,7 @@ function App() {
     players: [],
     isGameMaster: false,
     gameIsReady: false,
+    gameMaster: '',
     teams: [],
     playerTeam: 0,
     team1Score: 0,
@@ -132,28 +141,34 @@ function App() {
     ws.send(JSON.stringify({type: 'leaveRoom', player: name}))
   };
 
-  const players = gameState.players;
   const chooseGif = (gifUrl) => {
     ws.send(JSON.stringify({type: 'setGif', gifUrl: gifUrl}));
   };
 
-  const users = gameState.users;
-  let debugGameState = _.cloneDeep(gameState);
-  delete debugGameState.rooms;
-  const gameMaster = gameState.isGameMaster;
+  const players = gameState.players;
+  const gameMaster = gameState.gameMaster;
+  const isGameMaster = gameState.isGameMaster;
   const roomId = gameState.roomId;
   const rooms = gameState.rooms;
+  const player = gameState.player;
   const debug = process.env.NODE_ENV === 'development';
+
+  // DEBUG
+  let debugGameState = _.cloneDeep(gameState);
+  delete debugGameState.rooms;
   if (debug) {
     console.log(debugGameState);
   }
 
-  return (<div className="App">
-    {debug && <p>GAME STATE : {JSON.stringify(debugGameState)}</p>}
+  return (
+    <React.Fragment>
+    <CssBaseline/>
+    <Container fixed className="App" maxWidth="xl">
+    <Header/>
     {!gameState.gameIsReady && !gameState.joinedRoom && <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>}
     {
       !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
-          <ConnectionScreen players={players} isGameMaster={gameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
+          <ConnectionScreen players={players} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
         </React.Fragment>
     }
     {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}{
@@ -161,7 +176,8 @@ function App() {
           RESET GAME
         </Button>
     }
-  </div>);
+  </Container>
+  </React.Fragment>);
 }
 
 export default App;

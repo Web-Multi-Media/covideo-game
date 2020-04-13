@@ -108,7 +108,6 @@ Room.prototype = {
     return {
       name: this.name,
       id: this.id,
-      users: this.user,
       words: this.words,
       wordsOfRound: this.wordsOfRound,
       teams: this.teams,
