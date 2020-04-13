@@ -15,9 +15,9 @@ function shuffle(a) {
 }
 
 function sortTeam(players) {
-  const randomizedUsers = shuffle(players);
-  const teamA = randomizedUsers.slice(0, Math.floor(randomizedUsers.length / 2));
-  const teamB = randomizedUsers.slice(Math.floor(randomizedUsers.length / 2), randomizedUsers.length);
+  const randomizedPlayers = shuffle(players);
+  const teamA = randomizedPlayers.slice(0, Math.floor(randomizedPlayers.length / 2));
+  const teamB = randomizedPlayers.slice(Math.floor(randomizedPlayers.length / 2), randomizedPlayers.length);
   return [teamA, teamB];
 }
 

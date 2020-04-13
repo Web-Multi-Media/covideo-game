@@ -9,7 +9,7 @@ var rooms = new Map();
 let rootingFunction = {
   'addName': addName,
   'addWord': addWord,
-  'getUsers': getUsers,
+  'getPlayers': getPlayers,
   'gameIsReady': gameIsReady,
   'startSet': startRound, // TODO: change startSet to startRound
   'validateWord': validateWord,
@@ -87,11 +87,10 @@ function leaveRoom(ws, obj, room) {
 }
 
 function addName(ws, obj, room) {
-  room.addUser(obj.player);
   room.addPlayer(new playerFunction.Player(ws.id, obj.player));
   let response = {
     type: 'updateState',
-    users: _.cloneDeep(room.getUsers())
+    players: _.cloneDeep(room.getPlayers())
   };
   broadcast(response, room);
 }
@@ -159,10 +158,10 @@ function nextWord(ws, obj, room) {
   broadcast(response, room);
 }
 
-function getUsers(ws, obj, room) {
+function getPlayers(ws, obj, room) {
   let response = {
     type: 'updateState',
-    users: room.getUsers()
+    players: room.getPlayers()
   };
   if (room.hasAGameMaster === false) {
     room.setGameMaster();

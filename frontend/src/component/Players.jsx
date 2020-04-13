@@ -27,13 +27,15 @@ function Players(props) {
       <TableHead>
       <TableRow>
         <TableCell><b>Player</b></TableCell>
+        <TableCell align="right"><b>ID</b></TableCell>
       </TableRow>
       </TableHead>
       <TableBody>
         {
-          props.players.map((player) => (<TableRow key={player}>
-            <TableCell aliglkfdkfkfkfkfekfkfkfkfkfkfekfkfkfkfkfkfklfdgklfdgkfkfkfkfkfkfkfkfkffkfkkfkfkfkfkfkfkfkfkfkfkfn="right">{player}</TableCell>
-            <TableCell align="right"><Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={kickPlayer.bind(this, player)}>Kick player</Button></TableCell>
+          props.players.map((player) => (<TableRow key={player.id}>
+            <TableCell component="th" scope="row">{player.name}</TableCell>
+            <TableCell align="right">{player.id}</TableCell>
+            <TableCell align="right"><Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={kickPlayer.bind(this, player.name)}>Kick player</Button></TableCell>
           </TableRow>))
         }
       </TableBody>

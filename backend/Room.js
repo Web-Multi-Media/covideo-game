@@ -4,7 +4,7 @@ const _ = require('lodash');
 function Room(id) {
   this.name = "";
   this.id = id;
-  this.users = [];
+  this.players = [];
   this.words = [];
   this.wordsOfRound = [];
   this.teams = [];
@@ -24,9 +24,9 @@ Room.prototype = {
     this.updateActivity();
     return this.id;
   },
-  getUsers: function() {
+  getPlayers: function() {
     this.updateActivity();
-    return this.users;
+    return this.players;
   },
   getPlayers: function() {
     this.updateActivity();
@@ -64,20 +64,13 @@ Room.prototype = {
     this.updateActivity();
     this.hasAGameMaster = true;
   },
-  addUser: function(user) {
-    this.updateActivity();
-    this.users = [
-      ...this.users,
-      user
-    ];
-    this.numberOfPlayer = this.users.length;
-  },
   addPlayer: function(player) {
     this.updateActivity();
     this.players = [
       ...this.players,
       player
     ];
+    this.numberOfPlayer = this.players.length;
   },
   removePlayer: function(name) {
     this.updateActivity();
@@ -94,7 +87,7 @@ Room.prototype = {
   },
   startGame: function() {
     this.updateActivity();
-    this.teams = utils.sortTeam(this.users);
+    this.teams = utils.sortTeam(this.players);
   },
   startSet: function() {
     this.updateActivity();
@@ -133,7 +126,7 @@ Room.prototype = {
   },
   resetGame: function() {
     this.updateActivity();
-    this.users = [];
+    this.players = [];
     this.words = [];
     this.wordsOfRound = [];
     this.teams = [];

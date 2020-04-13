@@ -18,7 +18,7 @@ const id = Math.floor(Math.random() * 1000);
 function App() {
     const [gameState, setGameState] = useState({
         player: '',
-        users : [],
+        players : [],
         isGameMaster: false,
         gameIsReady: false,
         teams: [],
@@ -50,7 +50,7 @@ function App() {
 
     useEffect(() => {
         if (gameState.joinedRoom === true) {
-            ws.send(JSON.stringify({type: 'getUsers'}));
+            ws.send(JSON.stringify({type: 'getPlayers'}));
         }
    }, [gameState.joinedRoom]);
 
@@ -58,7 +58,7 @@ function App() {
         if (location.pathname !== '/' && gameState.socketConnected) {
             console.log('has pathe name');
             console.log(location.pathname);
-            ws.send(JSON.stringify({type: 'joinRoom',roomId: location.pathname.substring(1)}));
+            ws.send(JSON.stringify({type: 'joinRoom', roomId: location.pathname.substring(1)}));
         }
     }, [gameState.socketConnected]);
 
@@ -132,7 +132,7 @@ function App() {
         ws.send(JSON.stringify({type: 'leaveRoom', player: name}))
     }
 
-    const users = gameState.users;
+    const players = gameState.players;
     const gameMaster = gameState.isGameMaster;
     const roomId = gameState.roomId;
     const rooms = gameState.rooms;
@@ -152,7 +152,7 @@ function App() {
         {!gameState.gameIsReady & gameState.joinedRoom &&
             <React.Fragment>
             <ConnectionScreen
-                users = {users}
+                players = {players}
                 isGameMaster = {gameMaster}
                 onGameReady = {sendGameIsReady}
                 onSend = {sendMessage}

@@ -18,7 +18,7 @@ function ConnectionScreen(props) {
     setWordInput(event.target.value);
   };
 
-  const players = props.users;
+  const players = props.players;
   const roomId = props.roomId;
 
   const enterRoom = () => {
