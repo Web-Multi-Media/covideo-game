@@ -14,8 +14,8 @@ function MainScreen(props) {
     return (<TeamScreen gameState={props.gameState} team={team} teamNumber={index + 1}/>);
   });
 
-  const teamScreens1 = <TeamScreen gameState={props.gameState} team="team" ={props.gameState.teams[0]} teamNumber={1}/>;
-  const teamScreens2 = <TeamScreen gameState={props.gameState} team="team" ={props.gameState.teams[1]} teamNumber={2}/>;
+  const teamScreens1 = <TeamScreen gameState={props.gameState} team={props.gameState.teams[0]} teamNumber={1}/>;
+  const teamScreens2 = <TeamScreen gameState={props.gameState} team={props.gameState.teams[1]} teamNumber={2}/>;
 
   return (<React.Fragment>
     <p>ACTIVE PLAYER : {props.gameState.activePlayer}</p>
@@ -45,7 +45,7 @@ function MainScreen(props) {
     </div>
     {
       props.gameState.player === props.gameState.activePlayer && <div>
-          <WordInput startTimer={props.gameState.startTimer} wordToGuess={props.gameState.words[0]} startRound={props.startSet} validation={props.validateWord} next={props.nextWord}/>
+          <WordInput startTimer={props.gameState.startTimer} wordToGuess={props.gameState.words[0]} startRound={props.startRound} validation={props.validateWord} next={props.nextWord}/>
         </div>
     }
   </React.Fragment>);

@@ -8,6 +8,7 @@ function Room(id) {
   this.words = [];
   this.wordsOfRound = [];
   this.teams = [];
+  this.gameMaster = null;
   this.hasAGameMaster = false;
   this.round = 0;
   this.set = 1;
@@ -19,57 +20,14 @@ function Room(id) {
 }
 
 Room.prototype = {
-  getId: function() {
-    this.updateActivity();
-    return this.id;
-  },
-  getPlayers: function() {
-    this.updateActivity();
-    return this.players;
-  },
-  getPlayers: function() {
-    this.updateActivity();
-    return this.players;
-  },
-  getWordsOfRound: function() {
-    this.updateActivity();
-    return this.wordsOfRound;
-  },
-  getSet: function() {
-    this.updateActivity();
-    return this.set;
-  },
-  getRound: function() {
-    this.updateActivity();
-    return this.round;
-  },
-  getGifUrl: function() {
-    this.updateActivity();
-    return this.gifUrl;
-  },
-  getTeams: function() {
-    this.updateActivity();
-    return this.teams;
-  },
-  isSetFinished: function() {
-    this.updateActivity();
-    return this.setFinished;
-  },
-  getScoreFirstTeam: function() {
-    this.updateActivity();
-    return this.scoreFirstTeam;
-  },
-  getScoreSecondTeam: function() {
-    this.updateActivity();
-    return this.scoreSecondTeam;
-  },
   setName: function(name) {
     this.updateActivity();
     this.name = name;
   },
-  setGameMaster: function() {
+  setGameMaster: function(player) {
     this.updateActivity();
     this.hasAGameMaster = true;
+    this.gameMaster = player.id;
   },
   addPlayer: function(player) {
     this.updateActivity();
@@ -123,9 +81,7 @@ Room.prototype = {
     this.gifUrl = this.gifUrl === '' ? this.gifUrl : '';
     if (this.wordsOfRound.length === 0) {
       this.setFinished = true;
-      // response.setFinished = true;
       this.set++;
-      // response.set = set;
     }
   },
   skipWord: function() {
@@ -138,16 +94,12 @@ Room.prototype = {
   },
   resetGame: function() {
     this.updateActivity();
-    this.players = [];
     this.words = [];
     this.wordsOfRound = [];
-    this.teams = [];
-    this.hasAGameMaster = false;
     this.round = 0;
     this.set = 1;
     this.scoreFirstTeam = 0;
     this.scoreSecondTeam = 0;
-    this.numberOfPlayer = 0;
   },
   updateActivity: function() {
     this.lastActivity = Date.now();

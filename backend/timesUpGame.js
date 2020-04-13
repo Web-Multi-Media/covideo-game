@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const playerFunction = require('./Player.js');
 const utils = require('./utils')
-const room = require('./Room.js');
+const roomfunc = require('./Room.js');
 
 let webSockets = {};
 var rooms = new Map();
@@ -52,7 +52,7 @@ function createRoom(ws, obj) {
   }
 
   // Set current room
-  let room = new room.Room(roomId);
+  let room = new roomfunc.Room(roomId);
   rooms.set(roomId, room);
   console.log('Create room ' + roomId);
   console.log('Rooms ' + rooms);
@@ -105,19 +105,20 @@ function addName(ws, obj, room) {
   room.addPlayer(new playerFunction.Player(ws.id, obj.player));
   let response = {
     type: 'updateState',
-    players: _.cloneDeep(room.getPlayers())
+    players: _.cloneDeep(room.players)
   };
   broadcast(response, room);
 }
 
 function startRound(ws, obj, room) {
-  let response = {};
-  response.type = 'updateState';
+  let response = {
+    type: 'updateState'
+  };
   room.startRound();
   let counter = 30;
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
-    let isSetfinished = room.isSetFinished();
+    let isSetfinished = room.setFinished;
     response.setFinished = isSetfinished;
     if (counter <= 0 || isSetfinished === true) {
       if (isSetfinished === true) {
@@ -126,7 +127,7 @@ function startRound(ws, obj, room) {
       }
       response.startTimer = false;
       response.activePlayer = room.choosePlayer();
-      response.words = room.getWordsOfRound();
+      response.words = room.wordsOfRound;
       response.gifUrl = '';
       broadcast(response, room);
       clearInterval(WinnerCountdown);
@@ -143,8 +144,8 @@ function gameIsReady(ws, obj, room) {
   room.startRound();
   let response = {
     type: 'gameIsReady',
-    teams: room.getTeams(),
-    words: room.getWordsOfRound(),
+    teams: room.teams,
+    words: room.wordsOfRound,
     activePlayer: room.choosePlayer()
   }
   broadcast(response, room);
@@ -158,11 +159,11 @@ function validateWord(ws, obj, room) {
   room.validateWord(obj.team);
   let response = {
     type: 'updateState',
-    words: room.getWordsOfRound(),
-    team1Score: room.getScoreFirstTeam(),
-    team2Score: room.getScoreSecondTeam(),
-    set: room.getSet(),
-    gifUrl: room.getGifUrl()
+    words: room.wordsOfRound,
+    team1Score: room.scoreFirstTeam,
+    team2Score: room.scoreSecondTeam,
+    set: room.set,
+    gifUrl: room.gifUrl
   };
   broadcast(response, room);
 }
@@ -171,7 +172,7 @@ function nextWord(ws, obj, room) {
   room.skipWord();
   let response = {
     type: 'updateState',
-    words: room.getWordsOfRound(),
+    words: room.wordsOfRound,
     gifUrl: ''
   };
   broadcast(response, room);
@@ -180,10 +181,10 @@ function nextWord(ws, obj, room) {
 function getPlayers(ws, obj, room) {
   let response = {
     type: 'updateState',
-    players: room.getPlayers()
+    players: room.players
   };
   if (room.hasAGameMaster === false) {
-    room.setGameMaster();
+    room.setGameMaster(ws.id);
     response.isGameMaster = true;
   }
   ws.send(JSON.stringify(response));
@@ -213,11 +214,11 @@ function broadcast(msg, room, senderId) {
 
 function resetGame(ws, obj, room) {
   room.resetGame();
-  webSockets.clients.forEach(function each(client) {
-    if (client.roomId === room.id) {
-      client.close();
-    }
-  });
+  let response = {
+    type: 'updateState',
+    gameIsReady: false
+  }
+  broadcast(response, room);
   console.log('fin de partie');
 }
 

@@ -149,14 +149,14 @@ function App() {
   }
 
   return (<div className="App">
-    {!debug && <p>GAME STATE : {JSON.stringify(debugGameState)}</p>}
+    {debug && <p>GAME STATE : {JSON.stringify(debugGameState)}</p>}
     {!gameState.gameIsReady && !gameState.joinedRoom && <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>}
     {
       !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
           <ConnectionScreen players={players} isGameMaster={gameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
         </React.Fragment>
     }
-    {gameState.gameIsReady && <MainScreen gameState={gameState} startSet={startSet} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}{
+    {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}{
       gameState.isGameMaster && <Button className="margButt" variant="contained" color="primary" onClick={resetSockets}>
           RESET GAME
         </Button>

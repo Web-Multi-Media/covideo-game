@@ -4,11 +4,11 @@ function Player(id, name) {
 }
 
 Player.prototype = {
-  getId: function() {
-    return {name: this.name, id: this.id};
-  },
-  getName: function() {
-    return this.name;
+  serialize: function() {
+    return {
+      name: this.name,
+      id: this.id
+    }
   }
 };
 
