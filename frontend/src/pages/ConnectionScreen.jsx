@@ -75,13 +75,13 @@ function ConnectionScreen(props) {
     <h1>Your info</h1>
     <div className="inputLine">
       <TextField id="standard-basic" size="small" label="Username" variant="outlined" value={textInput} onKeyDown={onkeydownName} onChange={handleNameChange} disabled={displayName}/>
-      <Button className="margButt" size="small" variant="contained" color="primary" onClick={sendName} disabled={displayName}>
+      <Button id={"outlined-basic-name-input"} className="margButt" size="small" variant="contained" color="primary" onClick={sendName} disabled={displayName}>
         Set
       </Button>
     </div>
     <div className="inputLine">
       <TextField id="standard-basic" size="small" label="Mot" variant="outlined" value={wordInput} onKeyDown={onkeydownWord} onChange={handleWordChange} disabled={wordSent >= 2}/>
-      <Button className="margButt" size="small" variant="contained" color="primary" onClick={sendWord} disabled={wordSent >= 2}>
+      <Button id={"outlined-basic-word"} className="margButt" size="small" variant="contained" color="primary" onClick={sendWord} disabled={wordSent >= 2}>
         Add word ({wordSent}/2)
       </Button>
     </div>
