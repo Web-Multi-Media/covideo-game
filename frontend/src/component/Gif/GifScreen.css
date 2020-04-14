@@ -20,7 +20,6 @@
 }
 
 .container {
-
     margin: 0 auto;
     padding: 2.5rem 2rem 1rem;
     padding: 2.5rem 2rem 1rem;
@@ -36,10 +35,6 @@
     animation: loader 400ms linear infinite;
 }
 
-
-
-
-
 .gifH1 {
     font-size: 3rem;
     font-weight: 300;
@@ -52,8 +47,6 @@
 .giphy-logo {
     font-weight: 800;
 }
-
-/* Search Input */
 
 .gif-search-container {
     display: flex;
@@ -109,7 +102,6 @@
     object-fit: cover;
     box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.16), 0 0.3rem 0.6rem rgba(0, 0, 0, 0.23);
 }
-
 
 /* Grid Feature Query */
 

@@ -1,24 +1,20 @@
 "use strict";
 
 import React, {useEffect, useState} from 'react';
-import {useLocation} from 'react-router-dom'
-
+import _ from 'lodash';
 import handleServerResponse from "./webSocket/rootedFunctions";
-
+import {useLocation} from 'react-router-dom';
+import {makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
-
-import GifScreen from "./component/Gif/GifScreen";
-
-import MainScreen from "./pages/MainScreen";
+import GameScreen from "./pages/GameScreen";
 import SelectRoomScreen from "./pages/SelectRoomScreen";
-import ConnectionScreen from "./pages/ConnectionScreen";
-import Header from "./component/Header";
-
+import RoomScreen from "./pages/RoomScreen";
+import AppMenu from "./component/AppMenu/AppMenu";
+import Header from "./component/Header/Header";
 import './App.css';
 
-const _ = require("lodash");
 const config = require('./env.json')[process.env.NODE_ENV || 'development']
 const WS_PORT = config.WS_PORT;
 const HOST = config.HOST;
@@ -26,7 +22,14 @@ const URL = `ws://${HOST}:${WS_PORT}`;
 let ws = new WebSocket(URL);
 const id = Math.floor(Math.random() * 1000);
 
+const useStyles = makeStyles((theme) => ({
+  container: {
+    padding: 20
+  },
+}));
+
 function App() {
+  const classes = useStyles();
   const [gameState, setGameState] = useState({
     player: '',
     players: [],
@@ -105,7 +108,7 @@ function App() {
     ws.send(JSON.stringify({type: 'joinRoom', roomId: roomId}));
   };
 
-  const sendMessage = (name) => {
+  const sendUsername = (name) => {
     ws.send(JSON.stringify({type: 'addName', player: name}));
   };
 
@@ -152,6 +155,7 @@ function App() {
   const rooms = gameState.rooms;
   const player = gameState.player;
   const debug = process.env.NODE_ENV === 'development';
+  var currentPlayer = _.filter(players, {'name': player})[0];
 
   // DEBUG
   let debugGameState = _.cloneDeep(gameState);
@@ -162,15 +166,20 @@ function App() {
 
   return (<React.Fragment>
     <CssBaseline/>
-    <Container fixed="fixed" className="App" maxWidth="xl">
-      <Header/> {!gameState.gameIsReady && !gameState.joinedRoom && <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>}
+    <AppMenu/>
+    <Container className={classes.container} fixed="fixed" maxWidth="xl">
       {
-        !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
-            <ConnectionScreen players={players} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
+        !gameState.gameIsReady && !gameState.joinedRoom && <React.Fragment>
+            <Header/>
+            <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>
           </React.Fragment>
       }
-      {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}
-
+      {
+        !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
+            <RoomScreen players={players} currentPlayer={currentPlayer} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSendUsername={sendUsername} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
+          </React.Fragment>
+      }
+      {gameState.gameIsReady && <GameScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}
     </Container>
   </React.Fragment>);
 }

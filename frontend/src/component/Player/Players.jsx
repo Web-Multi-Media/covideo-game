@@ -8,12 +8,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import PeopleIcon from '@material-ui/icons/People';
+import PlayerAdd from "./PlayerAdd";
 import PlayerAvatar from "./PlayerAvatar";
-import './Players.css'
+import TextIcon from '../TextIcon/TextIcon';
+import './Players.css';
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
+    minWidth: 300,
     maxWidth: 800
   },
   wrapIcon: {
@@ -27,14 +30,16 @@ function Players(props) {
   const players = props.players;
   const gameMaster = props.gameMaster;
   const isGameMaster = props.isGameMaster;
+  const currentPlayer = props.currentPlayer;
   const kickPlayer = (name) => {
     props.kickPlayer(name);
   }
 
-  return (<div>
-    <h1>Players</h1>
-    {
-      players.length > 0 && <TableContainer component={Paper}>
+  return (
+    <div>
+    <TextIcon size="h4" icon={<PeopleIcon fontSize="large"/>} text="Players"/>
+    {players.length === 0 && <p>No players in room yet. Add your name !</p>}
+    <TableContainer component={Paper}>
           <Table className={classes.table} size="small">
             <TableHead>
               <TableRow>
@@ -50,25 +55,29 @@ function Players(props) {
               {
                 players.map((p) => (<TableRow key={p.id}>
                   <TableCell component="th" scope="row">
-                    <PlayerAvatar player={p} gameMaster={gameMaster}/>
+                    <PlayerAvatar
+                      player={p}
+                      currentPlayer={currentPlayer}
+                      gameMaster={gameMaster}/>
                   </TableCell>
                   <TableCell align="left">{p.id}</TableCell>
                   <TableCell align="left">
                     {
-                      p.id !== gameMaster && isGameMaster && <React.Fragment>
+                      p.id !== gameMaster && isGameMaster &&
                           <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={kickPlayer.bind(this, p.name)}>
                             Kick player
                           </Button>
-                        </React.Fragment>
                     }
                   </TableCell>
                 </TableRow>))
               }
+              {!currentPlayer &&
+                <TableCell component="th" scope="row">
+                <PlayerAdd onSendUsername={props.onSendUsername} currentPlayer={currentPlayer}/>
+                </TableCell>}
             </TableBody>
           </Table>
         </TableContainer>
-    }
-    {players.length === 0 && <div>No players yet</div>}
   </div>);
 }
 

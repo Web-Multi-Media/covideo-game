@@ -5,7 +5,7 @@ import Round from "../component/Round/Round";
 import Timer from "../component/Timer/Timer";
 import WordInput from "../component/WordInput/WordInput";
 import TeamScreen from "./TeamScreen";
-import "./MainScreen.css";
+import "./GameScreen.css";
 
 function MainScreen(props) {
   const teamScreens1 = <TeamScreen gameState={props.gameState} team={props.gameState.teams[0]} teamNumber={1}/>;

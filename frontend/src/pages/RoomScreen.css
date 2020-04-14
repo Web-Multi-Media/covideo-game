@@ -1,6 +1,6 @@
 .inputLine{
     display: flex;
-    margin: 10px;
+    margin: 10px 0px 10px 0px;
     box-shadow: inset 0px 0px 0px 0px red;
 }
 
