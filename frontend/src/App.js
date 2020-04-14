@@ -2,20 +2,15 @@
 
 import React, {useEffect, useState} from 'react';
 import {useLocation} from 'react-router-dom'
-
 import handleServerResponse from "./webSocket/rootedFunctions";
-
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
-
-import GifScreen from "./component/Gif/GifScreen";
-
-import MainScreen from "./pages/MainScreen";
+import GameScreen from "./pages/GameScreen";
 import SelectRoomScreen from "./pages/SelectRoomScreen";
-import ConnectionScreen from "./pages/ConnectionScreen";
-import Header from "./component/Header";
-
+import RoomScreen from "./pages/RoomScreen";
+import AppMenu from "./component/AppMenu/AppMenu";
+import Header from "./component/Header/Header";
 import './App.css';
 
 const _ = require("lodash");
@@ -162,19 +157,20 @@ function App() {
 
   return (<React.Fragment>
     <CssBaseline/>
+    <AppMenu/>
     <Container fixed="fixed" className="App" maxWidth="xl">
-      <Header/> {!gameState.gameIsReady && !gameState.joinedRoom && <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>}
       {
-        !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
-            <ConnectionScreen players={players} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
+        !gameState.gameIsReady && !gameState.joinedRoom && <React.Fragment>
+            <Header/>
+            <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>
           </React.Fragment>
       }
-      {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}
       {
-        gameState.isGameMaster && <Button className="margButt" variant="contained" color="primary" onClick={resetSockets}>
-            Reset game
-          </Button>
+        !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
+            <RoomScreen players={players} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
+          </React.Fragment>
       }
+      {gameState.gameIsReady && <GameScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}
     </Container>
   </React.Fragment>);
 }

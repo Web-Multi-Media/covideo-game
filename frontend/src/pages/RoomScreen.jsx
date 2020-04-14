@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import "./ConnectionScreen.css";
+import "./RoomScreen.css";
 import {makeStyles} from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function ConnectionScreen(props) {
+function RoomScreen(props) {
   const [textInput, setTextInput] = useState('');
   const [wordInput, setWordInput] = useState('');
   const [wordSent, setWordSent] = useState(0);
@@ -101,4 +101,4 @@ function ConnectionScreen(props) {
   </React.Fragment>);
 }
 
-export default ConnectionScreen;
+export default RoomScreen;

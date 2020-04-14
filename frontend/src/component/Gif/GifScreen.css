@@ -1,11 +1,3 @@
-/* Base Styles */
-
-
-:focus {
-    outline: none;
-    box-shadow: 0 0 0 0.3rem #93f;
-}
-
 * {
     box-sizing: border-box;
 }

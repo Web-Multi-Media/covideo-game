@@ -9,7 +9,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import PlayerAvatar from "./PlayerAvatar";
-import './Players.css'
+import './Players.css';
 
 const useStyles = makeStyles({
   table: {
