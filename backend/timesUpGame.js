@@ -65,17 +65,7 @@ function createRoom(ws, obj) {
     isGameMaster: true
   };
   ws.send(JSON.stringify(response));
-
-  // Broadcast new room to all clients
-  var rooms_data = [];
-  for (const [id, room] of rooms.entries()) {
-    rooms_data.push(room.serialize());
-  }
-  let response2 = {
-    type: 'updateState',
-    rooms: rooms_data
-  }
-  broadcast(response2);
+  broadcastRoomsInfo();
 }
 
 function joinRoom(ws, obj) {
@@ -150,6 +140,7 @@ function addName(ws, obj, room) {
     players: _.cloneDeep(room.players)
   };
   broadcast(response, room);
+  broadcastRoomsInfo();
 }
 
 function changeRoomSettings(ws, obj, room) {
@@ -160,6 +151,7 @@ function changeRoomSettings(ws, obj, room) {
     roomSettings: room.settings
   }
   broadcast(response, room)
+  broadcastRoomsInfo();
 }
 
 function startRound(ws, obj, room) {
@@ -273,6 +265,19 @@ function resetGame(ws, obj, room) {
   }
   broadcast(response, room);
   console.log('fin de partie');
+}
+
+function broadcastRoomsInfo() {
+    // Broadcast new room settings to all clients
+    var rooms_data = [];
+    for (const [id, room] of rooms.entries()) {
+      rooms_data.push(room.serialize());
+    }
+    let response = {
+      type: 'updateState',
+      rooms: rooms_data
+    }
+    broadcast(response);
 }
 
 module.exports.messageHandler = messageHandler;

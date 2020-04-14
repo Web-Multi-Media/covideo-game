@@ -65,7 +65,15 @@ function Rooms(props) {
                       </div>
                     </TableCell>
                     <TableCell align="left">
-                      <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={joinRoom.bind(this, room.id)}>Join</Button>
+                      <Button 
+                        id="outlined-basic-name" 
+                        className="margButt" 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={joinRoom.bind(this, room.id)}
+                        disabled={(room.players.length >= room.settings.numMaxPlayers)}>
+                          Join
+                        </Button>
                     </TableCell>
                   </TableRow>))
                 }
