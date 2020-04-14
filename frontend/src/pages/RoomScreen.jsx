@@ -72,7 +72,11 @@ function RoomScreen(props) {
     <Paper className={classes.paper}>
     <Grid container spacing={2}>
       <Grid item xs={5}>
-      <RoomSettings isGameMaster={props.isGameMaster}/>
+      <RoomSettings 
+        isGameMaster={props.isGameMaster}
+        roomSettings={props.roomSettings}
+        onChangeSettings={props.onChangeSettings}
+      />
       </Grid>
 
       <Divider orientation="vertical" flexItem/>

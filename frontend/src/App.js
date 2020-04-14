@@ -52,7 +52,8 @@ function App() {
     roomId: '',
     rooms: [],
     socketConnected: false,
-    gifUrl: ''
+    gifUrl: '',
+    roomSettings: {}
   });
   const [img, setImg] = useState('');
 
@@ -112,6 +113,11 @@ function App() {
     ws.send(JSON.stringify({type: 'addName', player: name}));
   };
 
+  const sendRoomSettings = (settings) => {
+    ws.send(JSON.stringify({
+      type: 'changeRoomSettings', settings: settings}));
+  };
+
   const sendWord = (word) => {
     ws.send(JSON.stringify({type: 'addWord', word: word}));
   };
@@ -161,6 +167,7 @@ function App() {
   const player = gameState.player;
   const debug = process.env.NODE_ENV === 'development';
   var currentPlayer = _.filter(players, {'name': player})[0];
+  const roomSettings = gameState.roomSettings;
 
   // DEBUG
   let debugGameState = _.cloneDeep(gameState);
@@ -187,6 +194,8 @@ function App() {
               gameMaster={gameMaster}
               isGameMaster={isGameMaster}
               onGameReady={sendGameIsReady}
+              onChangeSettings={sendRoomSettings}
+              roomSettings={roomSettings}
               onSendUsername={sendUsername}
               onSendWord={sendWord}
               onDeleteWord={deleteWord}

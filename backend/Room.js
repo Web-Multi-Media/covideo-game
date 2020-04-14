@@ -41,7 +41,7 @@ Room.prototype = {
       timeToGuess2ndRound: 30,
       timeToGuess3rdRound: 40,
       numWordsPerPlayer: 3,
-      numMaxPlayer: 10,
+      numMaxPlayers: 10,
     }
   },
   addPlayer: function(player) {

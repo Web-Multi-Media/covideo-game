@@ -11,8 +11,9 @@ let rootingFunction = {
   'addWord': addWord,
   'deleteWord': deleteWord,
   'getPlayers': getPlayers,
+  'changeRoomSettings': changeRoomSettings,
   'gameIsReady': gameIsReady,
-  'startRound': startRound, // TODO: change startRound to startRound
+  'startRound': startRound,
   'validateWord': validateWord,
   'nextWord': nextWord,
   'resetGame': resetGame,
@@ -87,7 +88,8 @@ function joinRoom(ws, obj) {
   let response = {
     type: 'updateState',
     joinedRoom: true,
-    roomId: roomId
+    roomId: roomId,
+    roomSettings: room.settings
   };
 
   // Set user as game master if none exist
@@ -148,6 +150,16 @@ function addName(ws, obj, room) {
     players: _.cloneDeep(room.players)
   };
   broadcast(response, room);
+}
+
+function changeRoomSettings(ws, obj, room) {
+  console.log('Recieve new settings: '+ obj.settings.numMaxPlayers)
+  room.settings = obj.settings;
+  let response = {
+    type: 'updateState',
+    roomSettings: room.settings
+  }
+  broadcast(response, room)
 }
 
 function startRound(ws, obj, room) {
