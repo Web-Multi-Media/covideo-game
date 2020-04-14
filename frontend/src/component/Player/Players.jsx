@@ -31,9 +31,6 @@ function Players(props) {
   const gameMaster = props.gameMaster;
   const isGameMaster = props.isGameMaster;
   const currentPlayer = props.currentPlayer;
-  const kickPlayer = (name) => {
-    props.kickPlayer(name);
-  }
 
   return (
     <div>
@@ -64,7 +61,7 @@ function Players(props) {
                   <TableCell align="left">
                     {
                       p.id !== gameMaster && isGameMaster &&
-                          <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={kickPlayer.bind(this, p.name)}>
+                          <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={props.kickPlayer.bind(this, p.id)}>
                             Kick player
                           </Button>
                     }

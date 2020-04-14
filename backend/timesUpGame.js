@@ -9,6 +9,7 @@ var rooms = new Map();
 let rootingFunction = {
   'addName': addName,
   'addWord': addWord,
+  'deleteWord': deleteWord,
   'getPlayers': getPlayers,
   'gameIsReady': gameIsReady,
   'startRound': startRound, // TODO: change startRound to startRound
@@ -53,7 +54,7 @@ function createRoom(ws, obj) {
 
   // Set current room
   let room = new roomfunc.Room(roomId);
-  room.gameMaster = ws.id;
+  room.setGameMaster(ws.id);
   rooms.set(roomId, room);
   console.log('Create room ' + roomId);
   let response = {
@@ -86,7 +87,6 @@ function joinRoom(ws, obj) {
   let response = {
     type: 'updateState',
     joinedRoom: true,
-    gameMaster: room.gameMaster,
     roomId: roomId
   };
 
@@ -94,35 +94,40 @@ function joinRoom(ws, obj) {
   if (room.gameMaster === null) {
     console.log("No game master in room. Appointing " + ws.id);
     room.setGameMaster(ws.id);
-    response.gameMaster = room.gameMaster;
     response.isGameMaster = true;
   }
+  response.gameMaster = room.gameMaster;
   ws.send(JSON.stringify(response));
 }
 
 function leaveRoom(ws, obj, room) {
   let roomId = ws.roomId;
-  let name = obj.name;
+  let id = obj.player_id;
   var room = rooms.get(roomId);
   var gameMaster = room.gameMaster;
 
   // Remove player from room
   // Set state back to room list
-  console.log('Removing ' + name + ' from room ' + roomId);
-  room.removePlayer(name);
-  ws.roomId = null;
+  console.log('Removing ' + id + ' from room ' + roomId);
+  room.removePlayer(id);
   let response = {
     type: 'updateState',
-    joinedRoom: false,
-    roomId: roomId
+    joinedRoom: false
   };
-  ws.send(JSON.stringify(response));
+  webSockets.clients.forEach(function each(client) {
+    if (client.id === id) {
+      client.send(JSON.stringify(response));
+    }
+  });
 
   // If player leaving is the game master, appoint a new game master
   // If no more players are left, set gameMaster to null.
-  if (ws.id == gameMaster) {
-    response2 = {}
-    if (length(room.players) > 0) {
+  response2 = {
+    type:'updateState',
+    players: room.players
+  }
+  if (id == gameMaster) {
+    if (room.players.length > 0) {
       newGameMaster = room.players[0].id;
       console.log("Game master left the room. Appointing " + newGameMaster + " as gameMaster.");
       room.setGameMaster(newGameMaster);
@@ -132,8 +137,8 @@ function leaveRoom(ws, obj, room) {
       room.setGameMaster(null);
       response2.gameMaster = null;
     }
-    broadcast(response2, room);
   }
+  broadcast(response2, room);
 }
 
 function addName(ws, obj, room) {
@@ -188,6 +193,10 @@ function gameIsReady(ws, obj, room) {
 
 function addWord(ws, obj, room) {
   room.addWord(obj.word);
+}
+
+function deleteWord(ws, obj, room) {
+  room.deleteWord(obj.word);
 }
 
 function validateWord(ws, obj, room) {

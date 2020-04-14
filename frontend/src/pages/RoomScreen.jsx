@@ -40,20 +40,14 @@ function RoomScreen(props) {
   const [wordInput, setWordInput] = useState('');
   const [wordSent, setWordSent] = useState(0);
   const [words, setWords] = useState([]);
-  const roomId = props.roomId;
-  const player = props.player;
-  const players = props.players;
-  const isGameMaster = props.isGameMaster;
-  const gameMaster = props.gameMaster;
+  const room_url = `http://localhost:3000/${props.roomId}`;
   const currentPlayer = props.currentPlayer;
-  const room_url = `http://localhost:3000/${roomId}`;
-
   const handleWordChange = (event) => {
     setWordInput(event.target.value);
   };
 
   const handleWordDelete = name => event => {
-    console.log(name);
+    props.onDeleteWord(name);
     setWords(words.filter(word => word !== name));
     setWordSent(wordSent - 1);
   }
@@ -68,14 +62,6 @@ function RoomScreen(props) {
     }
   };
 
-  const gameIsReady = () => {
-    props.onGameReady();
-  };
-
-  const kickPlayer = (name) => {
-    props.kickPlayer(name);
-  };
-
   const onkeydownWord = (event) => {
     if (event.keyCode === 13 && wordSent < 2) {
       document.getElementById("outlined-basic-word").click();
@@ -86,18 +72,18 @@ function RoomScreen(props) {
     <Paper className={classes.paper}>
     <Grid container spacing={2}>
       <Grid item xs={5}>
-      <RoomSettings isGameMaster={isGameMaster}/>
+      <RoomSettings isGameMaster={props.isGameMaster}/>
       </Grid>
 
       <Divider orientation="vertical" flexItem/>
 
       <Grid item xs={5}>
       <Players
-        players={players}
         currentPlayer={currentPlayer}
-        gameMaster={gameMaster}
-        isGameMaster={isGameMaster}
-        kickPlayer={kickPlayer}
+        players={props.players}
+        gameMaster={props.gameMaster}
+        isGameMaster={props.isGameMaster}
+        kickPlayer={props.kickPlayer}
         onSendUsername={props.onSendUsername}/>
       </Grid>
 
@@ -153,8 +139,8 @@ function RoomScreen(props) {
           variant="contained"
           color="primary"
           size="large"
-          onClick={gameIsReady}
-          disabled={!isGameMaster}
+          onClick={props.onGameReady}
+          disabled={!props.isGameMaster}
           startIcon={<PlayCircleOutlineIcon fontSize="large"/>}>
           Start game
         </Button>

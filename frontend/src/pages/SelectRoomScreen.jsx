@@ -42,8 +42,7 @@ function SelectRoomScreen(props) {
         color="primary"
         className={classes.button}
         startIcon={<AddIcon />}
-        onClick={createNewRoom}
-      >
+        onClick={createNewRoom}>
         Add room
       </Button>
     </div>

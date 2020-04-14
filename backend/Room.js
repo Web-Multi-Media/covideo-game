@@ -24,10 +24,15 @@ Room.prototype = {
     this.updateActivity();
     this.name = name;
   },
-  setGameMaster: function(player) {
+  setGameMaster: function(id) {
     this.updateActivity();
-    this.hasAGameMaster = true;
-    this.gameMaster = player.id;
+    if (id === null){
+      this.gameMaster = null;
+      this.hasAGameMaster = false;
+    } else {
+      this.gameMaster = id;
+      this.hasAGameMaster = true;
+    }
   },
   addPlayer: function(player) {
     this.updateActivity();
@@ -37,19 +42,28 @@ Room.prototype = {
     ];
     this.numberOfPlayer = this.players.length;
   },
-  removePlayer: function(name) {
+  removePlayer: function(id) {
     this.updateActivity();
-    this.players = this.players.filter(function(item) {
-      return item.name != name;
+    this.players = _.filter(this.players, function(item) {
+      return item.id != id;
     });
     this.numberOfPlayer = this.players.length;
   },
   addWord: function(word) {
     this.updateActivity();
-    this.words = [
-      ...this.words,
-      word
-    ];
+    var check = this.words.includes(word);
+    if (!check){
+      this.words = [
+        word,
+        ...this.words,
+      ]
+    }
+  },
+  deleteWord: function(word) {
+    this.updateActivity();
+    this.words = _.filter(this.words, function(name){
+      name != word
+    });
   },
   startGame: function() {
     this.updateActivity();

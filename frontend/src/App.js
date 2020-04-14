@@ -116,6 +116,10 @@ function App() {
     ws.send(JSON.stringify({type: 'addWord', word: word}));
   };
 
+  const deleteWord = (word) => {
+    ws.send(JSON.stringify({type: 'deleteWord', word: word}));
+  };
+
   const sendGameIsReady = () => {
     ws.send(JSON.stringify({type: 'gameIsReady'}));
   };
@@ -136,12 +140,13 @@ function App() {
     ws.send(JSON.stringify({type: 'resetGame'}));
   };
 
-  const leaveRoom = (name) => {
-    ws.send(JSON.stringify({type: 'leaveRoom', player: name}));
+  const leaveRoom = (player_id) => {
+    ws.send(JSON.stringify({type: 'leaveRoom', player_id: player_id}));
   };
 
-  const kickPlayer = (name) => {
-    ws.send(JSON.stringify({type: 'leaveRoom', player: name}))
+  const kickPlayer = (player_id) => {
+    console.log("Kicking player " + player_id);
+    ws.send(JSON.stringify({type: 'leaveRoom', player_id: player_id}))
   };
 
   const chooseGif = (gifUrl) => {
@@ -176,7 +181,17 @@ function App() {
       }
       {
         !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
-            <RoomScreen players={players} currentPlayer={currentPlayer} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSendUsername={sendUsername} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
+            <RoomScreen
+              players={players}
+              currentPlayer={currentPlayer}
+              gameMaster={gameMaster}
+              isGameMaster={isGameMaster}
+              onGameReady={sendGameIsReady}
+              onSendUsername={sendUsername}
+              onSendWord={sendWord}
+              onDeleteWord={deleteWord}
+              roomId={roomId}
+              kickPlayer={kickPlayer}/>
           </React.Fragment>
       }
       {gameState.gameIsReady && <GameScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}
