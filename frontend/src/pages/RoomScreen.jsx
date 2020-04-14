@@ -146,7 +146,7 @@ function RoomScreen(props) {
           color="primary"
           size="large"
           onClick={props.onGameReady}
-          disabled={!props.isGameMaster}
+          disabled={props.isGameMaster === false}
           startIcon={<PlayCircleOutlineIcon fontSize="large"/>}>
           Start game
         </Button>
