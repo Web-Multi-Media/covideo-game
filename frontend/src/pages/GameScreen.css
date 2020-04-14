@@ -24,6 +24,6 @@
 
 .gifGrid {
     margin: 10px 10px;
-    display: flex;
+    /* display: flex; */
     grid-column: 2/9;
 }
