@@ -17,6 +17,7 @@ function Room(id) {
   this.scoreSecondTeam = 0;
   this.numberOfPlayer = 0;
   this.lastActivity = Date.now();
+  this.setDefaultSettings();
 }
 
 Room.prototype = {
@@ -32,6 +33,15 @@ Room.prototype = {
     } else {
       this.gameMaster = id;
       this.hasAGameMaster = true;
+    }
+  },
+  setDefaultSettings: function() {
+    this.settings = {
+      timeToGuess1stRound: 30,
+      timeToGuess2ndRound: 30,
+      timeToGuess3rdRound: 40,
+      numWordsPerPlayer: 3,
+      numMaxPlayer: 10,
     }
   },
   addPlayer: function(player) {
@@ -135,7 +145,8 @@ Room.prototype = {
       scoreSecondTeam: this.scoreSecondTeam,
       numberOfPlayer: this.numberOfPlayer,
       players: this.players,
-      lastActivity: this.lastActivity
+      lastActivity: this.lastActivity,
+      settings: this.settings,
     }
   }
 };
