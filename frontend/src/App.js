@@ -169,9 +169,10 @@ function App() {
             <ConnectionScreen players={players} gameMaster={gameMaster} isGameMaster={isGameMaster} onGameReady={sendGameIsReady} onSend={sendMessage} onSendWord={sendWord} roomId={roomId} kickPlayer={kickPlayer}/>
           </React.Fragment>
       }
-      {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}{
+      {gameState.gameIsReady && <MainScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}
+      {
         gameState.isGameMaster && <Button className="margButt" variant="contained" color="primary" onClick={resetSockets}>
-            RESET GAME
+            Reset game
           </Button>
       }
     </Container>

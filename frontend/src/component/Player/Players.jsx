@@ -68,7 +68,7 @@ function Players(props) {
           </Table>
         </TableContainer>
     }
-    {players.length === 0 && <div>No players yet</div>}
+    {players.length === 0 && <div>No players yet.</div>}
   </div>);
 }
 

@@ -25,6 +25,7 @@ function Rooms(props) {
   }
   return (<div>
     <h1>Rooms</h1>
+    {rooms.length > 0 &&
     <div class='rooms'>
       <TableContainer component={Paper}>
         <Table className={classes.table} size="small">
@@ -70,7 +71,8 @@ function Rooms(props) {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </div>}
+    {rooms.length === 0 && <div>No rooms.</div>}
   </div>);
 }
 
