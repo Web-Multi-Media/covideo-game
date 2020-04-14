@@ -17,7 +17,7 @@ function Room(id) {
   this.scoreSecondTeam = 0;
   this.numberOfPlayer = 0;
   this.lastActivity = Date.now();
-  this.setDefaultSettings();
+  this.settings = this.getDefaultSettings();
 }
 
 Room.prototype = {
@@ -35,8 +35,8 @@ Room.prototype = {
       this.hasAGameMaster = true;
     }
   },
-  setDefaultSettings: function() {
-    this.settings = {
+  getDefaultSettings: function() {
+    return {
       timesToGuessPerSet: [30, 30, 40],
       numWordsPerPlayer: 3,
       numMaxPlayers: 10,

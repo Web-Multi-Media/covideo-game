@@ -153,7 +153,7 @@ function addName(ws, obj, room) {
 }
 
 function changeRoomSettings(ws, obj, room) {
-  console.log('Recieve new settings: '+ obj.settings.numMaxPlayers)
+  console.log('Recieve new settings for room: ' + room.id)
   room.settings = obj.settings;
   let response = {
     type: 'updateState',
