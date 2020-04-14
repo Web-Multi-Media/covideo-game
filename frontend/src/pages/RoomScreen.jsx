@@ -46,9 +46,22 @@ function RoomScreen(props) {
   const [words, setWords] = useState([]);
   const room_url = `http://localhost:3000/${props.roomId}`;
   const currentPlayer = props.currentPlayer;
+
   const handleWordChange = (event) => {
     setWordInput(event.target.value);
   };
+
+  useEffect(() => {
+    var lenDiff = words.length - props.roomSettings.numWordsPerPlayer;
+    console.log(lenDiff);
+    if (lenDiff > 0){
+      setWordInput('');
+      for (let count = 0; count < lenDiff; count++) {
+        var deleteWord = words.pop();
+        handleWordDelete(deleteWord)(null);
+      }
+    }
+  }, [props.roomSettings]);
 
   const handleWordDelete = name => event => {
     props.onDeleteWord(name);
@@ -76,7 +89,7 @@ function RoomScreen(props) {
     <Paper className={classes.paper}>
     <Grid container spacing={2}>
       <Grid item xs={5}>
-      <RoomSettings 
+      <RoomSettings
         isGameMaster={props.isGameMaster}
         roomSettings={props.roomSettings}
         onChangeSettings={props.onChangeSettings}

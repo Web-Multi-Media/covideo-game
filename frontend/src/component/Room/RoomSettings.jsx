@@ -22,7 +22,7 @@ function RoomSettings(props) {
   const [timeToGuess3rdRound, setTimeToGuess3rdRound] = React.useState(props.roomSettings.timesToGuessPerSet[2]);
   const [numWordsPerPlayer, setNumWordsPerPlayer] = React.useState(props.roomSettings.numWordsPerPlayer);
   const [numMaxPlayers, setNumMaxPlayers] = React.useState(props.roomSettings.numMaxPlayers);
-
+  
   const handleOnChange = function() {
     const settings = {
       timesToGuessPerSet: [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound],
