@@ -40,7 +40,10 @@ const useStyles = makeStyles((theme) => ({
 function PlayerAvatar(props) {
   const player = props.player;
   const gameMaster = props.gameMaster;
+  const currentPlayer = props.currentPlayer;
   const classes = useStyles();
+  console.log(currentPlayer);
+  console.log(player)
 
   return (<React.Fragment>
     <Grid container="container" alignItems="center">
@@ -65,7 +68,11 @@ function PlayerAvatar(props) {
           </React.Fragment>
       }
       <Grid item="item">
-        {player.name.capitalize()}
+        <b>{player.name.capitalize()}</b>
+        {currentPlayer != null && player.id === currentPlayer.id && <React.Fragment>
+         &nbsp;(you)
+        </React.Fragment>
+        }
       </Grid>
     </Grid>
   </React.Fragment>);

@@ -10,6 +10,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import TextIcon from '../TextIcon/TextIcon';
 
 const useStyles = makeStyles({
   table: {
@@ -24,7 +26,7 @@ function Rooms(props) {
     props.joinRoom(roomId);
   }
   return (<div>
-    <h1>Rooms</h1>
+    <TextIcon size="h4" icon={<MeetingRoomIcon fontSize="large"/>} text="Rooms"/>
     {
       rooms.length > 0 && <div class='rooms'>
           <TableContainer component={Paper}>

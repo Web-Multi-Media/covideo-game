@@ -1,0 +1,8 @@
+.MuiInputBase-input.Mui-disabled {
+  background-color: #fff;
+  opacity: 1;
+}
+
+.MuiInputBase-input {
+  color: black !important;
+}
