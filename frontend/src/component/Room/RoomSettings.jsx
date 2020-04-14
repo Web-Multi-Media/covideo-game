@@ -39,7 +39,6 @@ function RoomSettings(props) {
   }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers]);
 
   return (<React.Fragment>
-    {JSON.stringify(props.roomSettings.timeToGuess1stRound)}
     <TextIcon size="h4" icon={<SettingsIcon fontSize="large"/>} text="Settings"/>
     <form className={classes.root} noValidate autoComplete="off">
       <div>
@@ -47,6 +46,7 @@ function RoomSettings(props) {
           id="standard-time-1st-round"
           type="number"
           label="Time first round"
+          disabled={!props.isGameMaster}
           value={props.roomSettings.timeToGuess1stRound}
           onChange={(event) => {
             setTimeToGuess1stRound(parseInt(event.target.value));
@@ -56,6 +56,7 @@ function RoomSettings(props) {
           id="standard-time-2nd-round"
           type="number"
           label="Time second round"
+          disabled={!props.isGameMaster}
           value={props.roomSettings.timeToGuess2ndRound}
           onChange={(event) => setTimeToGuess2ndRound(parseInt(event.target.value))}
         />
@@ -63,6 +64,7 @@ function RoomSettings(props) {
           id="standard-time-3rd-round"
           type="number"
           label="Time third round"
+          disabled={!props.isGameMaster}
           value={props.roomSettings.timeToGuess3rdRound}
           onChange={(event) => setTimeToGuess3rdRound(parseInt(event.target.value))}
         />
@@ -70,6 +72,7 @@ function RoomSettings(props) {
           id="standard-num-words"
           type="number"
           label="Number of words per player"
+          disabled={!props.isGameMaster}
           value={props.roomSettings.numWordsPerPlayer}
           onChange={(event) => setNumWordsPerPlayer(parseInt(event.target.value))}
         />
@@ -77,6 +80,7 @@ function RoomSettings(props) {
           id="standard-num-max-players"
           type="number"
           label="Number of maximum players"
+          disabled={!props.isGameMaster}
           value={props.roomSettings.numMaxPlayers}
           onChange={(event) => setNumMaxPlayers(parseInt(event.target.value))}
         />
