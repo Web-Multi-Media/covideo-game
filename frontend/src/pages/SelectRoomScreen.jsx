@@ -43,7 +43,7 @@ function SelectRoomScreen(props) {
         className={classes.button}
         startIcon={<AddIcon />}
         onClick={createNewRoom}>
-        Add room
+        Create room
       </Button>
     </div>
   </React.Fragment>);

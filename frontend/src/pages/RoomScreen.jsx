@@ -32,6 +32,10 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: 20
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
   }
 }));
 
@@ -97,12 +101,14 @@ function RoomScreen(props) {
 
       <Grid item xs={5}>
       <TextIcon size="h4" icon={<LibraryBooksIcon fontSize="large"/>} text="Words"/>
+      <p>Add your own words to the guess list !</p>
       <div className="inputLine">
         <TextField
           id="standard-basic"
           size="small"
           label="Word"
           variant="outlined"
+          className={classes.input}
           value={wordInput}
           onKeyDown={onkeydownWord}
           onChange={handleWordChange}

@@ -12,6 +12,7 @@ function WordInput(props) {
           <Button className="margButt" variant="contained" color="primary" onClick={props.validation}>
             Validate
           </Button>
+          &nbsp;
           <Button className="margButt" variant="contained" color="primary" onClick={props.next}>
             Next Word
           </Button>
