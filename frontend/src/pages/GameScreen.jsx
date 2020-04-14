@@ -18,7 +18,7 @@ function MainScreen(props) {
         <Round set={props.gameState.set}/>
       </div>
       <div className="timerGrid">
-        <Timer startTimer={props.gameState.startTimer} duration={props.gameState.duration}/>
+        <Timer startTimer={props.gameState.startTimer} duration={props.gameState.roomSettings.timesToGuessPerSet[props.gameState.set-1]}/>
       </div>
     </div>
     <div className="teamScreens">

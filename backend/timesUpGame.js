@@ -167,7 +167,7 @@ function startRound(ws, obj, room) {
     type: 'updateState'
   };
   room.startRound();
-  let counter = 30;
+  let counter = room.settings.timesToGuessPerSet[room.set-1];
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
     let isSetfinished = room.setFinished;

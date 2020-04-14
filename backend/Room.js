@@ -37,9 +37,7 @@ Room.prototype = {
   },
   setDefaultSettings: function() {
     this.settings = {
-      timeToGuess1stRound: 30,
-      timeToGuess2ndRound: 30,
-      timeToGuess3rdRound: 40,
+      timesToGuessPerSet: [30, 30, 40],
       numWordsPerPlayer: 3,
       numMaxPlayers: 10,
     }

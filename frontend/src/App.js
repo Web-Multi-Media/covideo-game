@@ -188,22 +188,31 @@ function App() {
       }
       {
         !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
-            <RoomScreen
-              players={players}
-              currentPlayer={currentPlayer}
-              gameMaster={gameMaster}
-              isGameMaster={isGameMaster}
-              onGameReady={sendGameIsReady}
-              onChangeSettings={sendRoomSettings}
-              roomSettings={roomSettings}
-              onSendUsername={sendUsername}
-              onSendWord={sendWord}
-              onDeleteWord={deleteWord}
-              roomId={roomId}
-              kickPlayer={kickPlayer}/>
-          </React.Fragment>
+          <RoomScreen
+            players={players}
+            currentPlayer={currentPlayer}
+            gameMaster={gameMaster}
+            isGameMaster={isGameMaster}
+            onGameReady={sendGameIsReady}
+            onChangeSettings={sendRoomSettings}
+            roomSettings={roomSettings}
+            onSendUsername={sendUsername}
+            onSendWord={sendWord}
+            onDeleteWord={deleteWord}
+            roomId={roomId}
+            kickPlayer={kickPlayer}/>
+        </React.Fragment>
       }
-      {gameState.gameIsReady && <GameScreen gameState={gameState} startRound={startRound} validateWord={validateWord} nextWord={nextWord} sendGif={chooseGif}/>}
+      {
+        gameState.gameIsReady && 
+          <GameScreen 
+            gameState={gameState} 
+            startRound={startRound} 
+            validateWord={validateWord} 
+            nextWord={nextWord} 
+            sendGif={chooseGif}
+          />
+      }
     </Container>
   </React.Fragment>);
 }

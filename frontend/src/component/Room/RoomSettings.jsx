@@ -17,17 +17,15 @@ const useStyles = makeStyles((theme) => ({
 
 function RoomSettings(props) {
   const classes = useStyles();
-  const [timeToGuess1stRound, setTimeToGuess1stRound] = React.useState(props.roomSettings.timeToGuess1stRound);
-  const [timeToGuess2ndRound, setTimeToGuess2ndRound] = React.useState(props.roomSettings.timeToGuess2ndRound);
-  const [timeToGuess3rdRound, setTimeToGuess3rdRound] = React.useState(props.roomSettings.timeToGuess3rdRound);
+  const [timeToGuess1stRound, setTimeToGuess1stRound] = React.useState(props.roomSettings.timesToGuessPerSet[0]);
+  const [timeToGuess2ndRound, setTimeToGuess2ndRound] = React.useState(props.roomSettings.timesToGuessPerSet[1]);
+  const [timeToGuess3rdRound, setTimeToGuess3rdRound] = React.useState(props.roomSettings.timesToGuessPerSet[2]);
   const [numWordsPerPlayer, setNumWordsPerPlayer] = React.useState(props.roomSettings.numWordsPerPlayer);
   const [numMaxPlayers, setNumMaxPlayers] = React.useState(props.roomSettings.numMaxPlayers);
 
   const handleOnChange = function() {
     const settings = {
-      timeToGuess1stRound: timeToGuess1stRound,
-      timeToGuess2ndRound: timeToGuess2ndRound,
-      timeToGuess3rdRound: timeToGuess3rdRound,
+      timesToGuessPerSet: [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound],
       numWordsPerPlayer: numWordsPerPlayer,
       numMaxPlayers: numMaxPlayers,
     };
@@ -47,7 +45,7 @@ function RoomSettings(props) {
           type="number"
           label="Time first round"
           disabled={!props.isGameMaster}
-          value={props.roomSettings.timeToGuess1stRound}
+          value={props.roomSettings.timesToGuessPerSet[0]}
           onChange={(event) => {
             setTimeToGuess1stRound(parseInt(event.target.value));
           }}
@@ -57,7 +55,7 @@ function RoomSettings(props) {
           type="number"
           label="Time second round"
           disabled={!props.isGameMaster}
-          value={props.roomSettings.timeToGuess2ndRound}
+          value={props.roomSettings.timesToGuessPerSet[1]}
           onChange={(event) => setTimeToGuess2ndRound(parseInt(event.target.value))}
         />
         <TextField
@@ -65,7 +63,7 @@ function RoomSettings(props) {
           type="number"
           label="Time third round"
           disabled={!props.isGameMaster}
-          value={props.roomSettings.timeToGuess3rdRound}
+          value={props.roomSettings.timesToGuessPerSet[2]}
           onChange={(event) => setTimeToGuess3rdRound(parseInt(event.target.value))}
         />
         <TextField

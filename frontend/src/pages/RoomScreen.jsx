@@ -63,7 +63,7 @@ function RoomScreen(props) {
   };
 
   const onkeydownWord = (event) => {
-    if (event.keyCode === 13 && wordSent < 2) {
+    if (event.keyCode === 13 && wordSent < props.roomSettings.numWordsPerPlayer) {
       document.getElementById("outlined-basic-word").click();
     }
   };
@@ -110,16 +110,16 @@ function RoomScreen(props) {
           value={wordInput}
           onKeyDown={onkeydownWord}
           onChange={handleWordChange}
-          disabled={currentPlayer == null || wordSent >= 2}/>
+          disabled={currentPlayer == null || wordSent >= props.roomSettings.numWordsPerPlayer}/>
         <Button
           id="outlined-basic-word"
           size="small"
           variant="contained"
           color="primary"
           onClick={sendWord}
-          disabled={currentPlayer == null || wordSent >= 2}
+          disabled={currentPlayer == null || wordSent >= props.roomSettings.numWordsPerPlayer}
           startIcon={<AddIcon/>}>
-          Add word ({wordSent}/2)
+          Add word ({wordSent}/{props.roomSettings.numWordsPerPlayer})
         </Button>
       </div>
       {currentPlayer != null && words != null && words.map((word) => (<React.Fragment>
