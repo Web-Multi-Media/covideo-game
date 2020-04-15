@@ -57,7 +57,7 @@ Room.prototype = {
     this.players = _.filter(this.players, function(item) {
       return item.id != id;
     });
-    this.wordsPerPlayer.delete(player.id);
+    delete this.wordsPerPlayer[id];
     this.numberOfPlayer = this.players.length;
   },
   addWord: function(word, playerId) {
