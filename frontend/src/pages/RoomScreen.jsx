@@ -65,7 +65,15 @@ function RoomScreen(props) {
 
   const handleWordDelete = name => event => {
     props.onDeleteWord(name);
-    setWords(words.filter(word => word !== name));
+
+    // delete only one occurence of the word to be deleted
+    setWords(function(words) {
+      for (var i = words.length - 1; i >= 0; i--) {
+        if (words[i] === name) {
+          words.splice(i, 1);
+          return words;
+        }}
+    })
     setWordSent(wordSent - 1);
   }
 

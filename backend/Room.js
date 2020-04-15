@@ -60,19 +60,20 @@ Room.prototype = {
   },
   addWord: function(word) {
     this.updateActivity();
-    var check = this.words.includes(word);
-    if (!check){
-      this.words = [
-        word,
-        ...this.words,
-      ]
-    }
+    this.words = [
+      word,
+      ...this.words,
+    ]
   },
   deleteWord: function(word) {
+    // delete only one occurence of the word to be deleted
     this.updateActivity();
-    this.words = _.filter(this.words, function(name){
-      name != word
-    });
+    this.words = (function(words, wordToRemove) {
+      for (var i = words.length - 1; i >= 0; i--) {
+        if (words[i] === wordToRemove) {
+          words.splice(i, 1);
+          return words;
+        }}})(this.words, word);
   },
   startGame: function() {
     this.updateActivity();
