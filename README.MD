@@ -1,17 +1,28 @@
-Run the server:
+# CoVideo Game
+
+This repository hosts the code of CoVideo Game, a web browser charades party game sometimes called Time's Up.
+It uses Express as a web application framework for the Node.js backend and the React JavaScript library for building the frontend client application.
 
 
-sudo docker-compose -f docker-compose-prod.yml up
+# Development
 
-Run the server:
+## dependencies
+For developping you will need to install node dependencies of both the backend and the frontend.
+You may want to use [nvm](https://github.com/nvm-sh/nvm) to install a recent version of *node.js* with a compatible *npm* version.
+Move to `backend/` and `frontend/` and install the dependencies by entering:
+```
+npm install
+```
 
-sudo docker-compose -f docker-compose.prod.yml build
+## start dev servers
+Start the backend development server by entering from the `backend/` directory:
+```
+npm run dev
+```
 
-Run the server:
+Start the fronend development server by entering from the `frontend/` directory:
+```
+npm start
+```
 
-sudo docker-compose -f docker-compose.yml build
-
-Run the server:
-
-sudo docker-compose -f docker-compose.yml up
-
+A browser will automatically open and load the application served at http://localhost:3000/.
