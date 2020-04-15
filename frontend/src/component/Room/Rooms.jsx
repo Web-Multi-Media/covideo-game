@@ -49,7 +49,7 @@ function Rooms(props) {
               </TableHead>
               <TableBody>
                 {
-                  rooms.map((room) => (<TableRow key={room.id}>
+                  rooms.map((room) => (!room.settings.private && <TableRow key={room.id}>
                     <TableCell component="th" scope="row">
                       <b>{room.id}</b>
                     </TableCell>

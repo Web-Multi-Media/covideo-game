@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -22,19 +24,21 @@ function RoomSettings(props) {
   const [timeToGuess3rdRound, setTimeToGuess3rdRound] = React.useState(props.roomSettings.timesToGuessPerSet[2]);
   const [numWordsPerPlayer, setNumWordsPerPlayer] = React.useState(props.roomSettings.numWordsPerPlayer);
   const [numMaxPlayers, setNumMaxPlayers] = React.useState(props.roomSettings.numMaxPlayers);
+  const [privateRoom, setPrivateRoom] = React.useState(props.roomSettings.private);
   
   const handleOnChange = function() {
     const settings = {
       timesToGuessPerSet: [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound],
       numWordsPerPlayer: numWordsPerPlayer,
       numMaxPlayers: numMaxPlayers,
+      private: privateRoom
     };
     props.onChangeSettings(settings);
   }
 
   useEffect(() => {
     handleOnChange();
-  }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers]);
+  }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers, privateRoom]);
 
   return (<React.Fragment>
     <TextIcon size="h4" icon={<SettingsIcon fontSize="large"/>} text="Settings"/>
@@ -81,6 +85,19 @@ function RoomSettings(props) {
           disabled={!props.isGameMaster}
           value={props.roomSettings.numMaxPlayers}
           onChange={(event) => setNumMaxPlayers(parseInt(event.target.value))}
+        />
+        <FormControlLabel
+          value="left"
+          control={
+            <Checkbox 
+              color="primary"
+              checked={props.roomSettings.private}
+              disabled={!props.isGameMaster}
+              onChange={(event) => setPrivateRoom(event.target.checked)}
+            />
+          }
+          label="Private"
+          labelPlacement="left"
         />
       </div>
     </form>
