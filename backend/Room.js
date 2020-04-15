@@ -40,6 +40,7 @@ Room.prototype = {
       timesToGuessPerSet: [30, 30, 40],
       numWordsPerPlayer: 3,
       numMaxPlayers: 10,
+      private: false,
     }
   },
   addPlayer: function(player) {
