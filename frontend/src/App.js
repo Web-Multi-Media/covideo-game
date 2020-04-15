@@ -41,6 +41,7 @@ function App() {
     team1Score: 0,
     team2Score: 0,
     words: [],
+    wordsValidated: [],
     setFinished: false,
     set: 1,
     activePlayer: '',
@@ -56,8 +57,26 @@ function App() {
     roomSettings: {}
   });
   const [img, setImg] = useState('');
-
   const location = useLocation();
+  const players = gameState.players;
+  const player = gameState.player; // Websocket player name
+  const currentPlayer = _.filter(players, {'name': player})[0];  // Websocket player data
+  const activePlayer = gameState.activePlayer;
+  const gameMaster = gameState.gameMaster;
+  const isGameMaster = gameState.isGameMaster;
+  const roomId = gameState.roomId;
+  const rooms = gameState.rooms;
+  const teams = gameState.teams;
+  const words = gameState.words;
+  const team1Score = gameState.team1Score;
+  const team2Score = gameState.team2Score;
+  const set = gameState.set;
+  const roomSettings = gameState.roomSettings;
+  const startTimer = gameState.startTimer;
+  const duration = gameState.duration;
+  const gifUrl = gameState.gifUrl;
+  const wordsValidated = gameState.wordsValidated;
+  const debug = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
     ws.onopen = function() {
@@ -70,7 +89,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (gameState.joinedRoom === true) {
+    if (gameState.joinedRoom === true && gameState.socketConnected) {
       ws.send(JSON.stringify({type: 'getPlayers'}));
     }
   }, [gameState.joinedRoom]);
@@ -159,16 +178,6 @@ function App() {
     ws.send(JSON.stringify({type: 'setGif', gifUrl: gifUrl}));
   };
 
-  const players = gameState.players;
-  const gameMaster = gameState.gameMaster;
-  const isGameMaster = gameState.isGameMaster;
-  const roomId = gameState.roomId;
-  const rooms = gameState.rooms;
-  const player = gameState.player;
-  const debug = process.env.NODE_ENV === 'development';
-  var currentPlayer = _.filter(players, {'name': player})[0];
-  const roomSettings = gameState.roomSettings;
-
   // DEBUG
   let debugGameState = _.cloneDeep(gameState);
   delete debugGameState.rooms;
@@ -192,25 +201,37 @@ function App() {
             players={players}
             currentPlayer={currentPlayer}
             gameMaster={gameMaster}
+            roomId={roomId}
+            roomSettings={roomSettings}
+            words={words}
             isGameMaster={isGameMaster}
+            kickPlayer={kickPlayer}
             onGameReady={sendGameIsReady}
             onChangeSettings={sendRoomSettings}
-            roomSettings={roomSettings}
             onSendUsername={sendUsername}
             onSendWord={sendWord}
-            onDeleteWord={deleteWord}
-            roomId={roomId}
-            kickPlayer={kickPlayer}/>
+            onDeleteWord={deleteWord}/>
         </React.Fragment>
       }
       {
-        gameState.gameIsReady && 
-          <GameScreen 
-            gameState={gameState} 
-            startRound={startRound} 
-            validateWord={validateWord} 
-            nextWord={nextWord} 
+        gameState.gameIsReady &&
+          <GameScreen
+            gameMaster={gameMaster}
+            currentPlayer={currentPlayer}
+            activePlayer={activePlayer}
+            teams={teams}
+            team1Score={team1Score}
+            team2Score={team2Score}
+            startRound={startRound}
+            startTimer={startTimer}
+            validateWord={validateWord}
+            nextWord={nextWord}
             sendGif={chooseGif}
+            gifUrl={gifUrl}
+            set={set}
+            words={words}
+            wordsValidated={wordsValidated}
+            duration={duration}
           />
       }
     </Container>

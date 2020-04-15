@@ -172,6 +172,7 @@ function startRound(ws, obj, room) {
       response.startTimer = false;
       response.activePlayer = room.choosePlayer();
       response.words = room.wordsOfRound;
+      response.wordsValidated = [];
       response.gifUrl = '';
       broadcast(response, room);
       clearInterval(WinnerCountdown);
@@ -197,6 +198,11 @@ function gameIsReady(ws, obj, room) {
 
 function addWord(ws, obj, room) {
   room.addWord(obj.word);
+  let response = {
+    type: 'updateState',
+    words: room.words
+  }
+  broadcast(response, room);
 }
 
 function deleteWord(ws, obj, room) {
@@ -208,6 +214,7 @@ function validateWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     words: room.wordsOfRound,
+    wordsValidated: room.wordsValidated,
     team1Score: room.scoreFirstTeam,
     team2Score: room.scoreSecondTeam,
     set: room.set,

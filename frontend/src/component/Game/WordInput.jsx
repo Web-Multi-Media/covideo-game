@@ -1,10 +1,9 @@
 import React from 'react';
-import './WordInput.css'
 import Button from "@material-ui/core/Button";
 
 function WordInput(props) {
 
-  return (<div className="navBar">
+  return (<React.Fragment>
     {
       props.startTimer && <React.Fragment>
           <p>Word to guess : {props.wordToGuess}
@@ -23,7 +22,8 @@ function WordInput(props) {
           startRound
         </Button>
     }
-  </div>);
+    </React.Fragment>
+);
 }
 
 export default WordInput;
