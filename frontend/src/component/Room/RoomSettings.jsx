@@ -50,9 +50,7 @@ function RoomSettings(props) {
           label="Time first round"
           disabled={!props.isGameMaster}
           value={props.roomSettings.timesToGuessPerSet[0]}
-          onChange={(event) => {
-            setTimeToGuess1stRound(parseInt(event.target.value));
-          }}
+          onChange={(event) => setTimeToGuess1stRound(parseInt(event.target.value))}
         />
         <TextField
           id="standard-time-2nd-round"

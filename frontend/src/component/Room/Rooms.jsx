@@ -25,6 +25,7 @@ function Rooms(props) {
   const joinRoom = (roomId) => {
     props.joinRoom(roomId);
   }
+  
   return (<div>
     <TextIcon size="h4" icon={<MeetingRoomIcon fontSize="large"/>} text="Rooms"/>
     {
@@ -70,7 +71,7 @@ function Rooms(props) {
                         className="margButt" 
                         variant="contained" 
                         color="primary" 
-                        onClick={joinRoom.bind(this, room.id)}
+                        onClick={() => joinRoom(room.id)}
                         disabled={(room.players.length >= room.settings.numMaxPlayers)}>
                           Join
                         </Button>
