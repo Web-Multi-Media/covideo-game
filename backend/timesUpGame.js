@@ -196,11 +196,11 @@ function gameIsReady(ws, obj, room) {
 }
 
 function addWord(ws, obj, room) {
-  room.addWord(obj.word);
+  room.addWord(obj.word, ws.id);
 }
 
 function deleteWord(ws, obj, room) {
-  room.deleteWord(obj.word);
+  room.deleteWord(obj.word, ws.id);
 }
 
 function validateWord(ws, obj, room) {

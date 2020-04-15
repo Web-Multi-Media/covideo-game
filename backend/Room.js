@@ -5,7 +5,7 @@ function Room(id) {
   this.name = "";
   this.id = id;
   this.players = [];
-  this.words = [];
+  this.wordsPerPlayer = {};
   this.wordsOfRound = [];
   this.teams = [];
   this.gameMaster = null;
@@ -49,6 +49,7 @@ Room.prototype = {
       ...this.players,
       player
     ];
+    this.wordsPerPlayer[player.id] = [];
     this.numberOfPlayer = this.players.length;
   },
   removePlayer: function(id) {
@@ -56,24 +57,25 @@ Room.prototype = {
     this.players = _.filter(this.players, function(item) {
       return item.id != id;
     });
+    this.wordsPerPlayer.delete(player.id);
     this.numberOfPlayer = this.players.length;
   },
-  addWord: function(word) {
+  addWord: function(word, playerId) {
     this.updateActivity();
-    this.words = [
+    this.wordsPerPlayer[playerId] = [
       word,
-      ...this.words,
-    ]
+      ...this.wordsPerPlayer[playerId]
+    ];
   },
-  deleteWord: function(word) {
+  deleteWord: function(word, playerId) {
     // delete only one occurence of the word to be deleted
     this.updateActivity();
-    this.words = (function(words, wordToRemove) {
+    this.wordsPerPlayer[playerId] = (function(words, wordToRemove) {
       for (var i = words.length - 1; i >= 0; i--) {
         if (words[i] === wordToRemove) {
           words.splice(i, 1);
           return words;
-        }}})(this.words, word);
+        }}})(this.wordsPerPlayer[playerId], word);
   },
   startGame: function() {
     this.updateActivity();
@@ -82,7 +84,14 @@ Room.prototype = {
   startSet: function() {
     this.updateActivity();
     this.setFinished = false;
-    this.wordsOfRound = utils.shuffle(this.words);
+    let words = []
+    for (var playerId in this.wordsPerPlayer) {
+      words = [
+        ...words,
+        ...this.wordsPerPlayer[playerId]
+      ];
+    }
+    this.wordsOfRound = utils.shuffle(words);
   },
   startRound: function() {
     this.updateActivity();
@@ -120,7 +129,7 @@ Room.prototype = {
   },
   resetGame: function() {
     this.updateActivity();
-    this.words = [];
+    this.wordsPerPlayer = {};
     this.wordsOfRound = [];
     this.round = 0;
     this.set = 1;
@@ -134,7 +143,6 @@ Room.prototype = {
     return {
       name: this.name,
       id: this.id,
-      words: this.words,
       wordsOfRound: this.wordsOfRound,
       teams: this.teams,
       hasAGameMaster: this.hasAGameMaster,
