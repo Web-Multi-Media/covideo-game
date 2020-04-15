@@ -1,12 +1,10 @@
 "use strict";
-
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
 import handleServerResponse from "./webSocket/rootedFunctions";
 import {useLocation} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import GameScreen from "./pages/GameScreen";
 import SelectRoomScreen from "./pages/SelectRoomScreen";
@@ -14,13 +12,12 @@ import RoomScreen from "./pages/RoomScreen";
 import AppMenu from "./component/AppMenu/AppMenu";
 import Header from "./component/Header/Header";
 import './App.css';
+import { useCookies } from 'react-cookie';
 
 const config = require('./env.json')[process.env.NODE_ENV || 'development']
 const WS_PORT = config.WS_PORT;
 const HOST = config.HOST;
-const URL = `ws://${HOST}:${WS_PORT}`;
-let ws = new WebSocket(URL);
-const id = Math.floor(Math.random() * 1000);
+let ws = {};
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,8 +26,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App() {
+
   const classes = useStyles();
   const [gameState, setGameState] = useState({
+    playerId:'',
+    roomId: '',
     player: '',
     players: [],
     isGameMaster: false,
@@ -49,17 +49,23 @@ function App() {
     round: 0,
     timeLeft: 0,
     joinedRoom: false,
-    roomId: '',
     rooms: [],
     socketConnected: false,
     gifUrl: '',
     roomSettings: {}
   });
-  const [img, setImg] = useState('');
-
   const location = useLocation();
+  const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
 
   useEffect(() => {
+
+    let URL = `ws://${HOST}:${WS_PORT}`;
+    URL += '?';
+    URL += cookies.playerId !== undefined ? `playerId=${cookies.playerId}` : '';
+    URL += cookies.roomId !== undefined ? `&roomId=${cookies.roomId}` : '';
+    URL += cookies.player !== undefined ? `&playerName=${cookies.player}` : '';
+    ws = new WebSocket(URL);
+
     ws.onopen = function() {
       getRooms();
       setGameState({
@@ -70,7 +76,19 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (gameState.joinedRoom === true) {
+    if(gameState.roomId !== cookies.roomId) {
+      setCookie('roomId', gameState.roomId, { path: '/' });
+    }
+    if(gameState.playerId !== cookies.playerId) {
+      setCookie('playerId', gameState.playerId, { path: '/' });
+    }
+    if(gameState.player !== cookies.player) {
+      setCookie('player', gameState.player, { path: '/' });
+    }
+  }, [gameState.roomId, gameState.playerId, gameState.player]);
+
+  useEffect(() => {
+    if (gameState.joinedRoom === true && gameState.socketConnected) {
       ws.send(JSON.stringify({type: 'getPlayers'}));
     }
   }, [gameState.joinedRoom]);
@@ -84,18 +102,22 @@ function App() {
   }, [gameState.socketConnected]);
 
   useEffect(() => {
-    if (gameState.roomId !== '' && gameState.joinedRoom === false) {
+    if (gameState.roomId !== '' && gameState.joinedRoom === false && gameState.socketConnected) {
       joinRoom(gameState.roomId);
     }
   }, [gameState.roomId]);
 
   useEffect(() => {
+
+
     ws.onmessage = (message) => {
       const obj = JSON.parse(message.data);
       console.log('new event : ' + obj.type);
       handleServerResponse(obj, gameState, setGameState);
     };
   });
+
+
 
   const getRooms = () => {
     ws.send(JSON.stringify({type: 'getRooms'}));
@@ -161,7 +183,7 @@ function App() {
 
   const players = gameState.players;
   const gameMaster = gameState.gameMaster;
-  const isGameMaster = gameState.isGameMaster;
+  const isGameMaster = gameState.playerId === gameState.gameMaster;
   const roomId = gameState.roomId;
   const rooms = gameState.rooms;
   const player = gameState.player;
@@ -180,6 +202,7 @@ function App() {
     <CssBaseline/>
     <AppMenu/>
     <Container className={classes.container} fixed="fixed" maxWidth="xl">
+      <p>{JSON.stringify(gameState)}</p>
       {
         !gameState.gameIsReady && !gameState.joinedRoom && <React.Fragment>
             <Header/>
@@ -204,12 +227,12 @@ function App() {
         </React.Fragment>
       }
       {
-        gameState.gameIsReady && 
-          <GameScreen 
-            gameState={gameState} 
-            startRound={startRound} 
-            validateWord={validateWord} 
-            nextWord={nextWord} 
+        gameState.gameIsReady &&
+          <GameScreen
+            gameState={gameState}
+            startRound={startRound}
+            validateWord={validateWord}
+            nextWord={nextWord}
             sendGif={chooseGif}
           />
       }

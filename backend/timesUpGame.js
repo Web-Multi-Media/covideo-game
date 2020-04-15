@@ -34,6 +34,18 @@ function messageHandler(message, ws, wss) {
   rootingFunction[obj.type](ws, obj, room);
 }
 
+function connectPlayer(ws) {
+  let response = {
+    type: 'updateState',
+    playerId: ws.id,
+    roomId: ws.roomId !== '' ? ws.roomId : '',
+    player : ws.player !== '' ? ws.player : '',
+  };
+  const roomInfo = rooms.get(ws.roomId) ? rooms.get(ws.roomId).serialize() : {};
+  console.log('add player id ' + response.playerId);
+  ws.send(JSON.stringify({...response, ...roomInfo}));
+}
+
 function getRooms(ws, obj) {
   var rooms_data = [];
   for (const [id, room] of rooms.entries()) {
@@ -149,7 +161,7 @@ function changeRoomSettings(ws, obj, room) {
   let response = {
     type: 'updateState',
     roomSettings: room.settings
-  }
+  };
   broadcast(response, room);
   broadcastRoomsInfo();
 }
@@ -262,7 +274,7 @@ function resetGame(ws, obj, room) {
   let response = {
     type: 'updateState',
     gameIsReady: false
-  }
+  };
   broadcast(response, room);
   console.log('fin de partie');
 }
@@ -281,4 +293,5 @@ function broadcastRoomsInfo() {
 }
 
 module.exports.messageHandler = messageHandler;
+module.exports.connectPlayer = connectPlayer;
 module.exports.rooms = rooms;
