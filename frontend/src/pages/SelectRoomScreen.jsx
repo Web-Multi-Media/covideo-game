@@ -15,6 +15,7 @@ function SelectRoomScreen(props) {
   const [roomId, setRoomId] = useState('');
   const classes = useStyles();
   const rooms = props.rooms;
+  const currentPlayer = props.currentPlayer;
 
   const createNewRoom = () => {
     props.createNewRoom();
@@ -33,17 +34,18 @@ function SelectRoomScreen(props) {
   }
 
   return (<React.Fragment>
-    <Rooms rooms={rooms} joinRoom={joinRoom}/>
-    <div className="inputLine">
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.button}
-        startIcon={<AddIcon />}
-        onClick={createNewRoom}>
-        Create room
-      </Button>
-    </div>
+    <Rooms
+      currentPlayer={currentPlayer}
+      rooms={rooms}
+      joinRoom={joinRoom}/>
+    <Button
+      variant="contained"
+      color="primary"
+      className={classes.button}
+      startIcon={<AddIcon />}
+      onClick={createNewRoom}>
+      Create room
+    </Button>
   </React.Fragment>);
 }
 

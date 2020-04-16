@@ -8,6 +8,7 @@ var rooms = new Map();
 
 let rootingFunction = {
   'addPlayer': addPlayer,
+  'changePlayerName': changePlayerName,
   'addWord': addWord,
   'deleteWord': deleteWord,
   'changeRoomSettings': changeRoomSettings,
@@ -58,22 +59,22 @@ function connectPlayer(ws, urlParams) {
     },
     room: {
       id: ws.roomId,
+      settings: {}
     },
     global: {
-      rooms: rooms_data
+      rooms: rooms_data,
+      joinedRoom: roomId !== ''
     }
   };
-  var roomData = {};
-  var room = rooms.get(ws.roomId);
+  let room = rooms.get(ws.roomId);
   if (room){
-    roomData = room.serialize();
+    response.room = room.serialize();
   }
-  console.log('add player id ' + response.player.id);
-  ws.send(JSON.stringify({...response, ...roomData}));
+  ws.send(JSON.stringify(response));
 }
 
 function getRooms(ws, obj) {
-  var rooms_data = [];
+  let rooms_data = [];
   for (const [id, room] of rooms.entries()) {
     console.log('Found room id ' + id + '');
     rooms_data.push(room.serialize());
@@ -87,23 +88,26 @@ function getRooms(ws, obj) {
   ws.send(JSON.stringify(response));
 }
 
+function addPlayerToRoom(ws, room){
+  let playerName = ws.playerName;
+  console.log("player name: " + ws.playerName)
+  if (playerName === ''){
+    playerName = "Anon" + ws.id;
+  }
+  let player = new playerFunction.Player(ws.id, playerName);
+  room.addPlayer(player);
+}
+
 function createRoom(ws, obj) {
   let roomId = utils.getUniqueID();
-  while (rooms.has(roomId)) {
-    roomId = utils.getUniqueID();
-  }
 
   // Add new room
   let room = new roomfunc.Room(roomId);
   room.setGameMaster(ws.id);
   rooms.set(roomId, room);
 
-  // If player name is defined in websocket, add player to room
-  let playerName = ws.playerName;
-  if (playerName){
-    player = new playerFunction.Player(ws.id, ws.playerName);
-    room.addPlayer(player);
-  }
+  // Add player to room
+  addPlayerToRoom(ws, room);
 
   //  Send room info for current client and connect him to the room
   console.log('Create room ' + roomId);
@@ -123,7 +127,6 @@ function createRoom(ws, obj) {
 }
 
 function joinRoom(ws, obj) {
-  // Get room
   let roomId = obj.roomId;
   let room = rooms.get(roomId);
 
@@ -131,12 +134,8 @@ function joinRoom(ws, obj) {
     // Set room id in web socket
     ws.roomId = roomId;
 
-    // Add user to room if playerName is defined in websocket
-    let playerName = ws.playerName;
-    if (playerName){
-      player = new playerFunction.Player(ws.id, ws.playerName);
-      room.addPlayer(player);
-    }
+    // Add user to room
+    addPlayerToRoom(ws, room);
 
     // Set user as game master if none exist
     if (room.gameMaster === null) {
@@ -163,24 +162,37 @@ function joinRoom(ws, obj) {
         id: ''
       }
     };
+    ws.roomId = '';
     ws.send(JSON.stringify(response));
   }
 }
 
-function leaveRoom(ws, obj, room) {
+function leaveRoom(ws, obj) {
   let roomId = ws.roomId;
   let id = obj.playerId;
-  var room = rooms.get(roomId);
-  var gameMaster = room.gameMaster;
+  let room = rooms.get(roomId);
+  let gameMaster = room.gameMaster;
 
   // Remove player from room
   // Set state back to room list
   console.log('Removing ' + id + ' from room ' + roomId);
   room.removePlayer(id);
+
+  // Get list of rooms
+  let rooms_data = [];
+  for (const [id, room] of rooms.entries()) {
+    console.log('Found room id ' + id + '');
+    rooms_data.push(room.serialize());
+  }
+
   let response = {
     type: 'updateState',
     global: {
-      joinedRoom: false
+      joinedRoom: false,
+      rooms: rooms_data
+    },
+    room: {
+      id: ''
     }
   };
   webSockets.clients.forEach(function each(client) {
@@ -191,7 +203,7 @@ function leaveRoom(ws, obj, room) {
 
   // If player leaving is the game master, appoint a new game master
   // If no more players are left, set gameMaster to null.
-  response2 = {
+  let response2 = {
     type:'updateState',
     room: {
       players: room.players
@@ -212,15 +224,23 @@ function leaveRoom(ws, obj, room) {
   broadcast(response2, room);
 }
 
-function addPlayer(ws, obj, room) {
-  var player = new playerFunction.Player(ws.id, obj.player);
-  room.addPlayer(player);
+function changePlayerName(ws, obj){
+  let room = rooms.get(ws.roomId);
+  let players = room.players;
+  let player = {};
+  room.players.map(function(p){
+    if (p.id === ws.id){
+      player = p;
+      ws.playerName = obj.playerName;
+      p.name = obj.playerName;
+    }
+  });
   let response = {
     type: 'updateState',
     room: {
       players: room.players
     }
-  };
+  }
   let response2 = {
     type: 'updateState',
     player: player,
@@ -228,12 +248,37 @@ function addPlayer(ws, obj, room) {
       joinedRoom: true,
     },
     room: {
-      id: room.id
+      id: room.id,
     }
   };
   ws.send(JSON.stringify(response2));
   broadcast(response, room);
   broadcastRoomsInfo();
+}
+
+function addPlayer(ws, obj, room) {
+  // var player = new playerFunction.Player(ws.id, obj.player);
+  // var room = rooms.get(roomId);
+  // room.addPlayer(player);
+  // let response = {
+  //   type: 'updateState',
+  //   room: {
+  //     players: room.players
+  //   }
+  // };
+  // let response2 = {
+  //   type: 'updateState',
+  //   player: player,
+  //   global: {
+  //     joinedRoom: true,
+  //   },
+  //   room: {
+  //     id: room.id,
+  //   }
+  // };
+  // ws.send(JSON.stringify(response2));
+  // broadcast(response, room);
+  // broadcastRoomsInfo();
 }
 
 function changeRoomSettings(ws, obj, room) {

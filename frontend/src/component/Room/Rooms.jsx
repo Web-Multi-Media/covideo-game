@@ -22,6 +22,7 @@ const useStyles = makeStyles({
 function Rooms(props) {
   const classes = useStyles();
   const rooms = props.rooms;
+  const currentPlayer = props.currentPlayer;
   const joinRoom = (roomId) => {
     props.joinRoom(roomId);
   }
@@ -56,16 +57,17 @@ function Rooms(props) {
                     <TableCell align="left">{new Date(room.lastActivity).toDateString()}</TableCell>
                     <TableCell align="left">{room.scoreFirstTeam} - {room.scoreSecondTeam}</TableCell>
                     <TableCell align="left">
-                      <div>
-                        {
-                          room.players.map((player) => (
-                            <PlayerAvatar
-                              player={player}
-                              gameMaster={room.gameMaster}
-                              gridContainerProps={{'justify': 'left'}}/>
-                          ))
-                        }
-                      </div>
+                    {
+                      room.players.map((player) => (
+                        <PlayerAvatar
+                          key={player.id}
+                          player={player}
+                          isGameMaster={player.id === room.gameMaster}
+                          isCurrentPlayer={player.id == currentPlayer.id}
+                          gridContainerProps={{'justify': 'flex-start'}}
+                          onSendUsername={props.onSendUsername}/>
+                      ))
+                    }
                     </TableCell>
                     <TableCell align="left">
                       <Button

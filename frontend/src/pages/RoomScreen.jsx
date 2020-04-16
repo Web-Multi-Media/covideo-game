@@ -9,6 +9,7 @@ import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import AddIcon from '@material-ui/icons/Add';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -32,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: 20
+  },
+  backButton: {
+    marginBottom: 10,
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -96,8 +100,23 @@ function RoomScreen(props) {
   };
 
   return (<React.Fragment>
+
+    {/* Leave room */}
+    <Button
+      className={classes.backButton}
+      variant="contained"
+      color="secondary"
+      size="medium"
+      onClick={props.leaveRoom.bind(this, currentPlayer.id)}
+      startIcon={<ArrowBackIcon fontSize="large"/>}>
+    Rooms
+    </Button>
+
+    {/* Room UI (settings, players, sharing) */}
     <Paper className={classes.paper}>
     <Grid container spacing={2}>
+
+      {/* Room settings panel */}
       <Grid item xs={5}>
       <RoomSettings
         isGameMaster={props.isGameMaster}
@@ -105,9 +124,9 @@ function RoomScreen(props) {
         onChangeSettings={props.onChangeSettings}
       />
       </Grid>
-
       <Divider orientation="vertical" flexItem/>
 
+      {/* Players table */}
       <Grid item xs={5}>
       <Players
         currentPlayer={currentPlayer}
@@ -117,15 +136,15 @@ function RoomScreen(props) {
         kickPlayer={props.kickPlayer}
         onSendUsername={props.onSendUsername}/>
       </Grid>
-
       <Divider flexItem />
 
+      {/* Room sharing */}
       <Grid item xs={5}>
       <RoomShare url={room_url}/>
       </Grid>
-
       <Divider orientation="vertical" flexItem />
 
+      {/* Words */}
       <Grid item xs={5}>
       <TextIcon size="h4" icon={<LibraryBooksIcon fontSize="large"/>} text="Words"/>
       <p>Add your own words to the guess list !</p>
@@ -164,6 +183,8 @@ function RoomScreen(props) {
       </Grid>
     </Grid>
     </Paper>
+
+    {/* Start game button */}
     <Grid container>
       <Grid item xs/>
       <Grid item xs>

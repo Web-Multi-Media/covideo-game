@@ -56,8 +56,8 @@ function GameScreen(props) {
               </Typography>
               <PlayerAvatar
                 player={activePlayer}
-                currentPlayer={props.currentPlayer}
-                gameMaster={props.gameMaster}
+                isCurrentPlayer={activePlayer.id === props.currentPlayer.id}
+                isGameMaster={props.isGameMaster}
                 gridContainerProps={{playerAvatarGridProps}}/>
             </Paper>
           </Grid>

@@ -8,8 +8,8 @@ import alarmClock from "./alarm-clock.png";
 
 const useStyles = makeStyles({});
 const style = {
-  'margin-right': '5px',
-  'padding-bottom': '5px',
+  'marginRight': '5px',
+  'paddingBottom': '5px',
   'width': '50px',
   'height': '50px'
 }
@@ -18,7 +18,7 @@ function AppMenu(props) {
   const classes = useStyles();
   return (<React.Fragment>
     <AppBar position="static">
-    <Toolbar classes='toolbar'>
+    <Toolbar className='toolbar'>
       <IconButton size="small" edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
       <img style={style} src={alarmClock} alt="Alarm Clock Logo"/>
       </IconButton>

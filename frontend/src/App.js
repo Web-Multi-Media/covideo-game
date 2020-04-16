@@ -128,7 +128,7 @@ function App() {
   };
 
   const sendUsername = (name) => {
-    ws.send(JSON.stringify({type: 'addPlayer', player: name}));
+    ws.send(JSON.stringify({type: 'changePlayerName', playerName: name}));
   };
 
   const sendRoomSettings = (settings) => {
@@ -183,13 +183,18 @@ function App() {
   return (<React.Fragment>
     <CssBaseline/>
     <AppMenu/>
-    <Container className={classes.container} fixed="fixed" maxWidth="xl">
+    <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
       {/*<p>{JSON.stringify(gameState)}</p>*/}
       {
         !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>
             <Header/>
-            <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={gameState.global.rooms}/>
+            <SelectRoomScreen
+              currentPlayer={gameState.player}
+              rooms={gameState.global.rooms}
+              createNewRoom={createNewRoom}
+              joinRoom={joinRoom}
+              getRooms={getRooms}/>
           </React.Fragment>
       }
       {
@@ -203,6 +208,7 @@ function App() {
             words={gameState.room.wordsOfRound}
             isGameMaster={isGameMaster}
             kickPlayer={kickPlayer}
+            leaveRoom={leaveRoom}
             onGameReady={sendGameIsReady}
             onChangeSettings={sendRoomSettings}
             onSendUsername={sendUsername}

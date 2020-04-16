@@ -52,24 +52,27 @@ function Players(props) {
                   <TableCell component="th" scope="row">
                     <PlayerAvatar
                       player={p}
-                      currentPlayer={currentPlayer}
-                      gameMaster={gameMaster}/>
+                      isCurrentPlayer={p.id == currentPlayer.id}
+                      isGameMaster={p.id == gameMaster}
+                      gameMaster={gameMaster}
+                      onSendUsername={props.onSendUsername}/>
                   </TableCell>
                   <TableCell align="left">{p.id}</TableCell>
                   <TableCell align="left">
                     {
-                      p.id !== gameMaster && isGameMaster &&
-                          <Button id="outlined-basic-name" className="margButt" variant="contained" color="primary" onClick={props.kickPlayer.bind(this, p.id)}>
-                            Kick player
-                          </Button>
+                      isGameMaster && p.id != currentPlayer.id &&
+                      <Button
+                        id="outlined-basic-name"
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={props.kickPlayer.bind(this, p.id)}>
+                      Kick player
+                      </Button>
                     }
                   </TableCell>
                 </TableRow>))
               }
-              {currentPlayer.name === '' &&
-                <TableCell component="th" scope="row">
-                <PlayerAdd onSendUsername={props.onSendUsername}/>
-                </TableCell>}
             </TableBody>
           </Table>
         </TableContainer>
