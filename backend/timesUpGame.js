@@ -100,7 +100,8 @@ function createRoom(ws, obj) {
   // If player name is defined in websocket, add player to room
   let playerName = ws.playerName;
   if (playerName){
-    addPlayer(ws, ws.playerName, room);
+    player = new playerFunction.Player(ws.id, ws.playerName);
+    room.addPlayer(player);
   }
 
   //  Send room info for current client and connect him to the room
