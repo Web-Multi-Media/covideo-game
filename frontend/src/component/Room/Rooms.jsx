@@ -69,21 +69,12 @@ function Rooms(props) {
                       </div>
                     </TableCell>
                     <TableCell align="left">
-<<<<<<< HEAD
                       <Button 
                         id="outlined-basic-name" 
                         className="margButt" 
                         variant="contained" 
                         color="primary" 
                         onClick={() => joinRoom(room.id)}
-=======
-                      <Button
-                        id="outlined-basic-name"
-                        className="margButt"
-                        variant="contained"
-                        color="primary"
-                        onClick={joinRoom.bind(this, room.id)}
->>>>>>> feature/add-cookies
                         disabled={(room.players.length >= room.settings.numMaxPlayers)}>
                           Join
                         </Button>
