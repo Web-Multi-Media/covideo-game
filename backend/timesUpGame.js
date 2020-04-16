@@ -34,6 +34,24 @@ function messageHandler(message, ws, wss) {
   rootingFunction[obj.type](ws, obj, room);
 }
 
+function connectPlayer(ws) {
+  let rooms_data = [];
+  for (const [id, room] of rooms.entries()) {
+    console.log('Found room id ' + id + '');
+    rooms_data.push(room.serialize());
+  }
+  let response = {
+    type: 'updateState',
+    playerId: ws.id,
+    roomId: ws.roomId !== '' ? ws.roomId : '',
+    player : ws.player !== '' ? ws.player : '',
+    rooms: rooms_data
+  };
+  const roomInfo = rooms.get(ws.roomId) ? rooms.get(ws.roomId).serialize() : {};
+  console.log('add player id ' + response.playerId);
+  ws.send(JSON.stringify({...response, ...roomInfo}));
+}
+
 function getRooms(ws, obj) {
   var rooms_data = [];
   for (const [id, room] of rooms.entries()) {
@@ -149,7 +167,7 @@ function changeRoomSettings(ws, obj, room) {
   let response = {
     type: 'updateState',
     roomSettings: room.settings
-  }
+  };
   broadcast(response, room);
   broadcastRoomsInfo();
 }
@@ -172,6 +190,7 @@ function startRound(ws, obj, room) {
       response.startTimer = false;
       response.activePlayer = room.choosePlayer();
       response.words = room.wordsOfRound;
+      response.wordsValidated = [];
       response.gifUrl = '';
       broadcast(response, room);
       clearInterval(WinnerCountdown);
@@ -196,7 +215,16 @@ function gameIsReady(ws, obj, room) {
 }
 
 function addWord(ws, obj, room) {
+<<<<<<< HEAD
   room.addWord(obj.word, ws.id);
+=======
+  room.addWord(obj.word);
+  let response = {
+    type: 'updateState',
+    words: room.words
+  }
+  broadcast(response, room);
+>>>>>>> feature/add-cookies
 }
 
 function deleteWord(ws, obj, room) {
@@ -208,6 +236,7 @@ function validateWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     words: room.wordsOfRound,
+    wordsValidated: room.wordsValidated,
     team1Score: room.scoreFirstTeam,
     team2Score: room.scoreSecondTeam,
     set: room.set,
@@ -262,7 +291,7 @@ function resetGame(ws, obj, room) {
   let response = {
     type: 'updateState',
     gameIsReady: false
-  }
+  };
   broadcast(response, room);
   console.log('fin de partie');
 }
@@ -281,4 +310,5 @@ function broadcastRoomsInfo() {
 }
 
 module.exports.messageHandler = messageHandler;
+module.exports.connectPlayer = connectPlayer;
 module.exports.rooms = rooms;

@@ -46,6 +46,8 @@ function RoomScreen(props) {
   const [words, setWords] = useState([]);
   const room_url = `http://localhost:3000/${props.roomId}`;
   const currentPlayer = props.currentPlayer;
+  console.log("Num words " + props.words.length)
+  console.log("Total words " + props.roomSettings.numWordsPerPlayer * props.players.length)
 
   const handleWordChange = (event) => {
     setWordInput(event.target.value);
@@ -171,7 +173,7 @@ function RoomScreen(props) {
           color="primary"
           size="large"
           onClick={props.onGameReady}
-          disabled={props.isGameMaster === false}
+          disabled={props.isGameMaster === false || props.players.length >= 2 && props.words.length < props.roomSettings.numWordsPerPlayer * props.players.length}
           startIcon={<PlayCircleOutlineIcon fontSize="large"/>}>
           Start game
         </Button>

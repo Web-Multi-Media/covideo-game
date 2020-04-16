@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import "./GifScreen.css";
+import "./GifPanel.css";
 import Loader from "./Loader";
 import SearchOutput from "./SearchOutput";
 import Button from "@material-ui/core/Button";
 
-function GifScreen({sendGif, startTimer}) {
+function GifPanel({sendGif, startTimer}) {
 
   const [searchTerm, setsearchTerm] = useState('');
   const searchLimit = 12;
@@ -16,7 +16,6 @@ function GifScreen({sendGif, startTimer}) {
 
   const handleSearchInput = (target) => {
     setsearchTerm(target.value);
-
   };
 
   const fetchGifs = () => {
@@ -67,4 +66,4 @@ function GifScreen({sendGif, startTimer}) {
     </div>
   </React.Fragment >);
 }
-export default GifScreen;
+export default GifPanel;

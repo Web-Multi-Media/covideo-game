@@ -7,6 +7,7 @@ function Room(id) {
   this.players = [];
   this.wordsPerPlayer = {};
   this.wordsOfRound = [];
+  this.wordsValidated = [];
   this.teams = [];
   this.gameMaster = null;
   this.hasAGameMaster = false;
@@ -105,15 +106,27 @@ Room.prototype = {
   },
   validateWord: function(team) {
     this.updateActivity();
+
+    // Increase team score
     if (team === 1) {
       this.scoreFirstTeam++;
     } else {
       this.scoreSecondTeam++;
     }
+
+    // Add word to validated words
+    var word = this.wordsOfRound[0];
+    this.wordsValidated.push(word);
+
+    // Remove word from words of round
     this.wordsOfRound = _.tail(this.wordsOfRound);
+
+    // Set gif URL if needed
     this.gifUrl = this.gifUrl === ''
       ? this.gifUrl
       : '';
+
+    // If no more words, set is finished
     if (this.wordsOfRound.length === 0) {
       this.setFinished = true;
       this.set++;
@@ -131,6 +144,7 @@ Room.prototype = {
     this.updateActivity();
     this.wordsPerPlayer = {};
     this.wordsOfRound = [];
+    this.wordsValidated = [];
     this.round = 0;
     this.set = 1;
     this.scoreFirstTeam = 0;

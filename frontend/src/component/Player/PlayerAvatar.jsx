@@ -34,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
   small: {
     width: theme.spacing(4),
     height: theme.spacing(4)
+  },
+  avatar: {
+    marginRight: '5px',
+    display: 'inline-flex',
+    fontSize: '1rem'
   }
 }));
 
@@ -42,11 +47,10 @@ function PlayerAvatar(props) {
   const gameMaster = props.gameMaster;
   const currentPlayer = props.currentPlayer;
   const classes = useStyles();
-  console.log(currentPlayer);
-  console.log(player)
+  const gridContainerProps = props.gridContainerProps;
 
   return (<React.Fragment>
-    <Grid container="container" alignItems="center">
+    <Grid container="container" alignItems="center" {...gridContainerProps}>
       {
         player.id !== gameMaster && <React.Fragment>
             <Grid item="item">
@@ -60,14 +64,14 @@ function PlayerAvatar(props) {
       }
       {
         player.id === gameMaster && <React.Fragment>
-            <Grid item="item">
+            <Grid item>
               <Avatar style={{
                   'backgroundColor' : '#f2ed94'
                 }} src='https://api.iconify.design/mdi-crown.svg' className={classes.small}/>
             </Grid>
           </React.Fragment>
       }
-      <Grid item="item">
+      <Grid item>
         <b>{player.name.capitalize()}</b>
         {currentPlayer != null && player.id === currentPlayer.id && <React.Fragment>
          &nbsp;(you)
