@@ -32,6 +32,8 @@ function SelectRoomScreen(props) {
     props.getRooms();
   }
 
+  console.log(props.rooms);
+
   return (<React.Fragment>
     <Rooms rooms={rooms} joinRoom={joinRoom}/>
     <div className="inputLine">

@@ -4,6 +4,7 @@ const _ = require('lodash');
 function Room(id) {
   this.name = "";
   this.id = id;
+  this.gifUrl = "";
   this.players = [];
   this.wordsPerPlayer = {};
   this.wordsOfRound = [];
@@ -13,6 +14,9 @@ function Room(id) {
   this.hasAGameMaster = false;
   this.round = 0;
   this.set = 1;
+  this.startTimer = false;
+  this.activePlayer = "";
+  this.gameIsReady = false;
   this.setFinished = false;
   this.scoreFirstTeam = 0;
   this.scoreSecondTeam = 0;
@@ -102,10 +106,10 @@ Room.prototype = {
     this.round++;
     this.setFinished = false;
   },
-  choosePlayer: function() {
+  setActivePlayer: function() {
     this.updateActivity();
     this.wordsOfRound = utils.shuffle(this.wordsOfRound);
-    return utils.choosePlayer(this.round, this.teams, this.numberOfPlayer);
+    this.activePlayer = utils.setActivePlayer(this.round, this.teams, this.numberOfPlayer);
   },
   validateWord: function(team) {
     this.updateActivity();
@@ -163,6 +167,7 @@ Room.prototype = {
       wordsOfRound: this.wordsOfRound,
       teams: this.teams,
       hasAGameMaster: this.hasAGameMaster,
+      gameMaster: this.gameMaster,
       round: this.round,
       set: this.set,
       setFinished: this.setFinished,

@@ -28,93 +28,77 @@ const useStyles = makeStyles((theme) => ({
 function App() {
 
   const classes = useStyles();
+
   const [gameState, setGameState] = useState({
-    playerId:'',
-    roomId: '',
-    player: '',
-    players: [],
-    isGameMaster: false,
-    gameIsReady: false,
-    gameMaster: '',
-    teams: [],
-    playerTeam: 0,
-    team1Score: 0,
-    team2Score: 0,
-    words: [],
-    wordsValidated: [],
-    setFinished: false,
-    set: 1,
-    activePlayer: '',
-    startTimer: false,
-    duration: 0,
-    round: 0,
-    timeLeft: 0,
-    joinedRoom: false,
-    rooms: [],
-    socketConnected: false,
-    gifUrl: '',
-    roomSettings: {}
+    global: {
+      rooms: [],
+      socketConnected: false,
+      playerTeam: 0,
+      joinedRoom: false
+    },
+    player: {
+      id: '',
+      name: ''
+    },
+    room: {
+      name: '',
+      id: '',
+      gifUrl: '',
+      players: [],
+      wordsPerPlayer: {},
+      wordsOfRound: [],
+      wordsValidated: [],
+      teams: [],
+      gameMaster: null,
+      hasAGameMaster: false,
+      round: 0,
+      set: 1,
+      setFinished: false,
+      scoreFirstTeam: 0,
+      scoreSecondTeam: 0,
+      numberOfPlayer: 0,
+      lastActivity: Date.now(),
+      settings: {}
+    }
   });
   const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
   const [img, setImg] = useState('');
   const location = useLocation();
-  const players = gameState.players;
-  const player = gameState.player; // Websocket player name
-  const currentPlayer = _.filter(players, {'name': player})[0];  // Websocket player data
-  const activePlayer = gameState.activePlayer;
-  const gameMaster = gameState.gameMaster;
-  const isGameMaster = gameState.gameMaster === gameState.playerId;
-  const roomId = gameState.roomId;
-  const rooms = gameState.rooms;
-  const teams = gameState.teams;
-  const words = gameState.words;
-  const team1Score = gameState.team1Score;
-  const team2Score = gameState.team2Score;
-  const set = gameState.set;
-  const roomSettings = gameState.roomSettings;
-  const startTimer = gameState.startTimer;
-  const duration = gameState.duration;
-  const gifUrl = gameState.gifUrl;
-  const wordsValidated = gameState.wordsValidated;
+  const isGameMaster = gameState.room.gameMaster === gameState.player.id;
   const debug = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
-
     let URL = `ws://${HOST}:${WS_PORT}`;
     URL += '?';
     URL += cookies.playerId !== undefined ? `playerId=${cookies.playerId}` : '';
     URL += cookies.roomId !== undefined ? `&roomId=${cookies.roomId}` : '';
-    URL += cookies.player !== undefined ? `&playerName=${cookies.player}` : '';
+    URL += cookies.playerName !== undefined ? `&playerName=${cookies.playerName}` : '';
     ws = new WebSocket(URL);
-
     ws.onopen = function() {
       setGameState({
         ...gameState,
-        socketConnected: true
+        global: {
+          ...gameState.global,
+          socketConnected: true
+        }
       })
     }
   }, []);
 
   useEffect(() => {
-    if(gameState.roomId !== cookies.roomId) {
-      setCookie('roomId', gameState.roomId, { path: '/' });
+    if (gameState.room.id !== cookies.roomId) {
+      setCookie('roomId', gameState.room.id, { path: '/' });
     }
-    if(gameState.playerId !== cookies.playerId) {
-      setCookie('playerId', gameState.playerId, { path: '/' });
+    if (gameState.player.id !== cookies.playerId) {
+      setCookie('playerId', gameState.player.id, { path: '/' });
     }
-    if(gameState.player !== cookies.player) {
-      setCookie('player', gameState.player, { path: '/' });
+    if (gameState.player.name !== cookies.playerName) {
+      setCookie('playerName', gameState.player.name, { path: '/' });
     }
-  }, [gameState.roomId, gameState.playerId, gameState.player]);
+  }, [gameState.room.id, gameState.player.id, gameState.player.name]);
 
   useEffect(() => {
-    if (gameState.joinedRoom === true && gameState.socketConnected) {
-      ws.send(JSON.stringify({type: 'getPlayers'}));
-    }
-  }, [gameState.joinedRoom]);
-
-  useEffect(() => {
-    if (location.pathname !== '/' && gameState.socketConnected) {
+    if (location.pathname !== '/' && gameState.global.socketConnected) {
       console.log('has pathe name');
       console.log(location.pathname);
       ws.send(JSON.stringify({type: 'joinRoom', roomId: location.pathname.substring(1)}));
@@ -122,22 +106,18 @@ function App() {
   }, [gameState.socketConnected]);
 
   useEffect(() => {
-    if (gameState.roomId !== '' && gameState.joinedRoom === false && gameState.socketConnected) {
-      joinRoom(gameState.roomId);
+    if (gameState.room.id !== '' && gameState.global.joinedRoom === false && gameState.global.socketConnected) {
+      joinRoom(gameState.room.id);
     }
-  }, [gameState.roomId]);
+  }, [gameState.room.id]);
 
   useEffect(() => {
-
-
     ws.onmessage = (message) => {
       const obj = JSON.parse(message.data);
       console.log('new event : ' + obj.type);
       handleServerResponse(obj, gameState, setGameState);
     };
   });
-
-
 
   const getRooms = () => {
     ws.send(JSON.stringify({type: 'getRooms'}));
@@ -181,20 +161,16 @@ function App() {
   };
 
   const validateWord = () => {
-    ws.send(JSON.stringify({type: 'validateWord', team: gameState.playerTeam}));
+    ws.send(JSON.stringify({type: 'validateWord', team: gameState.global.playerTeam}));
   };
 
-  const resetSockets = () => {
-    ws.send(JSON.stringify({type: 'resetGame'}));
+  const leaveRoom = (playerId) => {
+    ws.send(JSON.stringify({type: 'leaveRoom', playerId: playerId}));
   };
 
-  const leaveRoom = (player_id) => {
-    ws.send(JSON.stringify({type: 'leaveRoom', player_id: player_id}));
-  };
-
-  const kickPlayer = (player_id) => {
-    console.log("Kicking player " + player_id);
-    ws.send(JSON.stringify({type: 'leaveRoom', player_id: player_id}))
+  const kickPlayer = (playerId) => {
+    console.log("Kicking player " + playerId);
+    ws.send(JSON.stringify({type: 'leaveRoom', playerId: playerId}))
   };
 
   const chooseGif = (gifUrl) => {
@@ -203,7 +179,7 @@ function App() {
 
   // DEBUG
   let debugGameState = _.cloneDeep(gameState);
-  delete debugGameState.rooms;
+  delete debugGameState.global.rooms;
   if (debug) {
     console.log(debugGameState);
   }
@@ -212,22 +188,23 @@ function App() {
     <CssBaseline/>
     <AppMenu/>
     <Container className={classes.container} fixed="fixed" maxWidth="xl">
-      <p>{JSON.stringify(gameState)}</p>
+      {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
+      {/*<p>{JSON.stringify(gameState)}</p>*/}
       {
-        !gameState.gameIsReady && !gameState.joinedRoom && <React.Fragment>
+        !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>
             <Header/>
-            <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={rooms}/>
+            <SelectRoomScreen createNewRoom={createNewRoom} joinRoom={joinRoom} getRooms={getRooms} rooms={gameState.global.rooms}/>
           </React.Fragment>
       }
       {
-        !gameState.gameIsReady && gameState.joinedRoom && <React.Fragment>
+        !gameState.gameIsReady && gameState.global.joinedRoom && <React.Fragment>
           <RoomScreen
-            players={players}
-            currentPlayer={currentPlayer}
-            gameMaster={gameMaster}
-            roomId={roomId}
-            roomSettings={roomSettings}
-            words={words}
+            players={gameState.room.players}
+            currentPlayer={gameState.player}
+            gameMaster={gameState.room.gameMaster}
+            roomId={gameState.room.id}
+            roomSettings={gameState.room.settings}
+            words={gameState.room.wordsOfRound}
             isGameMaster={isGameMaster}
             kickPlayer={kickPlayer}
             onGameReady={sendGameIsReady}
@@ -240,22 +217,22 @@ function App() {
       {
         gameState.gameIsReady &&
           <GameScreen
-            gameMaster={gameMaster}
-            currentPlayer={currentPlayer}
-            activePlayer={activePlayer}
-            teams={teams}
-            team1Score={team1Score}
-            team2Score={team2Score}
+            currentPlayer={gameState.player}
+            gameMaster={gameState.room.gameMaster}
+            activePlayer={gameState.room.activePlayer}
+            teams={gameState.room.teams}
+            team1Score={gameState.room.team1Score}
+            team2Score={gameState.room.team2Score}
+            startTimer={gameState.room.startTimer}
+            gifUrl={gameState.room.gifUrl}
+            set={gameState.room.set}
+            words={gameState.room.wordsOfRound}
+            wordsValidated={gameState.room.wordsValidated}
+            roomSettings={gameState.room.settings}
             startRound={startRound}
-            startTimer={startTimer}
             validateWord={validateWord}
             nextWord={nextWord}
             sendGif={chooseGif}
-            gifUrl={gifUrl}
-            set={set}
-            words={words}
-            wordsValidated={wordsValidated}
-            duration={duration}
           />
       }
     </Container>
