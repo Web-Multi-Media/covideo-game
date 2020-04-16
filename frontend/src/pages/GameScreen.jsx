@@ -34,12 +34,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function GameScreen(props) {
-  const [spacing, setSpacing] = React.useState(2);
   const classes = useStyles();
-  const handleChange = (event) => {
-    setSpacing(Number(event.target.value));
-  };
-  const player = {
+  const activePlayer = {
     id: 'noob',
     name: props.activePlayer
   };
@@ -59,7 +55,7 @@ function GameScreen(props) {
                 <b>Active player</b>
               </Typography>
               <PlayerAvatar
-                player={props.currentPlayer}
+                player={activePlayer}
                 currentPlayer={props.currentPlayer}
                 gameMaster={props.gameMaster}
                 gridContainerProps={{playerAvatarGridProps}}/>

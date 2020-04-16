@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Typography from "@material-ui/core/Typography";
 import alarmClock from './alarm-clock.png';
 import {makeStyles} from '@material-ui/core/styles';
@@ -7,7 +7,6 @@ import './Header.css';
 const useStyles = makeStyles({})
 
 function Header(props) {
-  const classes = useStyles();
   const style = {
     'display': 'block',
     'margin-left': 'auto',
