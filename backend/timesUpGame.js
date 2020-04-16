@@ -100,7 +100,7 @@ function createRoom(ws, obj) {
   // If player name is defined in websocket, add player to room
   let playerName = ws.playerName;
   if (playerName){
-    addPlayer(ws.id, ws.playerName, room);
+    addPlayer(ws, ws.playerName, room);
   }
 
   //  Send room info for current client and connect him to the room
@@ -215,7 +215,13 @@ function addPlayer(ws, obj, room) {
   };
   let response2 = {
     type: 'updateState',
-    player: player
+    player: player,
+    global: {
+      joinedRoom: true,
+    },
+    room: {
+      id: room.id
+    }
   };
   ws.send(JSON.stringify(response2));
   broadcast(response, room);
