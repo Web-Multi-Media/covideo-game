@@ -64,6 +64,9 @@ Room.prototype = {
       ...this.players,
       player
     ];
+    this.players = _.uniqBy(this.players, function (p) {
+      return p.id;
+    });
     this.wordsPerPlayer[player.id] = [];
     this.numberOfPlayer = this.players.length;
   },
