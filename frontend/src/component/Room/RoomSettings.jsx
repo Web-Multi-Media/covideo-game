@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -25,7 +25,7 @@ function RoomSettings(props) {
   const [numWordsPerPlayer, setNumWordsPerPlayer] = React.useState(props.roomSettings.numWordsPerPlayer);
   const [numMaxPlayers, setNumMaxPlayers] = React.useState(props.roomSettings.numMaxPlayers);
   const [privateRoom, setPrivateRoom] = React.useState(props.roomSettings.private);
-  
+
   const handleOnChange = function() {
     const settings = {
       timesToGuessPerSet: [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound],
@@ -87,7 +87,7 @@ function RoomSettings(props) {
         <FormControlLabel
           value="left"
           control={
-            <Checkbox 
+            <Checkbox
               color="primary"
               checked={props.roomSettings.private}
               disabled={!props.isGameMaster}

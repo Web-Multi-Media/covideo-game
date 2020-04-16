@@ -56,7 +56,7 @@ function connectPlayer(ws, urlParams) {
       name: ws.playerName,
     },
     room: {
-      roomId: ws.roomId,
+      id: ws.roomId,
     },
     global: {
       rooms: rooms_data
@@ -201,15 +201,17 @@ function leaveRoom(ws, obj, room) {
 function addPlayer(ws, obj, room) {
   var player = new playerFunction.Player(ws.id, obj.player);
   room.addPlayer(player);
-  console.log(player);
   let response = {
     type: 'updateState',
-    player: player,
     room: {
       players: room.players
     }
   };
-  console.log(`Adding player '${player.name}'. Response: ${response}`);
+  let response2 = {
+    type: 'updateState',
+    player: player
+  };
+  ws.send(JSON.stringify(response2));
   broadcast(response, room);
   broadcastRoomsInfo();
 }

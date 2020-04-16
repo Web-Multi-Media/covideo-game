@@ -1,4 +1,3 @@
-"use strict";
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
 import handleServerResponse from "./webSocket/rootedFunctions";
@@ -62,7 +61,7 @@ function App() {
       settings: {}
     }
   });
-  const [cookies, setCookie] = useCookies(['playerId', 'playerName', 'roomId']);
+  const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
   const [img, setImg] = useState('');
   const location = useLocation();
   const isGameMaster = gameState.room.gameMaster === gameState.player.id;

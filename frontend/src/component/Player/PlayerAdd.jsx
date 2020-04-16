@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import React, {useState} from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -7,14 +6,6 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 function PlayerAdd(props) {
   const [displayName, setdisplayName] = useState(false);
   const [textInput, setTextInput] = useState('');
-
-  const sendName = () => {
-    if (textInput !== '') {
-      props.onSend(textInput);
-      setTextInput('');
-      setdisplayName(true);
-    }
-  };
 
   const handleNameChange = (event) => {
     setTextInput(event.target.value);
