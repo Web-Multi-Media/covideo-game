@@ -43,38 +43,6 @@ function GameScreen(props) {
   return (<React.Fragment>
     <Grid container direction="row" justify="center" spacing={2} alignItems="stretch">
 
-      {/* Top bar */}
-      <Grid item xs={12}>
-        <Grid container direction="row" justify="center" spacing={2}>
-
-          {/* Active player card */}
-          <Grid item xs={3} justify="left" alignItems="center">
-            <Paper className={classes.paper} elevation={2}>
-              <Typography className={classes.typography}>
-                <b>Active player</b>
-              </Typography>
-              <PlayerAvatar
-                player={activePlayer}
-                isCurrentPlayer={activePlayer.id === props.currentPlayer.id}
-                isGameMaster={props.isGameMaster}
-                gridContainerProps={{playerAvatarGridProps}}/>
-            </Paper>
-          </Grid>
-
-          {/* Round card */}
-          <Grid item xs={6}>
-            <Round set={props.set}/>
-          </Grid>
-
-          {/* Time left card */}
-          <Grid item xs={3}>
-            <Timer
-              duration={props.roomSettings.timesToGuessPerSet[props.set]}
-              startTimer={props.startTimer}/>
-          </Grid>
-        </Grid>
-      </Grid>
-
       {/* Team panel (left) */}
       <Grid item xs={2}>
         <TeamPanel
