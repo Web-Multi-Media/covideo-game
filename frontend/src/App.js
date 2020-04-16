@@ -62,7 +62,7 @@ function App() {
       settings: {}
     }
   });
-  const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
+  const [cookies, setCookie] = useCookies(['playerId', 'playerName', 'roomId']);
   const [img, setImg] = useState('');
   const location = useLocation();
   const isGameMaster = gameState.room.gameMaster === gameState.player.id;
@@ -100,7 +100,7 @@ function App() {
 
   useEffect(() => {
     if (location.pathname !== '/' && gameState.global.socketConnected) {
-      console.log('has pathe name');
+      console.log('has path name');
       console.log(location.pathname);
       ws.send(JSON.stringify({type: 'joinRoom', roomId: location.pathname.substring(1)}));
     }
