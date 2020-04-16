@@ -127,6 +127,14 @@ function joinRoom(ws, obj) {
   let room = rooms.get(roomId);
 
   if (room !== undefined) {
+    
+    // Add user to room if playerName is defined in websocket
+    let playerName = ws.playerName;
+    if (playerName){
+      player = new playerFunction.Player(ws.id, ws.playerName);
+      room.addPlayer(player);
+    }
+
     // Set room id in web socket and update state
     ws.roomId = roomId;
     let response = {
