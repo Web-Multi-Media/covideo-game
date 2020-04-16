@@ -127,10 +127,7 @@ function joinRoom(ws, obj) {
       global: {
         joinedRoom: true,
       },
-      room: {
-        id: roomId,
-        settings: room.settings
-      }
+      room: room.serialize()
     };
 
     // Set user as game master if none exist
