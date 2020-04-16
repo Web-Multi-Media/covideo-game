@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import PlayerActivePanel from "./PlayerActivePanel";
 import PlayerInactivePanel from "./PlayerInactivePanel";
@@ -17,8 +16,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function CenterPanel(props) {
-  const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false);
   const classes = useStyles();
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>

@@ -53,6 +53,7 @@ function App() {
       hasAGameMaster: false,
       round: 0,
       set: 1,
+      startTimer: false,
       setFinished: false,
       scoreFirstTeam: 0,
       scoreSecondTeam: 0,

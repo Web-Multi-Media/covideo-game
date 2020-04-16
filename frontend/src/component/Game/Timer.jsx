@@ -56,7 +56,6 @@ function Timer(props) {
     if (props.startTimer === false) {
       setSeconds(0);
     }
-
   }, [props.startTimer]);
 
   return (<React.Fragment>
