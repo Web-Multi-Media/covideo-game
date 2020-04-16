@@ -52,7 +52,7 @@ function PlayerAvatar(props) {
   return (<React.Fragment>
     <Grid container="container" alignItems="center" {...gridContainerProps}>
       {
-        player.id !== gameMaster && <React.Fragment>
+        player.id !== gameMaster && player.name !== "" && <React.Fragment>
             <Grid item="item">
               <Avatar style={{
                   'backgroundColor' : stringToColor(player.name)
