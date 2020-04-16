@@ -50,7 +50,6 @@ function App() {
       teams: [],
       gameMaster: null,
       gameIsReady: false,
-      hasAGameMaster: false,
       round: 0,
       set: 1,
       startTimer: false,
@@ -75,6 +74,7 @@ function App() {
     URL += cookies.roomId !== undefined ? `&roomId=${cookies.roomId}` : '';
     URL += cookies.playerName !== undefined ? `&playerName=${cookies.playerName}` : '';
     ws = new WebSocket(URL);
+
     ws.onopen = function() {
       setGameState({
         ...gameState,

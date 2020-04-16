@@ -191,19 +191,19 @@ function leaveRoom(ws, obj, room) {
 
   // If player leaving is the game master, appoint a new game master
   // If no more players are left, set gameMaster to null.
-  response2 = {
+  let response2 = {
     type:'updateState',
     room: {
       players: room.players
     }
-  }
+  };
   if (id == gameMaster) {
     if (room.players.length > 0) {
       newGameMaster = room.players[0].id;
       console.log("Game master left the room. Appointing " + newGameMaster + " as gameMaster.");
       room.setGameMaster(newGameMaster);
       response2.room.gameMaster = newGameMaster;
-    } else {
+    }else {
       console.log("No more players in room. Room gameMaster set to null.")
       room.setGameMaster(null);
       response2.room.gameMaster = null;
@@ -299,7 +299,7 @@ function gameIsReady(ws, obj, room) {
       ? 1
       : 2,
     }
-  }
+  };
   broadcast(response, room);
 }
 
@@ -310,7 +310,7 @@ function addWord(ws, obj, room) {
     room: {
       words: room.getWords()
     }
-  }
+  };
   broadcast(response, room);
 }
 
@@ -378,7 +378,7 @@ function broadcastRoomsInfo() {
       global: {
         rooms: rooms_data
       }
-    }
+    };
     broadcast(response);
 }
 

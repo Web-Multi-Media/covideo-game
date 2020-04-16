@@ -39,45 +39,13 @@ function GameScreen(props) {
     id: 'noob',
     name: props.activePlayer
   };
-  const playerAvatarGridProps = { justify: 'center' };
 
   return (<React.Fragment>
     <Grid container direction="row" justify="center" spacing={2} alignItems="stretch">
 
-      {/* Top bar */}
-      <Grid item xs={12}>
-        <Grid container direction="row" justify="center" spacing={2}>
-
-          {/* Active player card */}
-          <Grid item xs={3} justify="left" alignItems="center">
-            <Paper className={classes.paper} elevation={2}>
-              <Typography className={classes.typography}>
-                <b>Active player</b>
-              </Typography>
-              <PlayerAvatar
-                player={activePlayer}
-                currentPlayer={props.currentPlayer}
-                gameMaster={props.gameMaster}
-                gridContainerProps={{playerAvatarGridProps}}/>
-            </Paper>
-          </Grid>
-
-          {/* Round card */}
-          <Grid item xs={6}>
-            <Round set={props.set}/>
-          </Grid>
-
-          {/* Time left card */}
-          <Grid item xs={3}>
-            <Timer
-              duration={props.roomSettings.timesToGuessPerSet[props.set]}
-              startTimer={props.startTimer}/>
-          </Grid>
-        </Grid>
-      </Grid>
 
       {/* Team panel (left) */}
-      <Grid item xs={3}>
+      <Grid item xs={2}>
         <TeamPanel
           team={props.teams[0]}
           teamScore={props.team1Score}
@@ -88,19 +56,22 @@ function GameScreen(props) {
       </Grid>
 
       {/* Game panel (center) */}
-      <Grid item xs={6}>
+      <Grid item xs={8}>
         <CenterPanel
           currentPlayer={props.currentPlayer}
+          gameMaster={props.gameMaster}
+          set={props.set}
+          roomSettings={props.roomSettings}
+          startTimer={props.startTimer}
           activePlayer={props.activePlayer}
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}
-          startTimer={props.startTimer}
           word={props.words[0]}
-          set={props.set}/>
+        />
       </Grid>
 
       {/* Team panel (left) */}
-      <Grid item xs={3}>
+      <Grid item xs={2}>
         <TeamPanel
           team={props.teams[1]}
           teamScore={props.team2Score}
