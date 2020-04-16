@@ -133,7 +133,7 @@ function App() {
   };
 
   const sendUsername = (name) => {
-    ws.send(JSON.stringify({type: 'addName', player: name}));
+    ws.send(JSON.stringify({type: 'addPlayer', player: name}));
   };
 
   const sendRoomSettings = (settings) => {

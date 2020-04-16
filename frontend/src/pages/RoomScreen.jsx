@@ -173,7 +173,7 @@ function RoomScreen(props) {
           color="primary"
           size="large"
           onClick={props.onGameReady}
-          disabled={props.isGameMaster === false || props.players.length >= 2 && words.length < props.roomSettings.numWordsPerPlayer * props.players.length}
+          disabled={props.isGameMaster === false || props.players.length < 2 && words.length < props.roomSettings.numWordsPerPlayer * props.players.length}
           startIcon={<PlayCircleOutlineIcon fontSize="large"/>}>
           Start game
         </Button>

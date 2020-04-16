@@ -7,7 +7,7 @@ let webSockets = {};
 var rooms = new Map();
 
 let rootingFunction = {
-  'addName': addName,
+  'addPlayer': addPlayer,
   'addWord': addWord,
   'deleteWord': deleteWord,
   'changeRoomSettings': changeRoomSettings,
@@ -92,15 +92,24 @@ function createRoom(ws, obj) {
     roomId = utils.getUniqueID();
   }
 
-  // Set current room
+  // Add new room
   let room = new roomfunc.Room(roomId);
   room.setGameMaster(ws.id);
   rooms.set(roomId, room);
+
+  // If player name is defined in websocket, add player to room
+  let playerName = ws.playerName;
+  if (playerName){
+    addPlayer(ws.id, ws.playerName, room);
+  }
+
+  // Broadcast new room to all clients and send room info for current client
   console.log('Create room ' + roomId);
   let response = {
     type: 'updateState',
     room: room.serialize()
   };
+  console.log(response);
   ws.send(JSON.stringify(response));
   broadcastRoomsInfo();
 }
@@ -192,7 +201,7 @@ function leaveRoom(ws, obj, room) {
   broadcast(response2, room);
 }
 
-function addName(ws, obj, room) {
+function addPlayer(ws, obj, room) {
   var player = new playerFunction.Player(ws.id, obj.player);
   room.addPlayer(player);
   console.log(player);
