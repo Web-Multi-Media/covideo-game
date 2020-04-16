@@ -25,12 +25,11 @@ function Rooms(props) {
   const joinRoom = (roomId) => {
     props.joinRoom(roomId);
   }
-  
+
   return (<div>
     <TextIcon size="h4" icon={<MeetingRoomIcon fontSize="large"/>} text="Rooms"/>
     {
-      rooms.length > 0 && <div class='rooms'>
-          <TableContainer component={Paper}>
+      rooms.length > 0 && <TableContainer component={Paper}>
             <Table className={classes.table} size="small">
               <TableHead>
                 <TableRow>
@@ -59,32 +58,31 @@ function Rooms(props) {
                     <TableCell align="left">
                       <div>
                         {
-                          room.players.map((player) => (<div class='avatar'>
+                          room.players.map((player) => (
                             <PlayerAvatar
                               player={player}
                               gameMaster={room.gameMaster}
                               gridContainerProps={{'justify': 'left'}}/>
-                          </div>))
+                          ))
                         }
                       </div>
                     </TableCell>
                     <TableCell align="left">
-                      <Button 
-                        id="outlined-basic-name" 
-                        className="margButt" 
-                        variant="contained" 
-                        color="primary" 
+                      <Button
+                        id="outlined-basic-name"
+                        className="margButt"
+                        variant="contained"
+                        color="primary"
                         onClick={() => joinRoom(room.id)}
                         disabled={(room.players.length >= room.settings.numMaxPlayers)}>
-                          Join
-                        </Button>
+                      Join
+                      </Button>
                     </TableCell>
                   </TableRow>))
                 }
               </TableBody>
             </Table>
           </TableContainer>
-        </div>
     }
     {rooms.length === 0 && <div>No rooms.</div>}
   </div>);

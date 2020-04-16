@@ -7,7 +7,6 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 function PlayerAdd(props) {
   const [displayName, setdisplayName] = useState(false);
   const [textInput, setTextInput] = useState('');
-  const currentPlayer = props.currentPlayer;
 
   const sendName = () => {
     if (textInput !== '') {

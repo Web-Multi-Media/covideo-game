@@ -139,19 +139,19 @@ function RoomScreen(props) {
           value={wordInput}
           onKeyDown={onkeydownWord}
           onChange={handleWordChange}
-          disabled={currentPlayer == null || wordSent >= props.roomSettings.numWordsPerPlayer}/>
+          disabled={currentPlayer.name === '' || wordSent >= props.roomSettings.numWordsPerPlayer}/>
         <Button
           id="outlined-basic-word"
           size="small"
           variant="contained"
           color="primary"
           onClick={sendWord}
-          disabled={currentPlayer == null || wordSent >= props.roomSettings.numWordsPerPlayer}
+          disabled={currentPlayer.name === '' || wordSent >= props.roomSettings.numWordsPerPlayer}
           startIcon={<AddIcon/>}>
           Add word ({wordSent}/{props.roomSettings.numWordsPerPlayer})
         </Button>
       </div>
-      {currentPlayer != null && words != null && words.map((word) => (<React.Fragment>
+      {currentPlayer.name !== '' && words != null && words.map((word) => (<React.Fragment>
         <Chip
           icon={<LocalLibraryIcon/>}
           label={word}
@@ -173,7 +173,7 @@ function RoomScreen(props) {
           color="primary"
           size="large"
           onClick={props.onGameReady}
-          disabled={props.isGameMaster === false || props.players.length >= 2 && props.words.length < props.roomSettings.numWordsPerPlayer * props.players.length}
+          disabled={props.isGameMaster === false || props.players.length < 2 && words.length < props.roomSettings.numWordsPerPlayer * props.players.length}
           startIcon={<PlayCircleOutlineIcon fontSize="large"/>}>
           Start game
         </Button>

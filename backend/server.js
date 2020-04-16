@@ -48,16 +48,7 @@ app.get('*', (req, res) => {
 
 wss.on('connection', function connection(ws, sed) {
   const urlParams = new URLSearchParams(sed.url.substring(1));
-  const playerId = urlParams.get('playerId');
-  const roomId = urlParams.get('roomId');
-  const playerName = urlParams.get('playerName');
-  ws.id = playerId ?  playerId : utils.getUniqueID();
-  ws.roomId = roomId ?  roomId : undefined;
-  ws.player = playerName ? playerName : undefined;
-  wss.clients.forEach(function each(client) {
-    console.log('Client.ID: ' + client.id);
-  });
-  game.connectPlayer(ws);
+  game.connectPlayer(ws, urlParams);
 
   ws.on('message', function incoming(message) {
     game.messageHandler(message, ws, wss);

@@ -1,11 +1,10 @@
 let rootingFunction = {
-  'updateState': updateState,
-  'gameIsReady': gameIsReady
+  'updateState': updateState
 };
 
-export default function handleServerResponse(message, gameState, setGameState) {
+export default function handleServerResponse(message, state, setState) {
   console.log('server response ' + message.type);
-  return rootingFunction[message.type](message, gameState, setGameState);
+  return rootingFunction[message.type](message, state, setState);
 }
 
 /**
@@ -15,23 +14,18 @@ export default function handleServerResponse(message, gameState, setGameState) {
  * @param  The room identifier
  */
 function updateState(message, gameState, setGameState) {
-  let objToUpdate = message;
-  delete objToUpdate.type;
   setGameState({
-    ...gameState,
-    ...objToUpdate
-  });
-}
-
-function gameIsReady(message, gameState, setGameState) {
-  setGameState({
-    ...gameState,
-    gameIsReady: true,
-    teams: message.teams,
-    playerTeam: message.teams[0].findIndex((element) => element === gameState.player) !== -1
-      ? 1
-      : 2,
-    words: message.words,
-    activePlayer: message.activePlayer
+    global: {
+      ...gameState.global,
+      ...message.global
+    },
+    player: {
+      ...gameState.player,
+      ...message.player
+    },
+    room: {
+      ...gameState.room,
+      ...message.room
+    }
   });
 }

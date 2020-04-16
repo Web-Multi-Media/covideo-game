@@ -30,7 +30,10 @@ function Players(props) {
   const gameMaster = props.gameMaster;
   const isGameMaster = props.isGameMaster;
   const currentPlayer = props.currentPlayer;
-
+  console.log(players);
+  console.log(" game master: " + gameMaster);
+  console.log(" is game master ? " + isGameMaster);
+  console.log(" current player: " + currentPlayer.name);
   return (
     <div>
     <TextIcon size="h4" icon={<PeopleIcon fontSize="large"/>} text="Players"/>
@@ -67,9 +70,9 @@ function Players(props) {
                   </TableCell>
                 </TableRow>))
               }
-              {!currentPlayer &&
+              {currentPlayer.name === '' &&
                 <TableCell component="th" scope="row">
-                <PlayerAdd onSendUsername={props.onSendUsername} currentPlayer={currentPlayer}/>
+                <PlayerAdd onSendUsername={props.onSendUsername}/>
                 </TableCell>}
             </TableBody>
           </Table>

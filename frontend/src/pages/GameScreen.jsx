@@ -74,7 +74,7 @@ function GameScreen(props) {
           {/* Time left card */}
           <Grid item xs={3}>
             <Timer
-              duration={props.duration}
+              duration={props.roomSettings.timesToGuessPerSet[props.set]}
               startTimer={props.startTimer}/>
           </Grid>
         </Grid>
