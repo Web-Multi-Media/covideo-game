@@ -334,10 +334,6 @@ function broadcast(msg, room, senderId) {
     if (room === undefined && client.roomId === undefined) {
       client.send(JSON.stringify(msg));
     } else if (senderId !== client.id && room !== undefined && room.id === client.roomId) {
-      const player = room.players.find(player => player.id === client.id);
-      msg.player = player
-        ? player.name
-        : '';
       client.send(JSON.stringify(msg));
     }
   });

@@ -109,7 +109,7 @@ Room.prototype = {
   setActivePlayer: function() {
     this.updateActivity();
     this.wordsOfRound = utils.shuffle(this.wordsOfRound);
-    this.activePlayer = utils.setActivePlayer(this.round, this.teams, this.numberOfPlayer);
+    this.activePlayer = utils.getNextActivePlayer(this.round, this.teams, this.numberOfPlayer);
   },
   validateWord: function(team) {
     this.updateActivity();

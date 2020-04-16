@@ -14,7 +14,6 @@ export default function handleServerResponse(message, state, setState) {
  * @param  The room identifier
  */
 function updateState(message, gameState, setGameState) {
-  delete message.type;
   setGameState({
     global: {
       ...gameState.global,

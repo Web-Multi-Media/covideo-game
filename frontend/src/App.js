@@ -115,6 +115,7 @@ function App() {
     ws.onmessage = (message) => {
       const obj = JSON.parse(message.data);
       console.log('new event : ' + obj.type);
+      console.log(obj);
       handleServerResponse(obj, gameState, setGameState);
     };
   });

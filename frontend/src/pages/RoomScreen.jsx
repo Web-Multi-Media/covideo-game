@@ -139,14 +139,14 @@ function RoomScreen(props) {
           value={wordInput}
           onKeyDown={onkeydownWord}
           onChange={handleWordChange}
-          disabled={currentPlayer.name !== '' || wordSent >= props.roomSettings.numWordsPerPlayer}/>
+          disabled={currentPlayer.name === '' || wordSent >= props.roomSettings.numWordsPerPlayer}/>
         <Button
           id="outlined-basic-word"
           size="small"
           variant="contained"
           color="primary"
           onClick={sendWord}
-          disabled={currentPlayer.name !== '' || wordSent >= props.roomSettings.numWordsPerPlayer}
+          disabled={currentPlayer.name === '' || wordSent >= props.roomSettings.numWordsPerPlayer}
           startIcon={<AddIcon/>}>
           Add word ({wordSent}/{props.roomSettings.numWordsPerPlayer})
         </Button>

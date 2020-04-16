@@ -21,7 +21,7 @@ function sortTeam(players) {
   return [teamA, teamB];
 }
 
-function setActivePlayer(round, teams, numberOfPlayer) {
+function getNextActivePlayer(round, teams, numberOfPlayer) {
   const player = round % numberOfPlayer;
   const idx0 = Math.trunc(player % 2);
   const idx1 = Math.trunc(player / 2);
@@ -43,6 +43,6 @@ function getUniqueID() {
 
 module.exports.shuffle = shuffle;
 module.exports.sortTeam = sortTeam;
-module.exports.setActivePlayer = setActivePlayer;
+module.exports.getNextActivePlayer = getNextActivePlayer;
 module.exports.firstToLastIndex = firstToLastIndex;
 module.exports.getUniqueID = getUniqueID;
