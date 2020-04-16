@@ -5,8 +5,9 @@ function Room(id) {
   this.name = "";
   this.id = id;
   this.players = [];
-  this.words = [];
+  this.wordsPerPlayer = {};
   this.wordsOfRound = [];
+  this.wordsValidated = [];
   this.teams = [];
   this.gameMaster = null;
   this.hasAGameMaster = false;
@@ -21,6 +22,16 @@ function Room(id) {
 }
 
 Room.prototype = {
+  getWords: function() {
+    let words = []
+    for (var playerId in this.wordsPerPlayer) {
+      words = [
+        ...words,
+        ...this.wordsPerPlayer[playerId]
+      ];
+    }
+    return words;
+  },
   setName: function(name) {
     this.updateActivity();
     this.name = name;
@@ -40,6 +51,7 @@ Room.prototype = {
       timesToGuessPerSet: [30, 30, 40],
       numWordsPerPlayer: 3,
       numMaxPlayers: 10,
+      private: false,
     }
   },
   addPlayer: function(player) {
@@ -48,6 +60,7 @@ Room.prototype = {
       ...this.players,
       player
     ];
+    this.wordsPerPlayer[player.id] = [];
     this.numberOfPlayer = this.players.length;
   },
   removePlayer: function(id) {
@@ -55,23 +68,25 @@ Room.prototype = {
     this.players = _.filter(this.players, function(item) {
       return item.id != id;
     });
+    delete this.wordsPerPlayer[id];
     this.numberOfPlayer = this.players.length;
   },
-  addWord: function(word) {
+  addWord: function(word, playerId) {
     this.updateActivity();
-    var check = this.words.includes(word);
-    if (!check){
-      this.words = [
-        word,
-        ...this.words,
-      ]
-    }
+    this.wordsPerPlayer[playerId] = [
+      word,
+      ...this.wordsPerPlayer[playerId]
+    ];
   },
-  deleteWord: function(word) {
+  deleteWord: function(word, playerId) {
+    // delete only one occurence of the word to be deleted
     this.updateActivity();
-    this.words = _.filter(this.words, function(name){
-      name != word
-    });
+    this.wordsPerPlayer[playerId] = (function(words, wordToRemove) {
+      for (var i = words.length - 1; i >= 0; i--) {
+        if (words[i] === wordToRemove) {
+          words.splice(i, 1);
+          return words;
+        }}})(this.wordsPerPlayer[playerId], word);
   },
   startGame: function() {
     this.updateActivity();
@@ -80,7 +95,7 @@ Room.prototype = {
   startSet: function() {
     this.updateActivity();
     this.setFinished = false;
-    this.wordsOfRound = utils.shuffle(this.words);
+    this.wordsOfRound = utils.shuffle(this.getWords());
   },
   startRound: function() {
     this.updateActivity();
@@ -94,15 +109,27 @@ Room.prototype = {
   },
   validateWord: function(team) {
     this.updateActivity();
+
+    // Increase team score
     if (team === 1) {
       this.scoreFirstTeam++;
     } else {
       this.scoreSecondTeam++;
     }
+
+    // Add word to validated words
+    var word = this.wordsOfRound[0];
+    this.wordsValidated.push(word);
+
+    // Remove word from words of round
     this.wordsOfRound = _.tail(this.wordsOfRound);
+
+    // Set gif URL if needed
     this.gifUrl = this.gifUrl === ''
       ? this.gifUrl
       : '';
+
+    // If no more words, set is finished
     if (this.wordsOfRound.length === 0) {
       this.setFinished = true;
       this.set++;
@@ -118,8 +145,9 @@ Room.prototype = {
   },
   resetGame: function() {
     this.updateActivity();
-    this.words = [];
+    this.wordsPerPlayer = {};
     this.wordsOfRound = [];
+    this.wordsValidated = [];
     this.round = 0;
     this.set = 1;
     this.scoreFirstTeam = 0;
@@ -132,7 +160,6 @@ Room.prototype = {
     return {
       name: this.name,
       id: this.id,
-      words: this.words,
       wordsOfRound: this.wordsOfRound,
       teams: this.teams,
       hasAGameMaster: this.hasAGameMaster,

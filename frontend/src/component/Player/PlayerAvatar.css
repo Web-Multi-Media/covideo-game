@@ -1,3 +1,5 @@
 .MuiAvatar-root {
+  margin-right: 5px !important;
+  display: inline-flex !important;
   font-size: 1rem;
 }

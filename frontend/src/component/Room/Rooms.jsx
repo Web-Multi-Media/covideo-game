@@ -25,6 +25,7 @@ function Rooms(props) {
   const joinRoom = (roomId) => {
     props.joinRoom(roomId);
   }
+  
   return (<div>
     <TextIcon size="h4" icon={<MeetingRoomIcon fontSize="large"/>} text="Rooms"/>
     {
@@ -49,7 +50,7 @@ function Rooms(props) {
               </TableHead>
               <TableBody>
                 {
-                  rooms.map((room) => (<TableRow key={room.id}>
+                  rooms.map((room) => (!room.settings.private && <TableRow key={room.id}>
                     <TableCell component="th" scope="row">
                       <b>{room.id}</b>
                     </TableCell>
@@ -59,18 +60,30 @@ function Rooms(props) {
                       <div>
                         {
                           room.players.map((player) => (<div class='avatar'>
-                            <PlayerAvatar player={player} gameMaster={room.gameMaster}/>
+                            <PlayerAvatar
+                              player={player}
+                              gameMaster={room.gameMaster}
+                              gridContainerProps={{'justify': 'left'}}/>
                           </div>))
                         }
                       </div>
                     </TableCell>
                     <TableCell align="left">
+<<<<<<< HEAD
                       <Button 
                         id="outlined-basic-name" 
                         className="margButt" 
                         variant="contained" 
                         color="primary" 
+                        onClick={() => joinRoom(room.id)}
+=======
+                      <Button
+                        id="outlined-basic-name"
+                        className="margButt"
+                        variant="contained"
+                        color="primary"
                         onClick={joinRoom.bind(this, room.id)}
+>>>>>>> feature/add-cookies
                         disabled={(room.players.length >= room.settings.numMaxPlayers)}>
                           Join
                         </Button>

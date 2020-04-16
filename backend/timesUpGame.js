@@ -34,6 +34,24 @@ function messageHandler(message, ws, wss) {
   rootingFunction[obj.type](ws, obj, room);
 }
 
+function connectPlayer(ws) {
+  let rooms_data = [];
+  for (const [id, room] of rooms.entries()) {
+    console.log('Found room id ' + id + '');
+    rooms_data.push(room.serialize());
+  }
+  let response = {
+    type: 'updateState',
+    playerId: ws.id,
+    roomId: ws.roomId !== '' ? ws.roomId : '',
+    player : ws.player !== '' ? ws.player : '',
+    rooms: rooms_data
+  };
+  const roomInfo = rooms.get(ws.roomId) ? rooms.get(ws.roomId).serialize() : {};
+  console.log('add player id ' + response.playerId);
+  ws.send(JSON.stringify({...response, ...roomInfo}));
+}
+
 function getRooms(ws, obj) {
   var rooms_data = [];
   for (const [id, room] of rooms.entries()) {
@@ -73,23 +91,33 @@ function joinRoom(ws, obj) {
   let roomId = obj.roomId;
   let room = rooms.get(roomId);
 
-  // Set room id in web socket and update state
-  ws.roomId = roomId;
-  let response = {
-    type: 'updateState',
-    joinedRoom: true,
-    roomId: roomId,
-    roomSettings: room.settings
-  };
+  if (room !== undefined) {
+    // Set room id in web socket and update state
+    ws.roomId = roomId;
+    let response = {
+      type: 'updateState',
+      joinedRoom: true,
+      roomId: roomId,
+      roomSettings: room.settings
+    };
 
-  // Set user as game master if none exist
-  if (room.gameMaster === null) {
-    console.log("No game master in room. Appointing " + ws.id);
-    room.setGameMaster(ws.id);
-    response.isGameMaster = true;
+    // Set user as game master if none exist
+    if (room.gameMaster === null) {
+      console.log("No game master in room. Appointing " + ws.id);
+      room.setGameMaster(ws.id);
+      response.isGameMaster = true;
+    }
+    response.gameMaster = room.gameMaster;
+    ws.send(JSON.stringify(response));
+  } else {
+    // room does not exist
+    let response = {
+      type: 'updateState',
+      joinedRoom: false,
+      roomId: ''
+    };
+    ws.send(JSON.stringify(response));
   }
-  response.gameMaster = room.gameMaster;
-  ws.send(JSON.stringify(response));
 }
 
 function leaveRoom(ws, obj, room) {
@@ -149,7 +177,7 @@ function changeRoomSettings(ws, obj, room) {
   let response = {
     type: 'updateState',
     roomSettings: room.settings
-  }
+  };
   broadcast(response, room);
   broadcastRoomsInfo();
 }
@@ -172,6 +200,7 @@ function startRound(ws, obj, room) {
       response.startTimer = false;
       response.activePlayer = room.choosePlayer();
       response.words = room.wordsOfRound;
+      response.wordsValidated = [];
       response.gifUrl = '';
       broadcast(response, room);
       clearInterval(WinnerCountdown);
@@ -196,11 +225,16 @@ function gameIsReady(ws, obj, room) {
 }
 
 function addWord(ws, obj, room) {
-  room.addWord(obj.word);
+  room.addWord(obj.word, ws.id);
+  let response = {
+    type: 'updateState',
+    words: room.getWords()
+  }
+  broadcast(response, room);
 }
 
 function deleteWord(ws, obj, room) {
-  room.deleteWord(obj.word);
+  room.deleteWord(obj.word, ws.id);
 }
 
 function validateWord(ws, obj, room) {
@@ -208,6 +242,7 @@ function validateWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     words: room.wordsOfRound,
+    wordsValidated: room.wordsValidated,
     team1Score: room.scoreFirstTeam,
     team2Score: room.scoreSecondTeam,
     set: room.set,
@@ -262,7 +297,7 @@ function resetGame(ws, obj, room) {
   let response = {
     type: 'updateState',
     gameIsReady: false
-  }
+  };
   broadcast(response, room);
   console.log('fin de partie');
 }
@@ -281,4 +316,5 @@ function broadcastRoomsInfo() {
 }
 
 module.exports.messageHandler = messageHandler;
+module.exports.connectPlayer = connectPlayer;
 module.exports.rooms = rooms;
