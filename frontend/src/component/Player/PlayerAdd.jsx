@@ -29,7 +29,6 @@ function PlayerAdd(props) {
 
   return (<React.Fragment>
     <div className="inputLine">
-      {!displayName && <React.Fragment>
         <TextField
           id="standard-basic"
           size="small"
@@ -47,8 +46,6 @@ function PlayerAdd(props) {
           onClick={props.onSendUsername.bind(this, textInput)}
           disabled={displayName}
           startIcon={<PersonAddIcon/>}>Join</Button>
-        </React.Fragment>
-      }
     </div>
   </React.Fragment>
   )

@@ -4,8 +4,6 @@ import Button from "@material-ui/core/Button";
 import AddIcon from '@material-ui/icons/Add';
 import Rooms from "../component/Room/Rooms";
 import TextIcon from "../component/TextIcon/TextIcon";
-import './SelectRoomScreen.css';
-import './Common.css';
 
 const useStyles = makeStyles({
   table: {

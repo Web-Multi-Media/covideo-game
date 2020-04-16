@@ -12,7 +12,6 @@ import PeopleIcon from '@material-ui/icons/People';
 import PlayerAdd from "./PlayerAdd";
 import PlayerAvatar from "./PlayerAvatar";
 import TextIcon from '../TextIcon/TextIcon';
-import './Players.css';
 
 const useStyles = makeStyles({
   table: {
