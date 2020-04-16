@@ -24,7 +24,6 @@ require('dotenv').config();
 const port = config.PORT;
 
 
-
 const AUTO_DELETE_ROOM_TASK_EVERY = "0 * * * *";
 const AUTO_DELETE_ROOM_TASK_TIME_OUT = 30 * 60 * 1000;
 
@@ -43,7 +42,6 @@ app.use(express.static(__dirname + '/../frontend/build/'));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/../frontend/build/index.html'));
 });
-
 
 
 wss.on('connection', function connection(ws, sed) {

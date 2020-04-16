@@ -11,7 +11,6 @@ function Room(id) {
   this.wordsValidated = [];
   this.teams = [];
   this.gameMaster = null;
-  this.hasAGameMaster = false;
   this.round = 0;
   this.set = 1;
   this.startTimer = false;
@@ -44,10 +43,8 @@ Room.prototype = {
     this.updateActivity();
     if (id === null){
       this.gameMaster = null;
-      this.hasAGameMaster = false;
     } else {
       this.gameMaster = id;
-      this.hasAGameMaster = true;
     }
   },
   getDefaultSettings: function() {
@@ -169,7 +166,6 @@ Room.prototype = {
       id: this.id,
       wordsOfRound: this.wordsOfRound,
       teams: this.teams,
-      hasAGameMaster: this.hasAGameMaster,
       gameMaster: this.gameMaster,
       round: this.round,
       set: this.set,

@@ -1,27 +1,34 @@
 // To test the GameScreen directly, use this fake state
-
 const [gameState, setGameState] = useState({
-  player: 'test',
-  players: [{'id': '5465461231', 'name': 'test'}, {'id': '546544321', 'name': 'test2'}],
-  isGameMaster: true,
-  gameIsReady: true,
-  gameMaster: '5465461231',
-  teams: [['test'],['test2']],
-  playerTeam: 0,
-  team1Score: 0,
-  team2Score: 0,
-  words: ['test', 'test2', 'test3', 'test4'],
-  setFinished: false,
-  set: 1,
-  activePlayer: 'test',
-  startTimer: false,
-  duration: 30,
-  round: 0,
-  timeLeft: 30,
-  joinedRoom: true,
-  roomId: '532463546543',
-  rooms: [],
-  socketConnected: false,
-  gifUrl: '',
-  roomSettings: {timesToGuessPerSet: [30]}
+    global: {
+        rooms: [],
+        socketConnected: false,
+        playerTeam: 0,
+        joinedRoom: false
+    },
+    player: {
+        id: 'testIdName',
+        name: 'test1'
+    },
+    room: {
+        name: 'testName',
+        id: 'testId',
+        gifUrl: '',
+        players: [{id: 'testIdName', name: 'test1'}],
+        wordsPerPlayer: {},
+        wordsOfRound: ['wordTest'],
+        wordsValidated: [],
+        teams: [[{id: 'testIdName', name: 'test1'}],[]],
+        gameMaster: 'dlkmgdkldfs',
+        gameIsReady: true,
+        round: 0,
+        set: 1,
+        setFinished: false,
+        scoreFirstTeam: 0,
+        scoreSecondTeam: 0,
+        numberOfPlayer: 0,
+        lastActivity: Date.now(),
+        settings: {}
+    }
 });
+

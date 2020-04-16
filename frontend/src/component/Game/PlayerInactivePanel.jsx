@@ -3,6 +3,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import './PlayerInactivePanel.css'
+import TopInformation from "./TopInformation";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -11,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    borderRadius: '10px'
+    borderRadius: '10px',
+    minHeight: '64vh'
   },
 }));
 
@@ -19,7 +21,6 @@ function PlayerInactivePanel(props) {
   const classes = useStyles();
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={2}>
-
     {!props.startTimer &&
       <Typography variant='h5'>
         Waiting for round to start ...
