@@ -22,6 +22,16 @@ function Room(id) {
 }
 
 Room.prototype = {
+  getWords: function() {
+    let words = []
+    for (var playerId in this.wordsPerPlayer) {
+      words = [
+        ...words,
+        ...this.wordsPerPlayer[playerId]
+      ];
+    }
+    return words;
+  },
   setName: function(name) {
     this.updateActivity();
     this.name = name;
@@ -85,14 +95,7 @@ Room.prototype = {
   startSet: function() {
     this.updateActivity();
     this.setFinished = false;
-    let words = []
-    for (var playerId in this.wordsPerPlayer) {
-      words = [
-        ...words,
-        ...this.wordsPerPlayer[playerId]
-      ];
-    }
-    this.wordsOfRound = utils.shuffle(words);
+    this.wordsOfRound = utils.shuffle(this.getWords());
   },
   startRound: function() {
     this.updateActivity();

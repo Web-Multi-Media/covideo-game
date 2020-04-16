@@ -91,23 +91,33 @@ function joinRoom(ws, obj) {
   let roomId = obj.roomId;
   let room = rooms.get(roomId);
 
-  // Set room id in web socket and update state
-  ws.roomId = roomId;
-  let response = {
-    type: 'updateState',
-    joinedRoom: true,
-    roomId: roomId,
-    roomSettings: room.settings
-  };
+  if (room !== undefined) {
+    // Set room id in web socket and update state
+    ws.roomId = roomId;
+    let response = {
+      type: 'updateState',
+      joinedRoom: true,
+      roomId: roomId,
+      roomSettings: room.settings
+    };
 
-  // Set user as game master if none exist
-  if (room.gameMaster === null) {
-    console.log("No game master in room. Appointing " + ws.id);
-    room.setGameMaster(ws.id);
-    response.isGameMaster = true;
+    // Set user as game master if none exist
+    if (room.gameMaster === null) {
+      console.log("No game master in room. Appointing " + ws.id);
+      room.setGameMaster(ws.id);
+      response.isGameMaster = true;
+    }
+    response.gameMaster = room.gameMaster;
+    ws.send(JSON.stringify(response));
+  } else {
+    // room does not exist
+    let response = {
+      type: 'updateState',
+      joinedRoom: false,
+      roomId: ''
+    };
+    ws.send(JSON.stringify(response));
   }
-  response.gameMaster = room.gameMaster;
-  ws.send(JSON.stringify(response));
 }
 
 function leaveRoom(ws, obj, room) {
@@ -215,16 +225,12 @@ function gameIsReady(ws, obj, room) {
 }
 
 function addWord(ws, obj, room) {
-<<<<<<< HEAD
   room.addWord(obj.word, ws.id);
-=======
-  room.addWord(obj.word);
   let response = {
     type: 'updateState',
-    words: room.words
+    words: room.getWords()
   }
   broadcast(response, room);
->>>>>>> feature/add-cookies
 }
 
 function deleteWord(ws, obj, room) {
