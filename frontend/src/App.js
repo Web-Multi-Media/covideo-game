@@ -67,7 +67,7 @@ function App() {
     ws = new WebSocket(URL);
 
     ws.onopen = function() {
-      getRooms();
+
       setGameState({
         ...gameState,
         socketConnected: true

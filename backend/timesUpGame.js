@@ -35,11 +35,17 @@ function messageHandler(message, ws, wss) {
 }
 
 function connectPlayer(ws) {
+  let rooms_data = [];
+  for (const [id, room] of rooms.entries()) {
+    console.log('Found room id ' + id + '');
+    rooms_data.push(room.serialize());
+  }
   let response = {
     type: 'updateState',
     playerId: ws.id,
     roomId: ws.roomId !== '' ? ws.roomId : '',
     player : ws.player !== '' ? ws.player : '',
+    rooms: rooms_data
   };
   const roomInfo = rooms.get(ws.roomId) ? rooms.get(ws.roomId).serialize() : {};
   console.log('add player id ' + response.playerId);
