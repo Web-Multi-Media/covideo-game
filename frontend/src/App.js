@@ -50,6 +50,7 @@ function App() {
       wordsValidated: [],
       teams: [],
       gameMaster: null,
+      gameIsReady: false,
       hasAGameMaster: false,
       round: 0,
       set: 1,
@@ -198,7 +199,7 @@ function App() {
           </React.Fragment>
       }
       {
-        !gameState.gameIsReady && gameState.global.joinedRoom && <React.Fragment>
+        !gameState.room.gameIsReady && gameState.global.joinedRoom && <React.Fragment>
           <RoomScreen
             players={gameState.room.players}
             currentPlayer={gameState.player}
@@ -216,7 +217,7 @@ function App() {
         </React.Fragment>
       }
       {
-        gameState.gameIsReady &&
+        gameState.room.gameIsReady &&
           <GameScreen
             currentPlayer={gameState.player}
             gameMaster={gameState.room.gameMaster}
