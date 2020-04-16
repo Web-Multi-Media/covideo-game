@@ -122,22 +122,12 @@ function App() {
   }, [gameState.socketConnected]);
 
   useEffect(() => {
-    if (gameState.roomId !== '' && gameState.joinedRoom === false && gameState.socketConnected) {
-      joinRoom(gameState.roomId);
-    }
-  }, [gameState.roomId]);
-
-  useEffect(() => {
-
-
     ws.onmessage = (message) => {
       const obj = JSON.parse(message.data);
       console.log('new event : ' + obj.type);
       handleServerResponse(obj, gameState, setGameState);
     };
   });
-
-
 
   const getRooms = () => {
     ws.send(JSON.stringify({type: 'getRooms'}));

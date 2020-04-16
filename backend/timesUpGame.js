@@ -78,10 +78,13 @@ function createRoom(ws, obj) {
   console.log('Create room ' + roomId);
   let response = {
     type: 'updateState',
+    joinedRoom: true,
+    roomSettings: room.settings,
     roomId: room.id,
     gameMaster: room.gameMaster,
     isGameMaster: true
   };
+  ws.roomId = roomId;
   ws.send(JSON.stringify(response));
   broadcastRoomsInfo();
 }
