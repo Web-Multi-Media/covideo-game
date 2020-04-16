@@ -40,6 +40,7 @@ function connectPlayer(ws, urlParams) {
   ws.id = playerId ?  playerId : utils.getUniqueID();
   ws.playerName = playerName ? playerName : '';
   ws.roomId = rooms.has(roomId) ?  roomId : '';
+  console.log("Current player name " + ws.playerName);
 
   // Get rooms
   let rooms_data = [];
@@ -126,8 +127,10 @@ function joinRoom(ws, obj) {
   let roomId = obj.roomId;
   let room = rooms.get(roomId);
 
-  if (room !== undefined) {
-    
+  if (room !== undefined) { // room already exists
+    // Set room id in web socket
+    ws.roomId = roomId;
+
     // Add user to room if playerName is defined in websocket
     let playerName = ws.playerName;
     if (playerName){
@@ -135,8 +138,12 @@ function joinRoom(ws, obj) {
       room.addPlayer(player);
     }
 
-    // Set room id in web socket and update state
-    ws.roomId = roomId;
+    // Set user as game master if none exist
+    if (room.gameMaster === null) {
+      console.log("No game master in room. Appointing " + ws.id);
+      room.setGameMaster(ws.id);
+    }
+
     let response = {
       type: 'updateState',
       global: {
@@ -144,17 +151,9 @@ function joinRoom(ws, obj) {
       },
       room: room.serialize()
     };
-
-    // Set user as game master if none exist
-    if (room.gameMaster === null) {
-      console.log("No game master in room. Appointing " + ws.id);
-      room.setGameMaster(ws.id);
-      response.isGameMaster = true;
-    }
-    response.gameMaster = room.gameMaster;
     ws.send(JSON.stringify(response));
   } else {
-    // room does not exist
+    // room does not exist - can happen if trying to access deleted room URL
     let response = {
       type: 'updateState',
       global: {
