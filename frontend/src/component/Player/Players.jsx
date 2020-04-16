@@ -33,7 +33,7 @@ function Players(props) {
   console.log(players);
   console.log(" game master: " + gameMaster);
   console.log(" is game master ? " + isGameMaster);
-  console.log(" current player: " + currentPlayer);
+  console.log(" current player: " + currentPlayer.name);
   return (
     <div>
     <TextIcon size="h4" icon={<PeopleIcon fontSize="large"/>} text="Players"/>

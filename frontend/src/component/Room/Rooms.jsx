@@ -58,12 +58,12 @@ function Rooms(props) {
                     <TableCell align="left">
                       <div>
                         {
-                          room.players.map((player) => (<div class='avatar'>
+                          room.players.map((player) => (
                             <PlayerAvatar
                               player={player}
                               gameMaster={room.gameMaster}
                               gridContainerProps={{'justify': 'left'}}/>
-                          </div>))
+                          ))
                         }
                       </div>
                     </TableCell>

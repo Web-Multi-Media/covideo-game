@@ -193,13 +193,17 @@ function leaveRoom(ws, obj, room) {
 }
 
 function addName(ws, obj, room) {
-  room.addPlayer(new playerFunction.Player(ws.id, obj.player));
+  var player = new playerFunction.Player(ws.id, obj.player);
+  room.addPlayer(player);
+  console.log(player);
   let response = {
     type: 'updateState',
+    player: player,
     room: {
       players: room.players
     }
   };
+  console.log(`Adding player '${player.name}'. Response: ${response}`);
   broadcast(response, room);
   broadcastRoomsInfo();
 }
