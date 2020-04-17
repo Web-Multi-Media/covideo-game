@@ -295,17 +295,16 @@ function changeRoomSettings(ws, obj, room) {
 }
 
 function startRound(ws, obj, room) {
-  room.startTimer = false;
+  room.startRound();
   let response = {
     type: 'updateState',
     room: {
-      startTimer: false,
       wordsValidated: [],
       gifUrl: ''
     },
     global: {}
   };
-  room.startRound();
+  response.room.wordsOfRound = room.wordsOfRound;
   let counter = room.settings.timesToGuessPerSet[room.set-1];
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
@@ -317,8 +316,8 @@ function startRound(ws, obj, room) {
         counter = 0;
       }
       room.setActivePlayer();
+      response.room.startTimer = false;
       response.room.activePlayer = room.activePlayer;
-      response.room.words = room.wordsOfRound;
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
@@ -338,7 +337,7 @@ function gameIsReady(ws, obj, room) {
     room: {
       gameIsReady: true,
       teams: room.teams,
-      words: room.wordsOfRound,
+      wordsOfRound: room.wordsOfRound,
       activePlayer: room.activePlayer,
       playerTeam: room.teams[0].findIndex((element) => element === ws.player) !== -1
       ? 1
@@ -369,7 +368,7 @@ function validateWord(ws, obj, room) {
     type: 'updateState',
     room: {
       wordsOfRound: room.wordsOfRound,
-      wordsValidated: room.wordsValidated,
+      wordsValidated: room.wordsValidated.length,
       team1Score: room.scoreFirstTeam,
       team2Score: room.scoreSecondTeam,
       set: room.set,

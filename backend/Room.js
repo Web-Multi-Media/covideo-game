@@ -100,6 +100,7 @@ Room.prototype = {
     this.updateActivity();
     this.setFinished = false;
     this.wordsOfRound = utils.shuffle(this.getWords());
+    this.set++;
   },
   startRound: function() {
     this.updateActivity();
@@ -113,30 +114,27 @@ Room.prototype = {
   },
   validateWord: function(team) {
     this.updateActivity();
+    if (this.wordsOfRound.length > 0) {
+      // Increase team score
+      if (team === 1) {
+        this.scoreFirstTeam++;
+      } else {
+        this.scoreSecondTeam++;
+      }
 
-    // Increase team score
-    if (team === 1) {
-      this.scoreFirstTeam++;
-    } else {
-      this.scoreSecondTeam++;
+      // Add word to validated words
+      var word = this.wordsOfRound[0];
+      this.wordsValidated.push(word);
+
+      // Remove word from words of round
+      this.wordsOfRound = _.tail(this.wordsOfRound);
+
+      // Set gif URL if needed
+      this.gifUrl = this.gifUrl === '' ? this.gifUrl : '';
     }
-
-    // Add word to validated words
-    var word = this.wordsOfRound[0];
-    this.wordsValidated.push(word);
-
-    // Remove word from words of round
-    this.wordsOfRound = _.tail(this.wordsOfRound);
-
-    // Set gif URL if needed
-    this.gifUrl = this.gifUrl === ''
-      ? this.gifUrl
-      : '';
-
     // If no more words, set is finished
     if (this.wordsOfRound.length === 0) {
       this.setFinished = true;
-      this.set++;
     }
   },
   skipWord: function() {
