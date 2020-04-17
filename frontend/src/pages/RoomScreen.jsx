@@ -69,6 +69,10 @@ function RoomScreen(props) {
     }
   }, [props.roomSettings]);
 
+  useEffect(() => {
+    props.playSound('userConnect');
+  }, [props.players]);
+
   const handleWordDelete = name => event => {
     props.onDeleteWord(name);
 

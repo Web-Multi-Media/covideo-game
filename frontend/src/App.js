@@ -219,7 +219,8 @@ function App() {
             onChangeSettings={sendRoomSettings}
             onSendUsername={sendUsername}
             onSendWord={sendWord}
-            onDeleteWord={deleteWord}/>
+            onDeleteWord={deleteWord}
+            playSound={playSound}/>
         </React.Fragment>
       }
       {
@@ -241,6 +242,7 @@ function App() {
             validateWord={validateWord}
             nextWord={nextWord}
             sendGif={chooseGif}
+            playSound={playSound}
           />
       }
     </Container>
