@@ -10,6 +10,7 @@ import SelectRoomScreen from "./pages/SelectRoomScreen";
 import RoomScreen from "./pages/RoomScreen";
 import AppMenu from "./component/AppMenu/AppMenu";
 import Header from "./component/Header/Header";
+import playSound from "./component/Audio/player";
 import './App.css';
 import { useCookies } from 'react-cookie';
 
