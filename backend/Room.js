@@ -27,7 +27,7 @@ function Room(id) {
 Room.prototype = {
   getWords: function() {
     let words = []
-    for (var playerId in this.wordsPerPlayer) {
+    for (const playerId in this.wordsPerPlayer) {
       words = [
         ...words,
         ...this.wordsPerPlayer[playerId]
@@ -95,11 +95,17 @@ Room.prototype = {
   startGame: function() {
     this.updateActivity();
     this.teams = utils.sortTeam(this.players.map(player => player.name));
+    this.wordsOfRound = utils.shuffle(this.getWords());
   },
   startSet: function() {
+    this.wordsOfRound = utils.shuffle(this.getWords());
     this.updateActivity();
     this.setFinished = false;
-    this.wordsOfRound = utils.shuffle(this.getWords());
+    if(this.set < 3){
+      this.set++;
+    }else{
+      this.resetGame();
+    }
   },
   startRound: function() {
     this.updateActivity();
@@ -113,30 +119,27 @@ Room.prototype = {
   },
   validateWord: function(team) {
     this.updateActivity();
+    if (this.wordsOfRound.length > 0) {
+      // Increase team score
+      if (team === 1) {
+        this.scoreFirstTeam++;
+      } else {
+        this.scoreSecondTeam++;
+      }
 
-    // Increase team score
-    if (team === 1) {
-      this.scoreFirstTeam++;
-    } else {
-      this.scoreSecondTeam++;
+      // Add word to validated words
+      let word = this.wordsOfRound[0];
+      this.wordsValidated.push(word);
+
+      // Remove word from words of round
+      this.wordsOfRound = _.tail(this.wordsOfRound);
+
+      // Set gif URL if needed
+      this.gifUrl = this.gifUrl === '' ? this.gifUrl : '';
     }
-
-    // Add word to validated words
-    var word = this.wordsOfRound[0];
-    this.wordsValidated.push(word);
-
-    // Remove word from words of round
-    this.wordsOfRound = _.tail(this.wordsOfRound);
-
-    // Set gif URL if needed
-    this.gifUrl = this.gifUrl === ''
-      ? this.gifUrl
-      : '';
-
     // If no more words, set is finished
     if (this.wordsOfRound.length === 0) {
       this.setFinished = true;
-      this.set++;
     }
   },
   skipWord: function() {
@@ -153,7 +156,7 @@ Room.prototype = {
     this.wordsOfRound = [];
     this.wordsValidated = [];
     this.round = 0;
-    this.set = 1;
+    this.set = 0;
     this.scoreFirstTeam = 0;
     this.scoreSecondTeam = 0;
   },

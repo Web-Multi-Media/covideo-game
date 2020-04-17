@@ -46,7 +46,7 @@ function App() {
       gifUrl: '',
       players: [],
       wordsPerPlayer: {},
-      wordsOfRound: [],
+      wordToGuess: '',
       wordsValidated: [],
       teams: [],
       gameMaster: null,
@@ -59,7 +59,12 @@ function App() {
       scoreSecondTeam: 0,
       numberOfPlayer: 0,
       lastActivity: Date.now(),
-      settings: {}
+      settings: {
+        timesToGuessPerSet: [30, 30, 40],
+        numWordsPerPlayer: 3,
+        numMaxPlayers: 10,
+        private: false,
+      }
     }
   });
   const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
@@ -186,7 +191,7 @@ function App() {
     <AppMenu/>
     <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
-      {/*<p>{JSON.stringify(gameState)}</p>*/}
+      {/*<p>{JSON.stringify(gameState.room)}</p>*/}
       {
         !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>
             <Header/>
@@ -206,7 +211,7 @@ function App() {
             gameMaster={gameState.room.gameMaster}
             roomId={gameState.room.id}
             roomSettings={gameState.room.settings}
-            words={gameState.room.wordsOfRound}
+            words={gameState.room.wordToGuess}
             isGameMaster={isGameMaster}
             kickPlayer={kickPlayer}
             leaveRoom={leaveRoom}
@@ -229,7 +234,7 @@ function App() {
             startTimer={gameState.room.startTimer}
             gifUrl={gameState.room.gifUrl}
             set={gameState.room.set}
-            words={gameState.room.wordsOfRound}
+            wordToGuess={gameState.room.wordToGuess}
             wordsValidated={gameState.room.wordsValidated}
             roomSettings={gameState.room.settings}
             startRound={startRound}

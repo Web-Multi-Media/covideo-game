@@ -292,17 +292,16 @@ function changeRoomSettings(ws, obj, room) {
 }
 
 function startRound(ws, obj, room) {
-  room.startTimer = false;
+  room.startRound();
   let response = {
     type: 'updateState',
     room: {
-      startTimer: false,
       wordsValidated: [],
       gifUrl: ''
     },
     global: {}
   };
-  room.startRound();
+  response.room.wordToGuess = room.wordsOfRound[0];
   let counter = room.settings.timesToGuessPerSet[room.set-1];
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
@@ -314,8 +313,9 @@ function startRound(ws, obj, room) {
         counter = 0;
       }
       room.setActivePlayer();
+      response.room.set = room.set;
+      response.room.startTimer = false;
       response.room.activePlayer = room.activePlayer;
-      response.room.words = room.wordsOfRound;
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
@@ -327,7 +327,6 @@ function startRound(ws, obj, room) {
 
 function gameIsReady(ws, obj, room) {
   room.startGame();
-  room.startSet();
   room.startRound();
   room.setActivePlayer();
   let response = {
@@ -335,7 +334,7 @@ function gameIsReady(ws, obj, room) {
     room: {
       gameIsReady: true,
       teams: room.teams,
-      words: room.wordsOfRound,
+      wordToGuess: room.wordsOfRound[0],
       activePlayer: room.activePlayer,
       playerTeam: room.teams[0].findIndex((element) => element === ws.player) !== -1
       ? 1
@@ -365,11 +364,9 @@ function validateWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     room: {
-      wordsOfRound: room.wordsOfRound,
-      wordsValidated: room.wordsValidated,
+      wordToGuess: room.wordsOfRound[0],
+      wordsValidated: room.wordsValidated.length,
       team1Score: room.scoreFirstTeam,
-      team2Score: room.scoreSecondTeam,
-      set: room.set,
       gifUrl: room.gifUrl
     }
   };
@@ -401,9 +398,9 @@ function setGif(ws, obj, room) {
 
 function broadcast(msg, room, senderId) {
   webSockets.clients.forEach(function each(client) {
-    if (room === undefined && client.roomId === undefined) {
+    if (room === undefined && !client.roomId) {
       client.send(JSON.stringify(msg));
-    } else if (senderId !== client.id && room !== undefined && room.id === client.roomId) {
+    } else if (senderId !== client.id && room && room.id === client.roomId) {
       client.send(JSON.stringify(msg));
     }
   });
