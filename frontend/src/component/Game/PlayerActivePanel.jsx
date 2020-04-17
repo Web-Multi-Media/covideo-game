@@ -1,11 +1,18 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles';
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import GifPanel from "./GifPanel";
 import TopInformation from "./TopInformation";
 
 const useStyles = makeStyles((theme) => ({
+  loader: {
+    display: 'flex',
+    '& > * + *': {
+      marginLeft: theme.spacing(2),
+    },
+  },
   paper: {
     height: '100%',
     width: '100%',
@@ -18,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
 
 function PlayerActivePanel(props){
   const classes = useStyles();
-  console.log(props.gifUrl);
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={2}>
 
@@ -29,21 +35,30 @@ function PlayerActivePanel(props){
     }
 
     {/* Round < 3 is using voice to guess words */}
-    {props.startTimer && props.set < 3 &&
+    {props.startTimer && props.set < 3 && <React.Fragment>
       <Typography variant='h5'>
         Players are still guessing ...
       </Typography>
+      <div className={classes.loader}>
+        <CircularProgress />
+      </div>
+      </React.Fragment>
     }
 
     {/* Round >=3 is using GIFs to guess words */}
     {props.startTimer && props.set >= 3 && <React.Fragment>
       {props.gifUrl !== '' && <React.Fragment>
-        <Typography>You have sent your GIF !</Typography>
-        <img className="GuesserImg" src={props.gifUrl} alt="Powered By GIPHY"/>
+        <Typography variant='h5'>You have sent your GIF !</Typography>
+        <Paper elevation={5}>
+          <img className="GuesserImg" src={props.gifUrl} alt="Powered By GIPHY"/>
+        </Paper>
         </React.Fragment>
       }
       {props.gifUrl === '' && <React.Fragment>
-        <GifPanel sendGif={props.sendGif} startTimer={props.startTimer}/>
+        <Typography variant='h5'>Search and select a GIF representing {props.word} !</Typography>
+        <Paper elevation={5}>
+          <GifPanel sendGif={props.sendGif} startTimer={props.startTimer}/>
+        </Paper>
         </React.Fragment>
       }
       </React.Fragment>

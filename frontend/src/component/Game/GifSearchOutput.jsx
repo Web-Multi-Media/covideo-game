@@ -1,7 +1,7 @@
 import React from "react";
 import GifElement from "./GifElement";
 
-function SearchOutput({gifs, sendGif}) {
+function GifSearchOutput({gifs, sendGif}) {
   return (<div className="gifs-output">
     {
       gifs.length > 0
@@ -11,4 +11,4 @@ function SearchOutput({gifs, sendGif}) {
   </div>);
 }
 
-export default SearchOutput;
+export default GifSearchOutput;

@@ -200,10 +200,10 @@ function App() {
               createNewRoom={createNewRoom}
               joinRoom={joinRoom}
               getRooms={getRooms}/>
-          </React.Fragment>
+            </React.Fragment>
       }
       {
-        !gameState.room.gameIsReady && gameState.global.joinedRoom && <React.Fragment>
+        !gameState.room.gameIsReady && gameState.global.joinedRoom &&
           <RoomScreen
             players={gameState.room.players}
             currentPlayer={gameState.player}
@@ -219,10 +219,9 @@ function App() {
             onSendUsername={sendUsername}
             onSendWord={sendWord}
             onDeleteWord={deleteWord}/>
-        </React.Fragment>
       }
       {
-        gameState.room.gameIsReady &&
+        gameState.room.gameIsReady && gameState.global.joinedRoom &&
           <GameScreen
             currentPlayer={gameState.player}
             gameMaster={gameState.room.gameMaster}
@@ -239,8 +238,7 @@ function App() {
             startRound={startRound}
             validateWord={validateWord}
             nextWord={nextWord}
-            sendGif={chooseGif}
-          />
+            sendGif={chooseGif}/>
       }
     </Container>
   </React.Fragment>);

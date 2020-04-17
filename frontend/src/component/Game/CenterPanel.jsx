@@ -28,13 +28,14 @@ function CenterPanel(props) {
       />
       {props.currentPlayer.name === props.activePlayer && <React.Fragment>
         <PlayerActivePanel
-           currentPlayer={props.currentPlayer}
+          currentPlayer={props.currentPlayer}
           gameMaster={props.gameMaster}
           roomSettings={props.roomSettings}
           set={props.set}
           startTimer={props.startTimer}
           gifUrl={props.gifUrl}
-          sendGif={props.sendGif}/>
+          sendGif={props.sendGif}
+          word={props.word}/>
         </React.Fragment>
       }
       {props.currentPlayer.name !== props.activePlayer && <React.Fragment>

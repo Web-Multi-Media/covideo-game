@@ -120,6 +120,7 @@ Room.prototype = {
   validateWord: function(team) {
     this.updateActivity();
     if (this.wordsOfRound.length > 0) {
+
       // Increase team score
       if (team === 1) {
         this.scoreFirstTeam++;

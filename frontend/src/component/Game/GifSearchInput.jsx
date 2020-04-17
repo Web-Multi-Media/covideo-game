@@ -1,7 +1,7 @@
 import React from "react";
 
-function SearchInput({handleSearchInput, onkeyDown}) {
-  return (<div className="gif-search-container" onChange={handleSearchInput}>
+function GifSearchInput({handleGifSearchInput, onkeyDown}) {
+  return (<div className="gif-search-container" onChange={handleGifSearchInput}>
     <div>
       <label htmlFor="search" className="gif-search-label">GIF Search:</label>
       <input type="text" id="search" className="gif-search-input gif-search-term" onKeyDown={onkeyDown} placeholder="e.g. funny cats"/>
@@ -9,4 +9,4 @@ function SearchInput({handleSearchInput, onkeyDown}) {
   </div>);
 }
 
-export default SearchInput;
+export default GifSearchInput;
