@@ -50,6 +50,8 @@ function connectPlayer(ws, urlParams) {
     rooms_data.push(room.serialize());
   }
 
+  let room = rooms.get(ws.roomId);
+
   // Send state to client
   let response = {
     type: 'updateState',
@@ -57,18 +59,13 @@ function connectPlayer(ws, urlParams) {
       id: ws.id,
       name: ws.playerName,
     },
-    room: {
-      id: ws.roomId,
-      settings: {}
-    },
     global: {
       rooms: rooms_data,
-      joinedRoom: roomId !== ''
+      joinedRoom: room !== undefined
     }
   };
-  let room = rooms.get(ws.roomId);
-  if (room){
-    response.room = room.serialize();
+  if (room) {
+    response.room = room.serialize()
   }
   ws.send(JSON.stringify(response));
 }
