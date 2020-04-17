@@ -6,9 +6,6 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Typography from "@material-ui/core/Typography";
 import CenterPanel from "../component/Game/CenterPanel";
 import TeamPanel from "../component/Game/TeamPanel";
-import PlayerAvatar from "../component/Player/PlayerAvatar";
-import Round from "../component/Game/Round";
-import Timer from "../component/Game/Timer";
 import WordInput from "../component/Game/WordInput";
 import TextIcon from "../component/TextIcon/TextIcon";
 
@@ -65,7 +62,7 @@ function GameScreen(props) {
           activePlayer={props.activePlayer}
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}
-          word={props.words[0]}
+          word={props.wordToGuess}
         />
       </Grid>
 
@@ -100,7 +97,7 @@ function GameScreen(props) {
                 props.currentPlayer.name === props.activePlayer && <React.Fragment>
                   <WordInput
                     startTimer={props.startTimer}
-                    wordToGuess={props.words[0]}
+                    wordToGuess={props.wordToGuess}
                     startRound={props.startRound}
                     validation={props.validateWord}
                     next={props.nextWord}/>
