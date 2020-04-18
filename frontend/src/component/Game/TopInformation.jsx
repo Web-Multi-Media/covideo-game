@@ -59,7 +59,8 @@ function TopInformation(props) {
                     <Grid item xs={3}>
                         <Timer
                             duration={props.roomSettings.timesToGuessPerSet[props.set-1]}
-                            startTimer={props.startTimer}/>
+                            startTimer={props.startTimer}
+                            playSound={props.playSound}/>
                     </Grid>
                 </Grid>
             </Grid>

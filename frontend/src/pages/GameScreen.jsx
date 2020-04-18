@@ -33,6 +33,11 @@ const useStyles = makeStyles((theme) => ({
 function GameScreen(props) {
   const classes = useStyles();
 
+  useEffect(() => {
+    if (props.currentPlayer.id === props.activePlayer.id) {
+      setTimeout(() => props.playSound('startRoundActivePlayer'), 500)
+    }
+  }, [props.activePlayer.id]);
 
   useEffect(() => {
     if (props.team1Score > 0 || props.team2Score > 0) {
@@ -66,6 +71,7 @@ function GameScreen(props) {
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}
           word={props.wordToGuess}
+          playSound={props.playSound}
         />
       </Grid>
 

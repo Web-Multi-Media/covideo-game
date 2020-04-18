@@ -495,7 +495,7 @@ function broadcast(msg, room,senderId = "") {
  * Broadcast one response to everyone and a second for a specific player
  */
 function broadCastTwoResponses(responseToBroadCast, responseToSpecific, senderId, room) {
-  broadcast(responseToBroadCast, room,senderId);
+  broadcast(responseToBroadCast, room, senderId);
   sendMessage(responseToSpecific, senderId);
 }
 
