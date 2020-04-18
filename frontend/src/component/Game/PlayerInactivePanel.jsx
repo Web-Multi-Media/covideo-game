@@ -1,11 +1,18 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import './PlayerInactivePanel.css'
 import TopInformation from "./TopInformation";
 
 const useStyles = makeStyles((theme) => ({
+  loader: {
+    display: 'flex',
+    '& > * + *': {
+      marginLeft: theme.spacing(2),
+    },
+  },
   paper: {
     height: '100%',
     width: '100%',
@@ -21,10 +28,14 @@ function PlayerInactivePanel(props) {
   const classes = useStyles();
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={2}>
-    {!props.startTimer &&
+    {!props.startTimer && <React.Fragment>
       <Typography variant='h5'>
-        Waiting for round to start ...
+        Waiting for active player to start round ...
       </Typography>
+      <div className={classes.loader}>
+        <CircularProgress />
+      </div>
+      </React.Fragment>
     }
 
     {/* Round < 3 is using voice to guess words */}
@@ -40,13 +51,18 @@ function PlayerInactivePanel(props) {
         <Typography variant='h5'>
         Guess the word using the GIF below !
         </Typography>
-        <img className="GuesserImg" src={props.gifUrl} alt="Powered By GIPHY"/>
+        <Paper elevation={5}>
+          <img className="GuesserImg" src={props.gifUrl} alt="Powered By GIPHY"/>
+        </Paper>
         </React.Fragment>
       }
       {props.gifUrl === '' && <React.Fragment>
         <Typography variant='h5'>
-          Waiting on GIF ...
+          Waiting on active player to choose a GIF ...
         </Typography>
+        <div className={classes.loader}>
+          <CircularProgress />
+        </div>
         </React.Fragment>
       }
       </React.Fragment>

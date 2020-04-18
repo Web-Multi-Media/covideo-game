@@ -32,10 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GameScreen(props) {
   const classes = useStyles();
-  const activePlayer = {
-    id: 'noob',
-    name: props.activePlayer
-  };
+
 
   useEffect(() => {
     if (props.team1Score > 0 || props.team2Score > 0) {
@@ -100,7 +97,7 @@ function GameScreen(props) {
             </Grid>
             <Grid item xs={4}>
               {
-                props.currentPlayer.name === props.activePlayer && <React.Fragment>
+                props.currentPlayer.id === props.activePlayer.id && <React.Fragment>
                   <WordInput
                     startTimer={props.startTimer}
                     wordToGuess={props.wordToGuess}

@@ -94,7 +94,7 @@ Room.prototype = {
   },
   startGame: function() {
     this.updateActivity();
-    this.teams = utils.sortTeam(this.players.map(player => player.name));
+    this.teams = utils.sortTeam(this.players);
     this.wordsOfRound = utils.shuffle(this.getWords());
   },
   startSet: function() {
@@ -120,6 +120,7 @@ Room.prototype = {
   validateWord: function(team) {
     this.updateActivity();
     if (this.wordsOfRound.length > 0) {
+
       // Increase team score
       if (team === 1) {
         this.scoreFirstTeam++;

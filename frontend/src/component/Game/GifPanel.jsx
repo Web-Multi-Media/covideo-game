@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import "./GifPanel.css";
 import Loader from "./Loader";
-import SearchOutput from "./SearchOutput";
+import GifSearchOutput from "./GifSearchOutput";
 import Button from "@material-ui/core/Button";
 
 function GifPanel({sendGif, startTimer}) {
@@ -14,7 +14,7 @@ function GifPanel({sendGif, startTimer}) {
   const url = 'https://api.giphy.com/v1/gifs/search?';
   const apiKey = '1caQBCCly08w0vinpWmp1AK5ep8o6gsj';
 
-  const handleSearchInput = (target) => {
+  const handleGifSearchInput = (target) => {
     setsearchTerm(target.value);
   };
 
@@ -40,7 +40,7 @@ function GifPanel({sendGif, startTimer}) {
         <main>
           <div className="container">
             <div className="searchInput">
-              <div className="gif-search-container" onChange={e => handleSearchInput(e.target)}>
+              <div className="gif-search-container" onChange={e => handleGifSearchInput(e.target)}>
                 <div>
                   <label htmlFor="search" className="gif-search-label">GIF Search:</label>
                   <input type="text" id="search" className="gif-search-input gif-search-term" onKeyDown={onkeydown} disabled={!startTimer} placeholder="e.g. funny cats"/>
@@ -57,7 +57,7 @@ function GifPanel({sendGif, startTimer}) {
             }
             {
               !searching && searched
-                ? <SearchOutput gifs={gifs} sendGif={sendGif}/>
+                ? <GifSearchOutput gifs={gifs} sendGif={sendGif}/>
                 : null
             }
           </div>

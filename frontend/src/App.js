@@ -191,7 +191,9 @@ function App() {
     <AppMenu/>
     <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
-      {/*<p>{JSON.stringify(gameState.room)}</p>*/}
+      {/*<p> gameState.room {JSON.stringify(gameState.room)}</p>*/}
+      <p> gameState.global {JSON.stringify(gameState.global)}</p>
+      {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
       {
         !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>
             <Header/>
@@ -201,10 +203,10 @@ function App() {
               createNewRoom={createNewRoom}
               joinRoom={joinRoom}
               getRooms={getRooms}/>
-          </React.Fragment>
+            </React.Fragment>
       }
       {
-        !gameState.room.gameIsReady && gameState.global.joinedRoom && <React.Fragment>
+        !gameState.room.gameIsReady && gameState.global.joinedRoom &&
           <RoomScreen
             players={gameState.room.players}
             currentPlayer={gameState.player}
@@ -220,11 +222,11 @@ function App() {
             onSendUsername={sendUsername}
             onSendWord={sendWord}
             onDeleteWord={deleteWord}
-            playSound={playSound}/>
-        </React.Fragment>
+            playSound={playSound}
+            onDeleteWord={deleteWord}/>
       }
       {
-        gameState.room.gameIsReady &&
+        gameState.room.gameIsReady && gameState.global.joinedRoom &&
           <GameScreen
             currentPlayer={gameState.player}
             gameMaster={gameState.room.gameMaster}
