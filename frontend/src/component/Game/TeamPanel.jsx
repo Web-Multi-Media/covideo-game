@@ -24,11 +24,10 @@ function TeamPanel(props) {
   const classes = useStyles();
   const team = props.team;
   const teamMembers = team.map(player => {
-    const playerData = {id: 'noob', name: player};
-    return (<React.Fragment key={playerData.name}>
+    return (<React.Fragment key={player.name}>
       <Grid item>
       <PlayerAvatar
-        player = {playerData}
+        player = {player}
         gameMaster = {props.gameMaster}
         currentPlayer = {props.currentPlayer}/>
       </Grid>

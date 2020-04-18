@@ -32,10 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GameScreen(props) {
   const classes = useStyles();
-  const activePlayer = {
-    id: 'noob',
-    name: props.activePlayer
-  };
+
 
   return (<React.Fragment>
     <Grid container direction="row" justify="center" spacing={2} alignItems="stretch">
@@ -94,7 +91,7 @@ function GameScreen(props) {
             </Grid>
             <Grid item xs={4}>
               {
-                props.currentPlayer.name === props.activePlayer && <React.Fragment>
+                props.currentPlayer.id === props.activePlayer.id && <React.Fragment>
                   <WordInput
                     startTimer={props.startTimer}
                     wordToGuess={props.wordToGuess}

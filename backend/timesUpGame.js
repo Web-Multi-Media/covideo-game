@@ -307,7 +307,6 @@ function startRound(ws, obj, room) {
     },
     global: {}
   };
-  response.room.wordToGuess = room.wordsOfRound[0];
   let counter = room.settings.timesToGuessPerSet[room.set-1];
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
@@ -328,7 +327,9 @@ function startRound(ws, obj, room) {
   }, 100);
   room.startTimer = true;
   response.room.startTimer = room.startTimer;
-  broadcast(response, room);
+  let response2 = _.cloneDeep(response);
+  response2.room.wordToGuess = room.wordsOfRound[0];
+  broadCastTwoResponses(response, response2, room.activePlayer.id, room)
 }
 
 /**
@@ -343,15 +344,11 @@ function gameIsReady(ws, obj, room) {
   room.startRound();
   room.setActivePlayer();
   let response = {
-    type: 'updateState',
+    type: 'gameIsReady',
     room: {
       gameIsReady: true,
       teams: room.teams,
-      wordToGuess: room.wordsOfRound[0],
-      activePlayer: room.activePlayer,
-      playerTeam: room.teams[0].findIndex((element) => element === ws.player) !== -1
-      ? 1
-      : 2,
+      activePlayer: room.activePlayer
     }
   };
   broadcast(response, room);
@@ -393,17 +390,18 @@ function deleteWord(ws, obj, room) {
  */
 function validateWord(ws, obj, room) {
   room.validateWord(obj.team);
-  let response = {
+  const responseToBroadCast = {
     type: 'updateState',
     room: {
-      wordToGuess: room.wordsOfRound[0],
       wordsValidated: room.wordsValidated.length,
       team1Score: room.scoreFirstTeam,
       team2Score: room.scoreSecondTeam,
       gifUrl: room.gifUrl
     }
   };
-  broadcast(response, room);
+  let responseToSpecific = _.cloneDeep(responseToBroadCast);
+  responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
+  broadCastTwoResponses(responseToBroadCast, responseToSpecific, room.activePlayer.id, room)
 }
 
 /**
@@ -419,11 +417,13 @@ function nextWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     room: {
-      wordsOfRound: room.wordsOfRound,
+      wordToGuess: room.wordsOfRound[0],
       gifUrl: ''
     }
   };
-  broadcast(response, room); // BUG: should send just the next word to the activePlayer.
+  // broadcast(response, room); // BUG: should send just the next word to the activePlayer.
+  sendMessage(response, room.activePlayer.id);
+
 }
 
 /**
@@ -481,14 +481,22 @@ function sendMessage(msg, clientId){
  * @param  {Room}   room     Room.
  * @param  {String} senderId Send id.
  */
-function broadcast(msg, room) {
+function broadcast(msg, room,senderId = "") {
   webSockets.clients.forEach(function each(client) {
     if (room === undefined && !client.roomId) {
       client.send(JSON.stringify(msg));
-    } else if (room && room.id === client.roomId) {
+    } else if (senderId !== client.id && room && room.id === client.roomId) {
       client.send(JSON.stringify(msg));
     }
   });
+}
+
+/**
+ * Broadcast one response to everyone and a second for a specific player
+ */
+function broadCastTwoResponses(responseToBroadCast, responseToSpecific, senderId, room) {
+  broadcast(responseToBroadCast, room,senderId);
+  sendMessage(responseToSpecific, senderId);
 }
 
 /**
