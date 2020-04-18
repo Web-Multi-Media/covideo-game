@@ -204,9 +204,9 @@ function App() {
             <SelectRoomScreen
               currentPlayer={gameState.player}
               rooms={gameState.global.rooms}
+              getRooms={getRooms}
               createNewRoom={createNewRoom}
-              joinRoom={joinRoom}
-              getRooms={getRooms}/>
+              joinRoom={joinRoom}/>
             </React.Fragment>
       }
       {
