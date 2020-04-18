@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import CheckIcon from '@material-ui/icons/Check';
 import EditIcon from '@material-ui/icons/Edit';
 import './PlayerAvatar.css';
 
@@ -29,18 +30,16 @@ String.prototype.capitalize = function() {
 }
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    '& > *': {
-      margin: theme.spacing(1)
-    }
-  },
   small: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+    margin: '2px',
     backgroundColor: '#f2ed94'
   },
-  avatar: {
+  tableInput: {
+    width: '40%'
+  },
+  text: {
     marginRight: '5px',
     display: 'inline-flex',
     fontSize: '1rem'
@@ -59,6 +58,9 @@ function PlayerAvatar(props) {
     setTextInput(event.target.value);
   };
   function onSendUsername(){
+    if (!textInput){
+      return;
+    }
     setEditMode(false);
     props.onSendUsername(textInput);
   };
@@ -68,13 +70,12 @@ function PlayerAvatar(props) {
 
   return (<React.Fragment>
     <Grid container alignItems="center" {...gridContainerProps}>
-      {!isGameMaster && player.name !== "" && <React.Fragment>
-            <Grid item>
-              <Avatar style={{'backgroundColor': stringToColor(player.name)}} className={classes.small}>
-                {getFirstLetter(player.name)}
-              </Avatar>
-            </Grid>
-          </React.Fragment>
+      {!isGameMaster && player.name !== "" &&
+        <Grid item>
+          <Avatar style={{'backgroundColor': stringToColor(player.name)}} className={classes.small}>
+            {getFirstLetter(player.name)}
+          </Avatar>
+        </Grid>
       }
       {isGameMaster &&
         <Grid item>
@@ -82,42 +83,40 @@ function PlayerAvatar(props) {
         </Grid>
       }
       {!isCurrentPlayer &&
-        <Grid item>
+        <Grid item className={classes.text}>
           <b>{player.name.capitalize()}</b>
         </Grid>
       }
       {isCurrentPlayer && <React.Fragment>
          {!editMode && <React.Fragment>
-           <Grid item>
+           <Grid item className={classes.text}>
             <b>{player.name.capitalize()}</b>&nbsp;(you)
            </Grid>
            &nbsp;
-           <Grid>
-             <Button
-               id="outlined-basic-name-input"
+           <Grid item>
+             <IconButton
                size="small"
                color="primary"
-               onClick={setEditMode.bind(this, true)}
-               startIcon={<EditIcon fontSize="small"/>}/>
+               onClick={setEditMode.bind(this, true)}>
+               <EditIcon fontSize="small"/>
+             </IconButton>
             </Grid>
             </React.Fragment>
          }
          {editMode && <React.Fragment>
            <TextField
-             id="standard-basic"
+             id="input-with-icon-textfield"
              size="small"
-             label="Username"
+             className={classes.tableInput}
+             label=""
              value={textInput}
              onChange={handleNameChange}/>
-           <Button
-             id="outlined-basic-name-input"
-             className={classes.button}
+           <IconButton
              size="small"
-             variant="contained"
              color="primary"
              onClick={onSendUsername}>
-             Set
-           </Button>
+             <CheckIcon fontSize="small"/>
+           </IconButton>
            </React.Fragment>
          }
          </React.Fragment>

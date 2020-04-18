@@ -35,11 +35,15 @@ function TeamPanel(props) {
   });
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={2}>
-    <Typography className={classes.typography}><b>Team {props.teamNumber}</b></Typography>
-    <Typography variant='h8'>Score : {props.teamScore}</Typography>
-    <Grid container>
-    {teamMembers}
-    </Grid>
+      <Typography className={classes.typography}>
+        <b>Team {props.teamNumber}</b>
+      </Typography>
+      <Typography variant='h8'>
+        Score : {props.teamScore}
+      </Typography>
+      <Grid container>
+        {teamMembers}
+      </Grid>
     </Paper>
   </React.Fragment>);
 }

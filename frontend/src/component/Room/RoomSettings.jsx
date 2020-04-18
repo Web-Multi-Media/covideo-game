@@ -33,7 +33,7 @@ function RoomSettings(props) {
       private: privateRoom
     };
     onChangeSettings(settings);
-  }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers, privateRoom, onChangeSettings]);
+  }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers, privateRoom]);
 
   return (<React.Fragment>
     <TextIcon size="h4" icon={<SettingsIcon fontSize="large"/>} text="Settings"/>
@@ -80,7 +80,9 @@ function RoomSettings(props) {
           onChange={(event) => setNumMaxPlayers(parseInt(event.target.value))}
         />
         <FormControlLabel
-          value="left"
+          value="start"
+          label="Private"
+          labelPlacement="end"
           control={
             <Checkbox
               color="primary"
@@ -89,8 +91,6 @@ function RoomSettings(props) {
               onChange={(event) => setPrivateRoom(event.target.checked)}
             />
           }
-          label="Private"
-          labelPlacement="left"
         />
       </div>
     </form>

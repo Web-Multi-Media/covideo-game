@@ -23,10 +23,9 @@ function SelectRoomScreen(props) {
       rooms={rooms}
       joinRoom={props.joinRoom}/>
     <Fab
-      variant="contained"
+      variant="extended"
       color="primary"
       className={classes.button}
-      startIcon={<AddIcon/>}
       onClick={props.createNewRoom}>
       <AddIcon />
       Create room

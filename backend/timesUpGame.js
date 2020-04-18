@@ -53,7 +53,6 @@ function connectPlayer(ws, urlParams) {
   ws.id = playerId ?  playerId : utils.getUniqueID();
   ws.playerName = playerName ? playerName : '';
   ws.roomId = rooms.has(roomId) ?  roomId : '';
-  console.log("Current player name " + ws.playerName);
   let room = rooms.get(ws.roomId);
   let response = {
     type: 'updateState',
@@ -212,7 +211,8 @@ function addPlayerToRoom(ws, room){
   let playerName = ws.playerName;
   console.log("player name: " + ws.playerName)
   if (playerName === ''){
-    playerName = "Anon" + ws.id;
+    let lastChars = ws.id.substr(ws.id.length - 4);
+    playerName = `Player-${lastChars}`;
   }
   let player = new playerFunction.Player(ws.id, playerName);
   room.addPlayer(player);

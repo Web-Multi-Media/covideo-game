@@ -26,9 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App() {
-
   const classes = useStyles();
-
   const [gameState, setGameState] = useState({
     global: {
       rooms: [],
@@ -41,6 +39,7 @@ function App() {
     player: {
       id: '',
       name: '',
+      status: ''
     },
     room: {
       name: '',
@@ -91,7 +90,7 @@ function App() {
         }
       })
     }
-  }, [cookies.playerId, cookies.playerName, cookies.roomId, gameState, gameState.global.socketConnected]);
+  }, []);
 
   useEffect(() => {
     if (gameState.room.id !== cookies.roomId) {
@@ -103,7 +102,7 @@ function App() {
     if (gameState.player.name !== cookies.playerName) {
       setCookie('playerName', gameState.player.name, { path: '/' });
     }
-  }, [gameState.room.id, gameState.player.id, gameState.player.name, cookies.roomId, cookies.playerId, cookies.playerName, setCookie]);
+  }, [gameState.room.id, gameState.player.id, gameState.player.name]);
 
   useEffect(() => {
     if (location.pathname !== '/' && gameState.global.socketConnected) {
@@ -111,7 +110,7 @@ function App() {
       console.log(location.pathname);
       ws.send(JSON.stringify({type: 'joinRoom', roomId: location.pathname.substring(1)}));
     }
-  }, [gameState.global.socketConnected, location.pathname]);
+  }, [gameState.socketConnected]);
 
   useEffect(() => {
     ws.onmessage = (message) => {

@@ -187,7 +187,7 @@ function RoomScreen(props) {
       <Grid item xs>
         <Fab
           className={classes.button}
-          variant="contained"
+          variant="extended"
           color="primary"
           size="large"
           onClick={props.onGameReady}

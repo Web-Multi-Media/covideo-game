@@ -6,16 +6,14 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import PeopleIcon from '@material-ui/icons/People';
-import PlayerAvatar from "./PlayerAvatar";
+import PlayerAvatarNew from "./PlayerAvatarNew";
 import TextIcon from '../TextIcon/TextIcon';
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 300,
-    maxWidth: 800
+    width: '100%'
   },
   wrapIcon: {
     verticalAlign: 'middle',
@@ -34,47 +32,36 @@ function Players(props) {
     <TextIcon size="h4" icon={<PeopleIcon fontSize="large"/>} text="Players"/>
     {players.length === 0 && <p>No players in room yet. Add your name !</p>}
     <TableContainer component={Paper}>
-          <Table className={classes.table} size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <b>Player</b>
-                </TableCell>
-                <TableCell align="left">
-                  <b>ID</b>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+      <Table className={classes.table} size="small">
+        <TableBody>
+        {
+          players.map((p) => (<TableRow key={p.id}>
+            <TableCell component="th" scope="row">
+              <PlayerAvatarNew
+                player={p}
+                isCurrentPlayer={p.id === currentPlayer.id}
+                isGameMaster={p.id === gameMaster}
+                gameMaster={gameMaster}
+                onSendUsername={props.onSendUsername}/>
+            </TableCell>
+            <TableCell align="left">
               {
-                players.map((p) => (<TableRow key={p.id}>
-                  <TableCell component="th" scope="row">
-                    <PlayerAvatar
-                      player={p}
-                      isCurrentPlayer={p.id === currentPlayer.id}
-                      isGameMaster={p.id === gameMaster}
-                      gameMaster={gameMaster}
-                      onSendUsername={props.onSendUsername}/>
-                  </TableCell>
-                  <TableCell align="left">{p.id}</TableCell>
-                  <TableCell align="left">
-                    {
-                      isGameMaster && p.id !== currentPlayer.id &&
-                      <Button
-                        id="outlined-basic-name"
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={props.kickPlayer.bind(this, p.id)}>
-                      Kick player
-                      </Button>
-                    }
-                  </TableCell>
-                </TableRow>))
+                isGameMaster && p.id !== currentPlayer.id &&
+                <Button
+                  id="outlined-basic-name"
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={props.kickPlayer.bind(this, p.id)}>
+                Kick
+                </Button>
               }
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </TableCell>
+          </TableRow>))
+        }
+        </TableBody>
+      </Table>
+    </TableContainer>
   </div>);
 }
 
