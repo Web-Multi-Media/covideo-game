@@ -33,36 +33,37 @@ function TopInformation(props) {
   const classes = useStyles();
   return (
     <Grid container direction="row" justify="center" spacing={2} alignItems="stretch">
-    <Grid item xs={12}>
-      <Grid container direction="row" justify="center" spacing={2}>
+      <Grid item xs={12}>
+        <Grid container direction="row" justify="center" spacing={2}>
 
-        {/* Active player card */}
-        <Grid item xs={3} justify="left" alignItems="center">
-          <Paper className={classes.paper} elevation={2}>
-            <Typography className={classes.typography}>
-              <b>Active player</b>
-            </Typography>
-            <PlayerAvatar
-              player={props.currentPlayer}
-              currentPlayer={props.currentPlayer}
-              gameMaster={props.gameMaster}
-              gridContainerProps={{playerAvatarGridProps}}/>
-          </Paper>
-        </Grid>
+          {/* Active player card */}
+          <Grid item xs={3} justify="left" alignItems="center">
+            <Paper className={classes.paper} elevation={2}>
+              <Typography className={classes.typography}>
+                <b>Active player</b>
+              </Typography>
+              <PlayerAvatar
+                player={props.currentPlayer}
+                currentPlayer={props.currentPlayer}
+                gameMaster={props.gameMaster}
+                gridContainerProps={{playerAvatarGridProps}}/>
+            </Paper>
+          </Grid>
 
-        {/* Round card */}
-        <Grid item xs={6}>
-          <Round set={props.set}/>
-        </Grid>
+          {/* Round card */}
+          <Grid item xs={6}>
+            <Round set={props.set}/>
+          </Grid>
 
-        {/* Time left card */}
-        <Grid item xs={3}>
-          <Timer
-            duration={props.roomSettings.timesToGuessPerSet[props.set]}
-            startTimer={props.startTimer}/>
+          {/* Time left card */}
+          <Grid item xs={3}>
+            <Timer
+              duration={props.roomSettings.timesToGuessPerSet[props.set]}
+              startTimer={props.startTimer}
+              playSound={props.playSound}/>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
     </Grid>
   );
 }

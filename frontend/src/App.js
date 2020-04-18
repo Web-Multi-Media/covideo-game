@@ -11,6 +11,7 @@ import RoomScreen from "./pages/RoomScreen";
 // import AppMenu from "./component/AppMenu/AppMenu";
 import AppMenuNew from "./component/AppMenu/AppMenuNew";
 import Header from "./component/Header/Header";
+import playSound from "./component/Audio/player";
 import './App.css';
 import { useCookies } from 'react-cookie';
 
@@ -80,7 +81,6 @@ function App() {
     URL += cookies.roomId !== undefined ? `&roomId=${cookies.roomId}` : '';
     URL += cookies.playerName !== undefined ? `&playerName=${cookies.playerName}` : '';
     ws = new WebSocket(URL);
-
     ws.onopen = function() {
       setGameState({
         ...gameState,
@@ -195,7 +195,7 @@ function App() {
     <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
       {/*<p> gameState.room {JSON.stringify(gameState.room)}</p>*/}
-      {/*<p> gameState.global {JSON.stringify(gameState.global)}*/}
+      {/*<p> gameState.global {JSON.stringify(gameState.global)}</p>*/}
       {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
       {
         !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>
@@ -224,6 +224,8 @@ function App() {
             onChangeSettings={sendRoomSettings}
             onSendUsername={sendUsername}
             onSendWord={sendWord}
+            onDeleteWord={deleteWord}
+            playSound={playSound}
             onDeleteWord={deleteWord}/>
       }
       {
@@ -244,7 +246,9 @@ function App() {
             startRound={startRound}
             validateWord={validateWord}
             nextWord={nextWord}
-            sendGif={chooseGif}/>
+            sendGif={chooseGif}
+            playSound={playSound}
+          />
       }
     </Container>
   </React.Fragment>);

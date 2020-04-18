@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -33,6 +33,17 @@ const useStyles = makeStyles((theme) => ({
 function GameScreen(props) {
   const classes = useStyles();
 
+  useEffect(() => {
+    if (props.currentPlayer.id === props.activePlayer.id) {
+      setTimeout(() => props.playSound('startRoundActivePlayer'), 500)
+    }
+  }, [props.activePlayer.id]);
+
+  useEffect(() => {
+    if (props.team1Score > 0 || props.team2Score > 0) {
+      props.playSound('guessWord');
+    }
+  }, [props.team1Score, props.team2Score]);
 
   return (<React.Fragment>
     <Grid container direction="row" justify="center" spacing={2} alignItems="stretch">
@@ -58,9 +69,9 @@ function GameScreen(props) {
           startTimer={props.startTimer}
           activePlayer={props.activePlayer}
           gifUrl={props.gifUrl}
-          sendGif={props.sendGif}
           wordToGuess={props.wordToGuess}
-        />
+          sendGif={props.sendGif}
+          playSound={props.playSound}/>
       </Grid>
 
       {/* Team panel (left) */}

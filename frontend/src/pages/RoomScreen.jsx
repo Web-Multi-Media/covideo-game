@@ -79,7 +79,7 @@ function RoomScreen(props) {
       }
     }
   }, [props.roomSettings, handleWordDelete, words]);
-
+  
   const sendWord = () => {
     if (wordInput !== '') {
       props.onSendWord(wordInput);

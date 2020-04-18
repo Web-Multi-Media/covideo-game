@@ -27,7 +27,7 @@ function CenterPanel(props) {
         set={props.set}
         roomSettings={props.roomSettings}
         startTimer={props.startTimer}
-      />
+        playSound={props.playSound}/>
       {props.currentPlayer.id === props.activePlayer.id && <React.Fragment>
         <PlayerActivePanel
           currentPlayer={props.currentPlayer}

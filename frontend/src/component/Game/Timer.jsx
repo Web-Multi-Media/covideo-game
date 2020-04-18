@@ -52,11 +52,20 @@ function Timer(props) {
   useEffect(() => {
     if (props.startTimer === true) {
       reset(props.duration);
+      props.playSound('startRound');
     }
     if (props.startTimer === false) {
       setSeconds(0);
     }
   }, [props.startTimer, props.duration]);
+
+  useEffect(() => {
+    if (isActive && seconds === 3) {
+      props.playSound('timerEndSoon');
+    } else if (isActive && seconds === 0) {
+      props.playSound('endRoundlooser');
+    }
+  }, [seconds]);
 
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>
