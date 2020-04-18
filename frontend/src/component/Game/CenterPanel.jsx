@@ -20,8 +20,6 @@ function CenterPanel(props) {
   const classes = useStyles();
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>
-      <p>props.currentPlayer {JSON.stringify(props.currentPlayer)}</p>
-      <p>props.activePlayer {JSON.stringify(props.activePlayer)}</p>
       <TopInformation
           currentPlayer={props.activePlayer}
           gameMaster={props.gameMaster}

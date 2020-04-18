@@ -192,7 +192,7 @@ function App() {
     <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
       {/*<p> gameState.room {JSON.stringify(gameState.room)}</p>*/}
-      <p> gameState.global {JSON.stringify(gameState.global)}</p>
+      {/* <p> gameState.global {JSON.stringify(gameState.global)}</p> */}
       {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
       {
         !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>
