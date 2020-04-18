@@ -63,7 +63,7 @@ function Rooms(props) {
                           key={player.id}
                           player={player}
                           isGameMaster={player.id === room.gameMaster}
-                          isCurrentPlayer={player.id == currentPlayer.id}
+                          isCurrentPlayer={player.id === currentPlayer.id}
                           gridContainerProps={{'justify': 'flex-start'}}
                           onSendUsername={props.onSendUsername}/>
                       ))

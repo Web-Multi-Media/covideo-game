@@ -43,7 +43,7 @@ function messageHandler(message, ws, wss) {
  * Retrieves player info (id, playerName, roomId) from cookies to handle
  * browser page refreshes.
  * Automatically reconnect client to room if it was in a room before.
- * @param  {object} ws        Websocket
+ * @param  {object} ws        Websocket-
  * @param  {object} urlParams URL parameters object.
  */
 function connectPlayer(ws, urlParams) {
@@ -307,6 +307,7 @@ function startRound(ws, obj, room) {
     },
     global: {}
   };
+  response.room.wordToGuess = room.wordsOfRound[0];
   let counter = room.settings.timesToGuessPerSet[room.set-1];
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
@@ -327,9 +328,7 @@ function startRound(ws, obj, room) {
   }, 100);
   room.startTimer = true;
   response.room.startTimer = room.startTimer;
-  let response2 = _.cloneDeep(response);
-  response2.room.wordToGuess = room.wordsOfRound[0];
-  broadCastTwoResponses(response, response2, room.activePlayer.id, room)
+  broadcast(response, room);
 }
 
 /**
@@ -344,11 +343,15 @@ function gameIsReady(ws, obj, room) {
   room.startRound();
   room.setActivePlayer();
   let response = {
-    type: 'gameIsReady',
+    type: 'updateState',
     room: {
       gameIsReady: true,
       teams: room.teams,
-      activePlayer: room.activePlayer
+      wordToGuess: room.wordsOfRound[0],
+      activePlayer: room.activePlayer,
+      playerTeam: room.teams[0].findIndex((element) => element === ws.player) !== -1
+      ? 1
+      : 2,
     }
   };
   broadcast(response, room);
@@ -390,18 +393,17 @@ function deleteWord(ws, obj, room) {
  */
 function validateWord(ws, obj, room) {
   room.validateWord(obj.team);
-  const responseToBroadCast = {
+  let response = {
     type: 'updateState',
     room: {
+      wordToGuess: room.wordsOfRound[0],
       wordsValidated: room.wordsValidated.length,
       team1Score: room.scoreFirstTeam,
       team2Score: room.scoreSecondTeam,
       gifUrl: room.gifUrl
     }
   };
-  let responseToSpecific = _.cloneDeep(responseToBroadCast);
-  responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
-  broadCastTwoResponses(responseToBroadCast, responseToSpecific, room.activePlayer.id, room)
+  broadcast(response, room);
 }
 
 /**
@@ -417,13 +419,11 @@ function nextWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     room: {
-      wordToGuess: room.wordsOfRound[0],
+      wordsOfRound: room.wordsOfRound,
       gifUrl: ''
     }
   };
-  // broadcast(response, room); // BUG: should send just the next word to the activePlayer.
-  sendMessage(response, room.activePlayer.id);
-
+  broadcast(response, room); // BUG: should send just the next word to the activePlayer.
 }
 
 /**
@@ -481,22 +481,14 @@ function sendMessage(msg, clientId){
  * @param  {Room}   room     Room.
  * @param  {String} senderId Send id.
  */
-function broadcast(msg, room,senderId = "") {
+function broadcast(msg, room) {
   webSockets.clients.forEach(function each(client) {
     if (room === undefined && !client.roomId) {
       client.send(JSON.stringify(msg));
-    } else if (senderId !== client.id && room && room.id === client.roomId) {
+    } else if (room && room.id === client.roomId) {
       client.send(JSON.stringify(msg));
     }
   });
-}
-
-/**
- * Broadcast one response to everyone and a second for a specific player
- */
-function broadCastTwoResponses(responseToBroadCast, responseToSpecific, senderId, room) {
-  broadcast(responseToBroadCast, room,senderId);
-  sendMessage(responseToSpecific, senderId);
 }
 
 /**

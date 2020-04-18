@@ -8,7 +8,8 @@ import Container from "@material-ui/core/Container";
 import GameScreen from "./pages/GameScreen";
 import SelectRoomScreen from "./pages/SelectRoomScreen";
 import RoomScreen from "./pages/RoomScreen";
-import AppMenu from "./component/AppMenu/AppMenu";
+// import AppMenu from "./component/AppMenu/AppMenu";
+import AppMenuNew from "./component/AppMenu/AppMenuNew";
 import Header from "./component/Header/Header";
 import './App.css';
 import { useCookies } from 'react-cookie';
@@ -33,11 +34,13 @@ function App() {
       rooms: [],
       socketConnected: false,
       playerTeam: 0,
-      joinedRoom: false
+      joinedRoom: false,
+      notificationsCount: 0,
+      privateMessagesCount: 0
     },
     player: {
       id: '',
-      name: ''
+      name: '',
     },
     room: {
       name: '',
@@ -67,7 +70,6 @@ function App() {
     }
   });
   const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
-  const [img, setImg] = useState('');
   const location = useLocation();
   const isGameMaster = gameState.room.gameMaster === gameState.player.id;
   const debug = process.env.NODE_ENV === 'development';
@@ -89,7 +91,7 @@ function App() {
         }
       })
     }
-  }, []);
+  }, [cookies.playerId, cookies.playerName, cookies.roomId, gameState, gameState.global.socketConnected]);
 
   useEffect(() => {
     if (gameState.room.id !== cookies.roomId) {
@@ -101,7 +103,7 @@ function App() {
     if (gameState.player.name !== cookies.playerName) {
       setCookie('playerName', gameState.player.name, { path: '/' });
     }
-  }, [gameState.room.id, gameState.player.id, gameState.player.name]);
+  }, [gameState.room.id, gameState.player.id, gameState.player.name, cookies.roomId, cookies.playerId, cookies.playerName, setCookie]);
 
   useEffect(() => {
     if (location.pathname !== '/' && gameState.global.socketConnected) {
@@ -109,7 +111,7 @@ function App() {
       console.log(location.pathname);
       ws.send(JSON.stringify({type: 'joinRoom', roomId: location.pathname.substring(1)}));
     }
-  }, [gameState.socketConnected]);
+  }, [gameState.global.socketConnected, location.pathname]);
 
   useEffect(() => {
     ws.onmessage = (message) => {
@@ -187,11 +189,14 @@ function App() {
 
   return (<React.Fragment>
     <CssBaseline/>
-    <AppMenu/>
+    <AppMenuNew
+      notificationsCount={gameState.global.notificationsCount}
+      privateMessagesCount={gameState.global.privateMessagesCount}
+    />
     <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
       {/*<p> gameState.room {JSON.stringify(gameState.room)}</p>*/}
-      <p> gameState.global {JSON.stringify(gameState.global)}</p>
+      {/*<p> gameState.global {JSON.stringify(gameState.global)}*/}
       {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
       {
         !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>

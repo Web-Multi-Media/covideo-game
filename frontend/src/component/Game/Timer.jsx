@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Timer(props) {
+  const classes = useStyles();
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const style = {
@@ -32,7 +33,6 @@ function Timer(props) {
     flexDirection: "column",
     justifyContent: "center"
   }
-  const classes = useStyles();
 
   function reset(duration) {
     setSeconds(duration);
@@ -56,7 +56,7 @@ function Timer(props) {
     if (props.startTimer === false) {
       setSeconds(0);
     }
-  }, [props.startTimer]);
+  }, [props.startTimer, props.duration]);
 
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>

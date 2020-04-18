@@ -3,7 +3,6 @@ import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {makeStyles} from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import SettingsIcon from '@material-ui/icons/Settings';
 import TextIcon from '../TextIcon/TextIcon';
 import './Rooms.css'
@@ -25,20 +24,16 @@ function RoomSettings(props) {
   const [numWordsPerPlayer, setNumWordsPerPlayer] = React.useState(props.roomSettings.numWordsPerPlayer);
   const [numMaxPlayers, setNumMaxPlayers] = React.useState(props.roomSettings.numMaxPlayers);
   const [privateRoom, setPrivateRoom] = React.useState(props.roomSettings.private);
-
-  const handleOnChange = function() {
+  const onChangeSettings = props.onChangeSettings;
+  useEffect(() => {
     const settings = {
       timesToGuessPerSet: [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound],
       numWordsPerPlayer: numWordsPerPlayer,
       numMaxPlayers: numMaxPlayers,
       private: privateRoom
     };
-    props.onChangeSettings(settings);
-  }
-
-  useEffect(() => {
-    handleOnChange();
-  }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers, privateRoom]);
+    onChangeSettings(settings);
+  }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers, privateRoom, onChangeSettings]);
 
   return (<React.Fragment>
     <TextIcon size="h4" icon={<SettingsIcon fontSize="large"/>} text="Settings"/>

@@ -5,8 +5,6 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import EditIcon from '@material-ui/icons/Edit';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import PlayerAdd from "./PlayerAdd";
 import './PlayerAvatar.css';
 
 function stringToColor(string) {
@@ -25,6 +23,7 @@ function stringToColor(string) {
   return color;
 }
 
+/* eslint-disable no-extend-native */
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 }
@@ -52,7 +51,6 @@ function PlayerAvatar(props) {
   const [editMode, setEditMode] = useState(false);
   const [textInput, setTextInput] = useState('');
   const player = props.player;
-  const gameMaster = props.gameMaster;
   const isCurrentPlayer = props.isCurrentPlayer;
   const isGameMaster = props.isGameMaster;
   const classes = useStyles();
@@ -64,13 +62,16 @@ function PlayerAvatar(props) {
     setEditMode(false);
     props.onSendUsername(textInput);
   };
+  function getFirstLetter(string){
+    return string.charAt(0).toUpperCase();
+  };
 
   return (<React.Fragment>
     <Grid container alignItems="center" {...gridContainerProps}>
       {!isGameMaster && player.name !== "" && <React.Fragment>
             <Grid item>
               <Avatar style={{'backgroundColor': stringToColor(player.name)}} className={classes.small}>
-                {player.name.charAt(0).toUpperCase()}
+                {getFirstLetter(player.name)}
               </Avatar>
             </Grid>
           </React.Fragment>

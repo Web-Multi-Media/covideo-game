@@ -2,17 +2,16 @@ import React, {useEffect, useState} from 'react';
 import "./RoomScreen.css";
 import {makeStyles} from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
 import Grid from "@material-ui/core/Grid";
-import Link from "@material-ui/core/Link";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import AddIcon from '@material-ui/icons/Add';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import Players from "../component/Player/Players";
 import RoomSettings from "../component/Room/RoomSettings";
@@ -24,10 +23,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1)
   },
   button: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingLeft: 80,
-    paddingRight: 80,
     margin: 20,
     textSize: "large"
   },
@@ -57,6 +52,22 @@ function RoomScreen(props) {
     setWordInput(event.target.value);
   };
 
+  function deleteWordFromArray(words, name){
+    for (var i = words.length - 1; i >= 0; i--) {
+      if (words[i] === name) {
+        words.splice(i, 1);
+        return words;
+      }}
+  }
+
+  const handleWordDelete = name => event => {
+    props.onDeleteWord(name);
+    setWords(function(words) {
+      return deleteWordFromArray(words, name);
+    });
+    setWordSent(wordSent - 1);
+  }
+
   useEffect(() => {
     var lenDiff = words.length - props.roomSettings.numWordsPerPlayer;
     console.log(lenDiff);
@@ -67,21 +78,7 @@ function RoomScreen(props) {
         handleWordDelete(deleteWord)(null);
       }
     }
-  }, [props.roomSettings]);
-
-  const handleWordDelete = name => event => {
-    props.onDeleteWord(name);
-
-    // delete only one occurence of the word to be deleted
-    setWords(function(words) {
-      for (var i = words.length - 1; i >= 0; i--) {
-        if (words[i] === name) {
-          words.splice(i, 1);
-          return words;
-        }}
-    })
-    setWordSent(wordSent - 1);
-  }
+  }, [props.roomSettings, handleWordDelete, words]);
 
   const sendWord = () => {
     if (wordInput !== '') {
@@ -188,16 +185,16 @@ function RoomScreen(props) {
     <Grid container>
       <Grid item xs/>
       <Grid item xs>
-        <Button
+        <Fab
           className={classes.button}
           variant="contained"
           color="primary"
           size="large"
           onClick={props.onGameReady}
-          disabled={props.isGameMaster === false || props.players.length < 2 && props.words.length < props.roomSettings.numWordsPerPlayer * props.players.length}
-          startIcon={<PlayCircleOutlineIcon fontSize="large"/>}>
+          disabled={props.isGameMaster === false || (props.players.length < 2 && props.words.length < props.roomSettings.numWordsPerPlayer * props.players.length)}>
+          <PlayCircleFilledIcon/>&nbsp;
           Start game
-        </Button>
+        </Fab>
       </Grid>
       <Grid item xs/>
     </Grid>

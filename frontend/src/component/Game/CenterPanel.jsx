@@ -16,18 +16,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function CenterPanel(props) {
-
   const classes = useStyles();
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>
-      <p>props.currentPlayer {JSON.stringify(props.currentPlayer)}</p>
-      <p>props.activePlayer {JSON.stringify(props.activePlayer)}</p>
+      {/* <p>props.currentPlayer {JSON.stringify(props.currentPlayer)}</p> */}
+      {/* <p>props.activePlayer {JSON.stringify(props.activePlayer)}</p> */}
       <TopInformation
-          currentPlayer={props.activePlayer}
-          gameMaster={props.gameMaster}
-          set={props.set}
-          roomSettings={props.roomSettings}
-          startTimer={props.startTimer}
+        currentPlayer={props.activePlayer}
+        gameMaster={props.gameMaster}
+        set={props.set}
+        roomSettings={props.roomSettings}
+        startTimer={props.startTimer}
       />
       {props.currentPlayer.id === props.activePlayer.id && <React.Fragment>
         <PlayerActivePanel
@@ -38,18 +37,18 @@ function CenterPanel(props) {
           startTimer={props.startTimer}
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}
-          word={props.word}/>
+          wordToguess={props.wordToGuess}/>
         </React.Fragment>
       }
       {props.currentPlayer.id !== props.activePlayer.id && <React.Fragment>
         <PlayerInactivePanel
-            currentPlayer={props.currentPlayer}
-            gameMaster={props.gameMaster}
-            roomSettings={props.roomSettings}
-            set={props.set}
-            startTimer={props.startTimer}
-            gifUrl={props.gifUrl}
-            sendGif={props.sendGif}/>
+          currentPlayer={props.currentPlayer}
+          gameMaster={props.gameMaster}
+          roomSettings={props.roomSettings}
+          set={props.set}
+          startTimer={props.startTimer}
+          gifUrl={props.gifUrl}
+          sendGif={props.sendGif}/>
         </React.Fragment>
       }
     </Paper>

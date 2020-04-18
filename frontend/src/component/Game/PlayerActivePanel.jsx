@@ -4,7 +4,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import GifPanel from "./GifPanel";
-import TopInformation from "./TopInformation";
 
 const useStyles = makeStyles((theme) => ({
   loader: {
@@ -28,10 +27,14 @@ function PlayerActivePanel(props){
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={2}>
 
-    {!props.startTimer &&
+    {!props.startTimer && <React.Fragment>
+      <Typography variant='h3'>
+        {props.wordToGuess}
+      </Typography>
       <Typography variant='h5'>
         Start the round when you are ready !
       </Typography>
+      </React.Fragment>
     }
 
     {/* Round < 3 is using voice to guess words */}
@@ -55,7 +58,7 @@ function PlayerActivePanel(props){
         </React.Fragment>
       }
       {props.gifUrl === '' && <React.Fragment>
-        <Typography variant='h5'>Search and select a GIF representing {props.word} !</Typography>
+        <Typography variant='h5'>Search and select a GIF !</Typography>
         <Paper elevation={5}>
           <GifPanel sendGif={props.sendGif} startTimer={props.startTimer}/>
         </Paper>

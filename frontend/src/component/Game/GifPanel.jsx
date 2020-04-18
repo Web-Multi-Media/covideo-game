@@ -5,12 +5,11 @@ import GifSearchOutput from "./GifSearchOutput";
 import Button from "@material-ui/core/Button";
 
 function GifPanel({sendGif, startTimer}) {
-
   const [searchTerm, setsearchTerm] = useState('');
-  const searchLimit = 12;
   const [searching, setsearching] = useState(false);
   const [searched, setsearched] = useState(false);
   const [gifs, setgifs] = useState([]);
+  const searchLimit = 12;
   const url = 'https://api.giphy.com/v1/gifs/search?';
   const apiKey = '1caQBCCly08w0vinpWmp1AK5ep8o6gsj';
 

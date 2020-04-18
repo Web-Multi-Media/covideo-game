@@ -9,7 +9,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import PeopleIcon from '@material-ui/icons/People';
-import PlayerAdd from "./PlayerAdd";
 import PlayerAvatar from "./PlayerAvatar";
 import TextIcon from '../TextIcon/TextIcon';
 
@@ -52,15 +51,15 @@ function Players(props) {
                   <TableCell component="th" scope="row">
                     <PlayerAvatar
                       player={p}
-                      isCurrentPlayer={p.id == currentPlayer.id}
-                      isGameMaster={p.id == gameMaster}
+                      isCurrentPlayer={p.id === currentPlayer.id}
+                      isGameMaster={p.id === gameMaster}
                       gameMaster={gameMaster}
                       onSendUsername={props.onSendUsername}/>
                   </TableCell>
                   <TableCell align="left">{p.id}</TableCell>
                   <TableCell align="left">
                     {
-                      isGameMaster && p.id != currentPlayer.id &&
+                      isGameMaster && p.id !== currentPlayer.id &&
                       <Button
                         id="outlined-basic-name"
                         variant="contained"

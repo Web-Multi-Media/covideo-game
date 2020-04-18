@@ -59,7 +59,7 @@ function GameScreen(props) {
           activePlayer={props.activePlayer}
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}
-          word={props.wordToGuess}
+          wordToGuess={props.wordToGuess}
         />
       </Grid>
 
@@ -94,7 +94,6 @@ function GameScreen(props) {
                 props.currentPlayer.id === props.activePlayer.id && <React.Fragment>
                   <WordInput
                     startTimer={props.startTimer}
-                    wordToGuess={props.wordToGuess}
                     startRound={props.startRound}
                     validation={props.validateWord}
                     next={props.nextWord}/>

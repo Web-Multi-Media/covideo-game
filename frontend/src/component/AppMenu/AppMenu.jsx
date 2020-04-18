@@ -20,7 +20,7 @@ function AppMenu(props) {
     <AppBar position="static">
     <Toolbar className='toolbar'>
       <IconButton size="small" edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-      <img style={style} src={alarmClock} alt="Alarm Clock Logo"/>
+        <img style={style} src={alarmClock} alt="Alarm Clock Logo"/>
       </IconButton>
       <Typography noWrap variant="h6" className={classes.title}>
         Time's Up !
