@@ -22,8 +22,12 @@ let ws = {};
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    padding: 20
+    padding: 20,
+    maxWidth: '100%'
   },
+  ['@media (max-width:780px)']: { // eslint-disable-line no-useless-computed-key
+    maxWidth: '100%'
+  }
 }));
 
 function App() {

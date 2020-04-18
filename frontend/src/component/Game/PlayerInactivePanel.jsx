@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     borderRadius: '10px',
-    minHeight: '64vh'
+    minHeight: '59vh'
   },
 }));
 
