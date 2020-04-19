@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     borderRadius: '10px'
+  },
+  grid: {
+    display :'grid',
   }
 }));
 
@@ -19,6 +22,7 @@ function CenterPanel(props) {
   const classes = useStyles();
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>
+
       {/* <p>props.currentPlayer {JSON.stringify(props.currentPlayer)}</p> */}
       {/* <p>props.activePlayer {JSON.stringify(props.activePlayer)}</p> */}
       <TopInformation
@@ -37,7 +41,7 @@ function CenterPanel(props) {
           startTimer={props.startTimer}
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}
-          wordToguess={props.wordToGuess}/>
+          wordToGuess={props.wordToGuess}/>
         </React.Fragment>
       }
       {props.currentPlayer.id !== props.activePlayer.id && <React.Fragment>

@@ -27,11 +27,7 @@ function PlayerActivePanel(props){
   const classes = useStyles();
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={2}>
-
     {!props.startTimer && <React.Fragment>
-      <Typography variant='h3'>
-        {props.wordToGuess}
-      </Typography>
       <Typography variant='h5'>
         Start the round when you are ready !
       </Typography>
@@ -40,6 +36,9 @@ function PlayerActivePanel(props){
 
     {/* Round < 3 is using voice to guess words */}
     {props.startTimer && props.set < 3 && <React.Fragment>
+      <Typography variant='h3'>
+        {props.wordToGuess}
+      </Typography>
       <Typography variant='h5'>
         Players are still guessing ...
       </Typography>
@@ -51,6 +50,9 @@ function PlayerActivePanel(props){
 
     {/* Round >=3 is using GIFs to guess words */}
     {props.startTimer && props.set >= 3 && <React.Fragment>
+      <Typography variant='h3'>
+        {props.wordToGuess}
+      </Typography>
       {props.gifUrl !== '' && <React.Fragment>
         <Typography variant='h5'>You have sent your GIF !</Typography>
         <Paper elevation={5}>

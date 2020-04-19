@@ -17,13 +17,26 @@ const useStyles = makeStyles((theme) => ({
   typography: {
     ...theme.typography.button,
     fontSize: '1.2rem'
+  },
+  grid:{
+    display: 'grid',
+    gridRowGap: '5px',
+    gridTemplateRows: 'repeat(2, auto)',
+    height: '100%'
+  },
+  firstRow:{
+    gridRow: '1 / 2'
+  },
+  secondRow:{
+    gridRow: '2 / 3'
   }
+
 }));
 
 function TeamPanel(props) {
   const classes = useStyles();
-  const team = props.team;
-  const teamMembers = team.map(player => {
+  const teams = props.teams;
+  const teamMembers1 = teams[0].map(player => {
     return (<React.Fragment key={player.name}>
       <Grid item>
       <PlayerAvatar
@@ -33,17 +46,42 @@ function TeamPanel(props) {
       </Grid>
     </React.Fragment>);
   });
+  const teamMembers2 = teams[1].map(player => {
+    return (<React.Fragment key={player.name}>
+      <Grid item>
+        <PlayerAvatar
+            player = {player}
+            gameMaster = {props.gameMaster}
+            currentPlayer = {props.currentPlayer}/>
+      </Grid>
+    </React.Fragment>);
+  });
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={2}>
-      <Typography className={classes.typography}>
-        <b>Team {props.teamNumber}</b>
-      </Typography>
-      <Typography variant='h8'>
-        Score : {props.teamScore}
-      </Typography>
-      <Grid container>
-        {teamMembers}
-      </Grid>
+      <div className={classes.grid}>
+        <Paper className={classes.firstRow} elevation={1}>
+          <Typography className={classes.typography}>
+            <b>Team 1</b>
+          </Typography>
+          <Typography variant='h8'>
+            Score : {props.team1Score}
+          </Typography>
+          <Grid container>
+            {teamMembers1}
+          </Grid>
+        </Paper>
+          <Paper className={classes.secondRow} elevation={3}>
+            <Typography className={classes.typography}>
+              <b>Team 2</b>
+            </Typography>
+            <Typography variant='h8'>
+              Score : {props.team2Score}
+            </Typography>
+            <Grid container>
+              {teamMembers2}
+            </Grid>
+          </Paper>
+      </div>
     </Paper>
   </React.Fragment>);
 }

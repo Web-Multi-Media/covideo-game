@@ -51,9 +51,9 @@ function GameScreen(props) {
       {/* Team panel (left) */}
       <Grid item xs={2}>
         <TeamPanel
-          team={props.teams[0]}
-          teamScore={props.team1Score}
-          teamNumber={1}
+          teams={props.teams}
+          team1Score={props.team1Score}
+          team2Score={props.team2Score}
           gameMaster={props.gameMaster}
           activePlayer={props.activePlayer}
           currentPlayer={props.currentPlayer}/>
@@ -72,17 +72,6 @@ function GameScreen(props) {
           wordToGuess={props.wordToGuess}
           sendGif={props.sendGif}
           playSound={props.playSound}/>
-      </Grid>
-
-      {/* Team panel (left) */}
-      <Grid item xs={2}>
-        <TeamPanel
-          team={props.teams[1]}
-          teamScore={props.team2Score}
-          teamNumber={2}
-          gameMaster={props.gameMaster}
-          activePlayer={props.activePlayer}
-          currentPlayer={props.currentPlayer}/>
       </Grid>
 
       {/* Bottom bar */}

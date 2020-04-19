@@ -61,8 +61,8 @@ function App() {
       set: 1,
       startTimer: false,
       setFinished: false,
-      scoreFirstTeam: 0,
-      scoreSecondTeam: 0,
+      team1Score: 0,
+      team2Score: 0,
       numberOfPlayer: 0,
       lastActivity: Date.now(),
       settings: {
@@ -198,7 +198,7 @@ function App() {
     />
     <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
-      {/*<p> gameState.room {JSON.stringify(gameState.room)}</p>*/}
+      <p> gameState.playerTeam {JSON.stringify(gameState.global.playerTeam)}</p>
       {/*<p> gameState.global {JSON.stringify(gameState.global)}</p>*/}
       {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
       {
