@@ -8,5 +8,6 @@
 
 
 .GuesserImg {
+  max-height: 59vh;
   width: 100%;
 }

@@ -26,3 +26,9 @@ npm start
 ```
 
 A browser will automatically open and load the application served at http://localhost:3000/.
+
+## On production server : 
+
+NODE_ENV=production forever start server.js
+
+

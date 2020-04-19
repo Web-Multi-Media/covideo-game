@@ -58,7 +58,7 @@ function TopInformation(props) {
           {/* Time left card */}
           <Grid item xs={3}>
             <Timer
-              duration={props.roomSettings.timesToGuessPerSet[props.set]}
+              duration={props.roomSettings.timesToGuessPerSet[props.set - 1]}
               startTimer={props.startTimer}
               playSound={props.playSound}/>
           </Grid>

@@ -342,15 +342,12 @@ function gameIsReady(ws, obj, room) {
   room.setActivePlayer();
   room.gameIsReady = true;
   let response = {
-    type: 'updateState',
+    type: 'gameIsReady',
     room: {
       gameIsReady: true,
       teams: room.teams,
       wordToGuess: room.wordsOfRound[0],
       activePlayer: room.activePlayer,
-      playerTeam: room.teams[0].findIndex((element) => element === ws.player) !== -1
-      ? 1
-      : 2,
     }
   };
   broadcast(response, room);
@@ -370,7 +367,7 @@ function addWord(ws, obj, room) {
       wordsPerPlayer: room.wordsPerPlayer
     }
   };
-  broadcast(response, room);
+  ws.send(JSON.stringify(response));
 }
 
 /**
@@ -399,17 +396,19 @@ function deleteWord(ws, obj, room) {
  */
 function validateWord(ws, obj, room) {
   room.validateWord(obj.team);
-  let response = {
+  const responseToBroadCast = {
     type: 'updateState',
-    room: {
-      wordToGuess: room.wordsOfRound[0],
-      wordsValidated: room.wordsValidated.length,
-      team1Score: room.scoreFirstTeam,
-      team2Score: room.scoreSecondTeam,
-      gifUrl: room.gifUrl
-    }
-  };
-  broadcast(response, room);
+      room: {
+        wordToGuess: room.wordsOfRound[0],
+        wordsValidated: room.wordsValidated.length,
+        team1Score: room.scoreFirstTeam,
+        team2Score: room.scoreSecondTeam,
+        gifUrl: room.gifUrl
+      }
+    };
+    let responseToSpecific = _.cloneDeep(responseToBroadCast);
+    responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
+    broadCastTwoResponses(responseToBroadCast, responseToSpecific, room.activePlayer.id, room);
 }
 
 /**
@@ -425,11 +424,21 @@ function nextWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     room: {
-      wordsOfRound: room.wordsOfRound,
+      wordToGuess: room.wordsOfRound[0],
       gifUrl: ''
     }
   };
-  broadcast(response, room); // BUG: should send just the next word to the activePlayer.
+  if(room.set <= 2){
+    sendMessage(response, ws.id);
+  }else{
+    let responseToBroadCast = {
+      type: 'updateState',
+      room: {
+        gifUrl: ''
+      }
+    };
+  broadCastTwoResponses(responseToBroadCast, response, ws.id, room);
+  }
 }
 
 /**
