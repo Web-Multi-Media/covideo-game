@@ -343,15 +343,12 @@ function gameIsReady(ws, obj, room) {
   room.startRound();
   room.setActivePlayer();
   let response = {
-    type: 'updateState',
+    type: 'gameIsReady',
     room: {
       gameIsReady: true,
       teams: room.teams,
       wordToGuess: room.wordsOfRound[0],
       activePlayer: room.activePlayer,
-      playerTeam: room.teams[0].findIndex((element) => element === ws.player) !== -1
-      ? 1
-      : 2,
     }
   };
   broadcast(response, room);
