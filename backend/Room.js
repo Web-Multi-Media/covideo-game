@@ -14,7 +14,7 @@ function Room(id) {
   this.round = 0;
   this.set = 1;
   this.startTimer = false;
-  this.activePlayer = "";
+  this.activePlayer = {};
   this.gameIsReady = false;
   this.setFinished = false;
   this.scoreFirstTeam = 0;
@@ -78,8 +78,8 @@ Room.prototype = {
   addWord: function(word, playerId) {
     this.updateActivity();
     this.wordsPerPlayer[playerId] = [
-      word,
-      ...this.wordsPerPlayer[playerId]
+      ...this.wordsPerPlayer[playerId],
+      word
     ];
   },
   deleteWord: function(word, playerId) {
@@ -180,6 +180,7 @@ Room.prototype = {
       players: this.players,
       lastActivity: this.lastActivity,
       settings: this.settings,
+      gameIsReady: this.gameIsReady
     }
   }
 };
