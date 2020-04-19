@@ -17,9 +17,6 @@ export const soundPlayers = {
   userConnect: create_player(
     "//freesound.org/data/previews/377/377017_1172853-lq.mp3"
   ),
-  userConnect: create_player(
-    "//freesound.org/data/previews/377/377017_1172853-lq.mp3"
-  ),
   startRound: create_player(
     "//freesound.org/data/previews/476/476175_6101353-lq.mp3"
   ),

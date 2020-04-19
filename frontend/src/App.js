@@ -228,7 +228,6 @@ function App() {
             onChangeSettings={sendRoomSettings}
             onSendUsername={sendUsername}
             onSendWord={sendWord}
-            onDeleteWord={deleteWord}
             playSound={playSound}
             onDeleteWord={deleteWord}/>
       }

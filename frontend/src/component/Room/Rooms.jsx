@@ -1,7 +1,6 @@
 import React from 'react';
 import './Rooms.css'
 import PlayerAvatar from "../Player/PlayerAvatar";
-import PlayerAvatarNew from "../Player/PlayerAvatarNew";
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
@@ -60,7 +59,7 @@ function Rooms(props) {
               <TableCell align="left">
               {
                 room.players.map((player) => (
-                  <PlayerAvatarNew
+                  <PlayerAvatar
                     key={player.id}
                     player={player}
                     isGameMaster={player.id === room.gameMaster}

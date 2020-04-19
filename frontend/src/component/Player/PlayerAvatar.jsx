@@ -1,12 +1,27 @@
-import React, {useState} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import React from 'react';
+import { makeStyles } from '@material-ui/styles';
+import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
-import CheckIcon from '@material-ui/icons/Check';
 import EditIcon from '@material-ui/icons/Edit';
-import './PlayerAvatar.css';
+import CheckIcon from '@material-ui/icons/Check';
+import './PlayerAvatar.css'
+
+const useStyles = makeStyles(({ palette }) => ({
+  header: {
+    padding: '0px',
+    marginTop: '2px',
+    marginBottom: '2px'
+  },
+  avatar: {
+    marginRight: '0px !important'
+  },
+  tableInput: {
+    width: '40%'
+  }
+}));
 
 function stringToColor(string) {
   let hash = 0;
@@ -24,39 +39,15 @@ function stringToColor(string) {
   return color;
 }
 
-/* eslint-disable no-extend-native */
-String.prototype.capitalize = function() {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-const useStyles = makeStyles((theme) => ({
-  small: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
-    margin: '2px',
-    backgroundColor: '#f2ed94'
-  },
-  tableInput: {
-    width: '40%'
-  },
-  text: {
-    marginRight: '5px',
-    display: 'inline-flex',
-    fontSize: '1rem'
-  }
-}));
-
-function PlayerAvatar(props) {
-  const [editMode, setEditMode] = useState(false);
-  const [textInput, setTextInput] = useState('');
-  const player = props.player;
-  const isCurrentPlayer = props.isCurrentPlayer;
-  const isGameMaster = props.isGameMaster;
+function PlayerAvatar(props){
   const classes = useStyles();
-  const gridContainerProps = props.gridContainerProps;
+  const [editMode, setEditMode] = React.useState(false);
+  const [textInput, setTextInput] = React.useState('');
+
   const handleNameChange = (event) => {
     setTextInput(event.target.value);
   };
+
   function onSendUsername(){
     if (!textInput){
       return;
@@ -64,65 +55,71 @@ function PlayerAvatar(props) {
     setEditMode(false);
     props.onSendUsername(textInput);
   };
+
   function getFirstLetter(string){
     return string.charAt(0).toUpperCase();
   };
 
-  return (<React.Fragment>
-    <Grid container alignItems="center" {...gridContainerProps}>
+  function getAvatar(player, isGameMaster){
+    return (<React.Fragment>
       {!isGameMaster && player.name !== "" &&
-        <Grid item>
-          <Avatar style={{'backgroundColor': stringToColor(player.name)}} className={classes.small}>
-            {getFirstLetter(player.name)}
-          </Avatar>
-        </Grid>
+        <Avatar aria-label="recipe" className={classes.avatar} style={{'backgroundColor': stringToColor(player.name)}}>
+          {getFirstLetter(player.name)}
+        </Avatar>
       }
       {isGameMaster &&
-        <Grid item>
-          <Avatar src='https://api.iconify.design/mdi-crown.svg' className={classes.small}/>
-        </Grid>
+        <Avatar src='https://api.iconify.design/mdi-crown.svg' style={{'backgroundColor': 'yellow'}} className={classes.avatar}/>
       }
-      {!isCurrentPlayer &&
-        <Grid item className={classes.text}>
-          <b>{player.name.capitalize()}</b>
-        </Grid>
+      </React.Fragment>);
+  };
+
+  function getDisplayName(player, isCurrentPlayer, editMode){
+    let string = ""
+    if (!editMode){
+      string = `${player.name}`
+      if (isCurrentPlayer){
+        string = string.concat(' (you)');
       }
-      {isCurrentPlayer && <React.Fragment>
-         {!editMode && <React.Fragment>
-           <Grid item className={classes.text}>
-            <b>{player.name.capitalize()}</b>&nbsp;(you)
-           </Grid>
-           &nbsp;
-           <Grid item>
-             <IconButton
-               size="small"
-               color="primary"
-               onClick={setEditMode.bind(this, true)}>
-               <EditIcon fontSize="small"/>
-             </IconButton>
-            </Grid>
-            </React.Fragment>
-         }
-         {editMode && <React.Fragment>
-           <TextField
-             id="input-with-icon-textfield"
-             size="small"
-             className={classes.tableInput}
-             label=""
-             value={textInput}
-             onChange={handleNameChange}/>
-           <IconButton
-             size="small"
-             color="primary"
-             onClick={onSendUsername}>
-             <CheckIcon fontSize="small"/>
-           </IconButton>
-           </React.Fragment>
-         }
-         </React.Fragment>
+    }
+    return (<Typography>
+      <b>{string}</b>
+      {isCurrentPlayer && !editMode && <React.Fragment>
+        <IconButton
+          size="small"
+          color="primary"
+          onClick={setEditMode.bind(this, true)}>
+        <EditIcon fontSize="small"/>
+        </IconButton>
+        </React.Fragment>
       }
-    </Grid>
-  </React.Fragment>);
-}
+      {isCurrentPlayer && editMode && <React.Fragment>
+        <TextField
+          id="input-with-icon-textfield"
+          size="small"
+          className={classes.tableInput}
+          label=""
+          value={textInput}
+          onChange={handleNameChange}/>
+        <IconButton
+          size="small"
+          color="primary"
+          onClick={onSendUsername}>
+          <CheckIcon fontSize="small"/>
+        </IconButton>
+        </React.Fragment>
+      }
+    </Typography>);
+  };
+
+  return (
+    <CardHeader
+      className={classes.header}
+      avatar={getAvatar(props.player, props.isGameMaster)}
+      title={getDisplayName(props.player, props.isCurrentPlayer, editMode)}
+      subheader={props.player.status}
+      titleTypographyProps={{className: classes.noPadding}}/>
+  );
+};
+
 
 export default PlayerAvatar;
