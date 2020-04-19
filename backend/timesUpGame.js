@@ -365,13 +365,7 @@ function gameIsReady(ws, obj, room) {
  */
 function addWord(ws, obj, room) {
   room.addWord(obj.word, ws.id);
-  let response = {
-    type: 'updateState',
-    room: {
-      words: room.getWords() // BUG: why are we broadcasting all the words again ?
-    }
-  };
-  broadcast(response, room);
+
 }
 
 /**
@@ -381,7 +375,7 @@ function addWord(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function deleteWord(ws, obj, room) {
-  room.deleteWord(obj.word, ws.id); // BUG: Why are we not broadcasting the updated words again ?
+  room.deleteWord(obj.word, ws.id);
 }
 
 /**
@@ -419,11 +413,11 @@ function nextWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     room: {
-      wordsOfRound: room.wordsOfRound,
+      wordToGuess: room.wordsOfRound[0],
       gifUrl: ''
     }
   };
-  broadcast(response, room); // BUG: should send just the next word to the activePlayer.
+  sendMessage(response, ws.id);
 }
 
 /**
