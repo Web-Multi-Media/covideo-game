@@ -51,18 +51,19 @@ function connectPlayer(ws, urlParams) {
   const roomId = urlParams.get('roomId');
   const playerName = urlParams.get('playerName');
   ws.id = playerId ?  playerId : utils.getUniqueID();
-  ws.playerName = playerName ? playerName : '';
+  ws.playerName = playerName ? playerName : utils.getRandomPlayerName(ws.id);
   ws.roomId = rooms.has(roomId) ?  roomId : '';
   let room = rooms.get(ws.roomId);
   let response = {
     type: 'updateState',
     player: {
       id: ws.id,
-      name: ws.playerName,
+      name: ws.playerName
     },
     global: {
       rooms: serializeRooms(),
-      joinedRoom: room !== undefined
+      joinedRoom: room !== undefined,
+      socketConnected: true
     }
   };
   if (room) {
@@ -99,6 +100,7 @@ function createRoom(ws, obj) {
   room.setGameMaster(ws.id);
   rooms.set(roomId, room);
   ws.roomId = roomId;
+  console.log(`Room ${room.id} created`);
   addPlayerToRoom(ws, room);
   let response = {
     type: 'updateState',
@@ -134,6 +136,7 @@ function joinRoom(ws, obj) {
     broadcast(response, room);
     broadcastRoomsInfo();
   } else { // room does not exist - can happen if trying to access deleted room URL
+    console.log(`Player ${ws.playerName} tried to join room ${room.id} that does not exist anymore`);
     let response = {
       type: 'updateState',
       global: {
@@ -161,11 +164,10 @@ function leaveRoom(ws, obj) {
   if (!clientId){
     clientId = ws.id;
   }
-  console.log("Client id to leave " + clientId);
-  console.log("Current client id " + ws.id);
   let room = rooms.get(roomId);
   let gameMaster = room.gameMaster;
   room.removePlayer(clientId);
+  console.log(`Player ${ws.playerName} left room ${room.id}`);
   let response = {
     type: 'updateState',
     global: {
@@ -208,20 +210,11 @@ function leaveRoom(ws, obj) {
  * @param {Room}   room Current room.
  */
 function addPlayerToRoom(ws, room){
-  let playerName = ws.playerName;
-  console.log("player name: " + ws.playerName)
-  let player = new playerFunction.Player(ws.id, playerName);
+  let player = new playerFunction.Player(ws.id, ws.playerName);
   room.addPlayer(player);
-
-  // If player name is empty, modify it
-  if (playerName === ''){
-    let lastChars = ws.id.substr(ws.id.length - 4);
-    playerName = `Player-${lastChars}`;
-  }
-  changePlayerName(ws, {playerName: playerName});
-
-  // If no game master, set it
-  if (room.gameMaster === null) {
+  changePlayerName(ws, {playerName: ws.playerName});
+  console.log(`Player ${playerName} added to room ${room.id}`);
+  if (room.gameMaster === null) { // if no game master in room, set it
     console.log("No game master in room. Appointing " + ws.id);
     room.setGameMaster(ws.id);
   }
@@ -347,6 +340,7 @@ function gameIsReady(ws, obj, room) {
   room.startGame();
   room.startRound();
   room.setActivePlayer();
+  room.gameIsReady = true;
   let response = {
     type: 'updateState',
     room: {
@@ -373,7 +367,7 @@ function addWord(ws, obj, room) {
   let response = {
     type: 'updateState',
     room: {
-      words: room.getWords() // BUG: why are we broadcasting all the words again ?
+      wordsPerPlayer: room.wordsPerPlayer
     }
   };
   broadcast(response, room);
@@ -386,7 +380,14 @@ function addWord(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function deleteWord(ws, obj, room) {
-  room.deleteWord(obj.word, ws.id); // BUG: Why are we not broadcasting the updated words again ?
+  room.deleteWord(obj.word, ws.id);
+  let response = {
+    type: 'updateState',
+    room: {
+      wordsPerPlayer: room.wordsPerPlayer
+    }
+  }
+  ws.send(JSON.stringify(response));
 }
 
 /**

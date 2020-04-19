@@ -41,8 +41,15 @@ function getUniqueID() {
   return s4() + s4() + '-' + s4();
 };
 
+function getRandomPlayerName(id){
+  let lastChars = id.substr(id.length - 4);
+  playerName = `Player-${lastChars}`;
+  return playerName;
+};
+
 module.exports.shuffle = shuffle;
 module.exports.sortTeam = sortTeam;
 module.exports.getNextActivePlayer = getNextActivePlayer;
 module.exports.firstToLastIndex = firstToLastIndex;
 module.exports.getUniqueID = getUniqueID;
+module.exports.getRandomPlayerName = getRandomPlayerName;
