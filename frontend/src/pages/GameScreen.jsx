@@ -8,6 +8,7 @@ import CenterPanel from "../component/Game/CenterPanel";
 import TeamPanel from "../component/Game/TeamPanel";
 import WordInput from "../component/Game/WordInput";
 import TextIcon from "../component/TextIcon/TextIcon";
+import Chat from "../component/Chat/Chat";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,7 +61,7 @@ function GameScreen(props) {
       </Grid>
 
       {/* Game panel (center) */}
-      <Grid item xs={8}>
+      <Grid item xs={4}>
         <CenterPanel
           currentPlayer={props.currentPlayer}
           gameMaster={props.gameMaster}
@@ -86,6 +87,12 @@ function GameScreen(props) {
           currentPlayer={props.currentPlayer}/>
       </Grid>
 
+      <Grid item xs={4}>
+        <Chat
+          sendChatMessage={props.sendChatMessage}
+          incomingChatMessage={props.incomingChatMessage}
+        />
+      </Grid>
       {/* Bottom bar */}
       <Grid item xs={12}>
         <Paper className={classes.paper} elevation={2}>

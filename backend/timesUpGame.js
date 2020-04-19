@@ -19,7 +19,8 @@ let rootingFunction = {
   'joinRoom': joinRoom,
   'getRooms': getRooms,
   'leaveRoom': leaveRoom,
-  'setGif': setGif
+  'setGif': setGif,
+  'chatMessage': chatMessage
 };
 
 /**
@@ -439,6 +440,28 @@ function setGif(ws, obj, room) {
     type: 'updateState',
     room: {
       gifUrl: obj.gifUrl
+    }
+  };
+  broadcast(response, room);
+}
+
+/**
+ * Send chat message.
+ * Broadcast chat message to clients in room.
+ * @param {object} ws   Websocket.
+ * @param {object} obj  Message.
+ * @param {Room}   room Current room.
+ */
+function chatMessage(ws, obj, room) {
+  room.setGifUrl(obj.gifUrl);
+  console.log(ws.playerName)
+  let response = {
+    type: 'updateState',
+    room: {
+      incomingChatMessage: {
+        'username': ws.playerName,
+        'message': obj.message
+      }
     }
   };
   broadcast(response, room);

@@ -64,7 +64,8 @@ function App() {
         numWordsPerPlayer: 3,
         numMaxPlayers: 10,
         private: false,
-      }
+      },
+      incomingChatMessage: {},
     }
   });
   const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
@@ -179,6 +180,13 @@ function App() {
     ws.send(JSON.stringify({type: 'setGif', gifUrl: gifUrl}));
   };
 
+  const sendChatMessage = (message) => {
+    ws.send(JSON.stringify({
+      type: 'chatMessage',
+      message: message
+    }))
+  };
+
   // DEBUG
   let debugGameState = _.cloneDeep(gameState);
   delete debugGameState.global.rooms;
@@ -244,6 +252,8 @@ function App() {
             validateWord={validateWord}
             nextWord={nextWord}
             sendGif={chooseGif}
+            sendChatMessage={sendChatMessage}
+            incomingChatMessage={gameState.room.incomingChatMessage}
             playSound={playSound}
           />
       }
