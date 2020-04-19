@@ -170,6 +170,7 @@ Room.prototype = {
       id: this.id,
       wordsOfRound: this.wordsOfRound,
       teams: this.teams,
+      activePlayer: this.activePlayer,
       gameMaster: this.gameMaster,
       round: this.round,
       set: this.set,
