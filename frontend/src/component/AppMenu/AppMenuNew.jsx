@@ -120,8 +120,7 @@ export default function AppMenu(props) {
       keepMounted
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
+      onClose={handleMenuClose}>
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
     </Menu>
@@ -136,8 +135,7 @@ export default function AppMenu(props) {
       keepMounted
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
+      onClose={handleMobileMenuClose}>
       <MenuItem>
         <IconButton aria-label="show new messages" color="inherit">
           <Badge badgeContent={privateMessagesCount} color="secondary">
@@ -181,7 +179,7 @@ export default function AppMenu(props) {
             <img className={classes.timesUpImg} src={alarmClock} alt="Alarm Clock Logo"/>
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
-            Material-UI
+            Time's up !
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
