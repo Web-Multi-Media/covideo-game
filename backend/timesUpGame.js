@@ -389,17 +389,19 @@ function deleteWord(ws, obj, room) {
  */
 function validateWord(ws, obj, room) {
   room.validateWord(obj.team);
-  let response = {
+  const responseToBroadCast = {
     type: 'updateState',
-    room: {
-      wordToGuess: room.wordsOfRound[0],
-      wordsValidated: room.wordsValidated.length,
-      team1Score: room.scoreFirstTeam,
-      team2Score: room.scoreSecondTeam,
-      gifUrl: room.gifUrl
-    }
-  };
-  broadcast(response, room);
+      room: {
+        wordToGuess: room.wordsOfRound[0],
+        wordsValidated: room.wordsValidated.length,
+        team1Score: room.scoreFirstTeam,
+        team2Score: room.scoreSecondTeam,
+        gifUrl: room.gifUrl
+      }
+    };
+    let responseToSpecific = _.cloneDeep(responseToBroadCast);
+    responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
+    broadCastTwoResponses(responseToBroadCast, responseToSpecific, room.activePlayer.id, room);
 }
 
 /**
@@ -419,7 +421,17 @@ function nextWord(ws, obj, room) {
       gifUrl: ''
     }
   };
-  sendMessage(response, ws.id);
+  if(room.set <= 2){
+    sendMessage(response, ws.id);
+  }else{
+    let responseToBroadCast = {
+      type: 'updateState',
+      room: {
+        gifUrl: ''
+      }
+    };
+  broadCastTwoResponses(responseToBroadCast, response, ws.id, room);
+  }
 }
 
 /**

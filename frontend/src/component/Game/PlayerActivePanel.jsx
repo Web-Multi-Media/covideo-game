@@ -8,6 +8,7 @@ import GifPanel from "./GifPanel";
 const useStyles = makeStyles((theme) => ({
   loader: {
     display: 'flex',
+    justifyContent: 'center',
     '& > * + *': {
       marginLeft: theme.spacing(2),
     },
