@@ -38,7 +38,7 @@ function TeamPanel(props) {
       <Typography className={classes.typography}>
         <b>Team {props.teamNumber}</b>
       </Typography>
-      <Typography variant='h8'>
+      <Typography variant='button'>
         Score : {props.teamScore}
       </Typography>
       <Grid container>

@@ -47,6 +47,7 @@ function App() {
       id: '',
       gifUrl: '',
       players: [],
+      activePlayer: {},
       wordsPerPlayer: {},
       wordToGuess: '',
       wordsValidated: [],
@@ -74,6 +75,16 @@ function App() {
   const isGameMaster = gameState.room.gameMaster === gameState.player.id;
   const debug = process.env.NODE_ENV === 'development';
 
+  function getPlayerWords(){
+    let playerId = gameState.player.id;
+    let wordsPerPlayer = gameState.room.wordsPerPlayer;
+    let playerWords = [];
+    if (playerId in wordsPerPlayer){
+      playerWords = wordsPerPlayer[playerId];
+    }
+    return playerWords;
+  }
+
   useEffect(() => {
     let URL = `ws://${HOST}:${WS_PORT}`;
     URL += '?';
@@ -81,15 +92,15 @@ function App() {
     URL += cookies.roomId !== undefined ? `&roomId=${cookies.roomId}` : '';
     URL += cookies.playerName !== undefined ? `&playerName=${cookies.playerName}` : '';
     ws = new WebSocket(URL);
-    ws.onopen = function() {
-      setGameState({
-        ...gameState,
-        global: {
-          ...gameState.global,
-          socketConnected: true
-        }
-      })
-    }
+    // ws.onopen = function() {
+    //   setGameState({
+    //     ...gameState,
+    //     global: {
+    //       ...gameState.global,
+    //       socketConnected: true
+    //     }
+    //   })
+    // }
   }, []);
 
   useEffect(() => {
@@ -216,7 +227,7 @@ function App() {
             gameMaster={gameState.room.gameMaster}
             roomId={gameState.room.id}
             roomSettings={gameState.room.settings}
-            words={gameState.room.wordToGuess}
+            playerWords={getPlayerWords()}
             isGameMaster={isGameMaster}
             kickPlayer={kickPlayer}
             leaveRoom={leaveRoom}

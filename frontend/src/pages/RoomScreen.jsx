@@ -41,55 +41,28 @@ const useStyles = makeStyles((theme) => ({
 function RoomScreen(props) {
   const classes = useStyles();
   const [wordInput, setWordInput] = useState('');
-  const [wordSent, setWordSent] = useState(0);
-  const [words, setWords] = useState([]);
   const room_url = `http://localhost:3000/${props.roomId}`;
   const currentPlayer = props.currentPlayer;
-
-  const handleWordChange = (event) => {
-    setWordInput(event.target.value);
-  };
-
-  function deleteWordFromArray(words, name){
-    for (var i = words.length - 1; i >= 0; i--) {
-      if (words[i] === name) {
-        words.splice(i, 1);
-        return words;
-      }}
-  }
-
-  const handleWordDelete = name => event => {
-    props.onDeleteWord(name);
-    setWords(function(words) {
-      return deleteWordFromArray(words, name);
-    });
-    setWordSent(wordSent - 1);
-  }
-
-  useEffect(() => {
-    var lenDiff = words.length - props.roomSettings.numWordsPerPlayer;
-    console.log(lenDiff);
-    if (lenDiff > 0){
-      setWordInput('');
-      for (let count = 0; count < lenDiff; count++) {
-        var deleteWord = words.pop();
-        handleWordDelete(deleteWord)(null);
-      }
-    }
-  }, [props.roomSettings, handleWordDelete, words]);
+  const disabledWordAdd = currentPlayer.name === '' || props.playerWords.length >= props.roomSettings.numWordsPerPlayer;
+  const disabledStartGame = props.isGameMaster === false || props.players.length < 2 || props.playerWords.length < props.roomSettings.numWordsPerPlayer;
 
   const sendWord = () => {
     if (wordInput !== '') {
       props.onSendWord(wordInput);
       setWordInput('');
-      setWordSent(wordSent + 1);
-      words.push(wordInput);
-      setWords(words);
     }
   };
 
+  const handleWordChange = (event) => {
+    setWordInput(event.target.value);
+  };
+
+  const handleWordDelete = name => event => {
+    props.onDeleteWord(name);
+  }
+
   const onkeydownWord = (event) => {
-    if (event.keyCode === 13 && wordSent < props.roomSettings.numWordsPerPlayer) {
+    if (event.keyCode === 13 && props.playerWords.length < props.roomSettings.numWordsPerPlayer) {
       document.getElementById("outlined-basic-word").click();
     }
   };
@@ -153,25 +126,24 @@ function RoomScreen(props) {
           value={wordInput}
           onKeyDown={onkeydownWord}
           onChange={handleWordChange}
-          disabled={currentPlayer.name === '' || wordSent >= props.roomSettings.numWordsPerPlayer}/>
+          disabled={disabledWordAdd}/>
         <Button
           id="outlined-basic-word"
           size="small"
           variant="contained"
           color="primary"
           onClick={sendWord}
-          disabled={currentPlayer.name === '' || wordSent >= props.roomSettings.numWordsPerPlayer}
+          disabled={disabledWordAdd}
           startIcon={<AddIcon/>}>
-          Add word ({wordSent}/{props.roomSettings.numWordsPerPlayer})
+          Add word ({props.playerWords.length}/{props.roomSettings.numWordsPerPlayer})
         </Button>
       </div>
-      {currentPlayer.name !== '' && words != null && words.map((word) => (<React.Fragment>
+      {currentPlayer.name !== '' && props.playerWords.map((word) => (<React.Fragment>
         <Chip
           key={word}
           label={word}
           onDelete={handleWordDelete(word)}
-          color="primary"
-        />
+          color="primary"/>
         &nbsp;
         </React.Fragment>
       ))}
@@ -189,7 +161,7 @@ function RoomScreen(props) {
           color="primary"
           size="large"
           onClick={props.onGameReady}
-          disabled={props.isGameMaster === false || (props.players.length < 2 && props.words.length < props.roomSettings.numWordsPerPlayer * props.players.length)}>
+          disabled={disabledStartGame}>
           <PlayCircleFilledIcon/>&nbsp;
           Start game
         </Fab>
