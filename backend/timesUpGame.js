@@ -210,12 +210,17 @@ function leaveRoom(ws, obj) {
 function addPlayerToRoom(ws, room){
   let playerName = ws.playerName;
   console.log("player name: " + ws.playerName)
+  let player = new playerFunction.Player(ws.id, playerName);
+  room.addPlayer(player);
+
+  // If player name is empty, modify it
   if (playerName === ''){
     let lastChars = ws.id.substr(ws.id.length - 4);
     playerName = `Player-${lastChars}`;
   }
-  let player = new playerFunction.Player(ws.id, playerName);
-  room.addPlayer(player);
+  changePlayerName(ws, {playerName: playerName});
+
+  // If no game master, set it
   if (room.gameMaster === null) {
     console.log("No game master in room. Appointing " + ws.id);
     room.setGameMaster(ws.id);

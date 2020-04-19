@@ -45,8 +45,6 @@ function RoomScreen(props) {
   const [words, setWords] = useState([]);
   const room_url = `http://localhost:3000/${props.roomId}`;
   const currentPlayer = props.currentPlayer;
-  console.log("Num words " + props.words.length)
-  console.log("Total words " + props.roomSettings.numWordsPerPlayer * props.players.length)
 
   const handleWordChange = (event) => {
     setWordInput(event.target.value);
@@ -79,7 +77,7 @@ function RoomScreen(props) {
       }
     }
   }, [props.roomSettings, handleWordDelete, words]);
-  
+
   const sendWord = () => {
     if (wordInput !== '') {
       props.onSendWord(wordInput);
@@ -169,7 +167,7 @@ function RoomScreen(props) {
       </div>
       {currentPlayer.name !== '' && words != null && words.map((word) => (<React.Fragment>
         <Chip
-          icon={<LocalLibraryIcon/>}
+          key={word}
           label={word}
           onDelete={handleWordDelete(word)}
           color="primary"
