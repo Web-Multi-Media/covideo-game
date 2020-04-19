@@ -217,8 +217,8 @@ function addPlayerToRoom(ws, room){
   if (playerName === ''){
     let lastChars = ws.id.substr(ws.id.length - 4);
     playerName = `Player-${lastChars}`;
-    changePlayerName(ws, {playerName: playerName});
   }
+  changePlayerName(ws, {playerName: playerName});
 
   // If no game master, set it
   if (room.gameMaster === null) {
