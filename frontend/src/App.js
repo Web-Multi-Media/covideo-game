@@ -198,7 +198,7 @@ function App() {
     />
     <Container className={classes.container} fixed maxWidth="xl">
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
-      <p> gameState.playerTeam {JSON.stringify(gameState.global.playerTeam)}</p>
+      {/*<p> gameState.playerTeam {JSON.stringify(gameState.global.playerTeam)}</p>*/}
       {/*<p> gameState.global {JSON.stringify(gameState.global)}</p>*/}
       {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
       {
