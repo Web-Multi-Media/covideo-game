@@ -8,7 +8,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import PeopleIcon from '@material-ui/icons/People';
-import PlayerAvatarNew from "./PlayerAvatarNew";
+import PlayerAvatar from "./PlayerAvatar";
 import TextIcon from '../TextIcon/TextIcon';
 
 const useStyles = makeStyles({
@@ -37,7 +37,7 @@ function Players(props) {
         {
           players.map((p) => (<TableRow key={p.id}>
             <TableCell component="th" scope="row">
-              <PlayerAvatarNew
+              <PlayerAvatar
                 player={p}
                 isCurrentPlayer={p.id === currentPlayer.id}
                 isGameMaster={p.id === gameMaster}
