@@ -49,6 +49,9 @@ function PlayerAvatar(props){
   };
 
   function onSendUsername(){
+    if (!textInput){
+      return;
+    }
     setEditMode(false);
     props.onSendUsername(textInput);
   };
