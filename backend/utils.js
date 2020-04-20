@@ -21,11 +21,11 @@ function sortTeam(players) {
   return [teamA, teamB];
 }
 
-function getNextActivePlayer(round, teams, numberOfPlayer) {
-  const player = round % numberOfPlayer;
-  const idx0 = Math.trunc(player % 2);
-  const idx1 = Math.trunc(player / 2);
-  return teams[idx0][idx1];
+function getNextActivePlayer(room) {
+  const teamPlaying = room.round % 2;
+  const player = teamPlaying === 0 ? room.team1Player : room.team2Player;
+  teamPlaying === 0 ? room.updateTeam1() : room.updateTeam2();
+  return room.teams[teamPlaying][player];
 }
 
 function firstToLastIndex(arr) {
