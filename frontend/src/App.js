@@ -96,15 +96,6 @@ function App() {
     URL += cookies.roomId !== undefined ? `&roomId=${cookies.roomId}` : '';
     URL += cookies.playerName !== undefined ? `&playerName=${cookies.playerName}` : '';
     ws = new WebSocket(URL);
-    // ws.onopen = function() {
-    //   setGameState({
-    //     ...gameState,
-    //     global: {
-    //       ...gameState.global,
-    //       socketConnected: true
-    //     }
-    //   })
-    // }
   }, []);
 
   useEffect(() => {

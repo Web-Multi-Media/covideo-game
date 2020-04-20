@@ -213,7 +213,7 @@ function addPlayerToRoom(ws, room){
   let player = new playerFunction.Player(ws.id, ws.playerName);
   room.addPlayer(player);
   changePlayerName(ws, {playerName: ws.playerName});
-  console.log(`Player ${playerName} added to room ${room.id}`);
+  console.log(`Player ${ws.playerName} added to room ${room.id}`);
   if (room.gameMaster === null) { // if no game master in room, set it
     console.log("No game master in room. Appointing " + ws.id);
     room.setGameMaster(ws.id);
