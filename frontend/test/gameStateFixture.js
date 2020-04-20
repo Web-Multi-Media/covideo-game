@@ -20,7 +20,7 @@ const [gameState, setGameState] = useState({
         wordsValidated: [],
         teams: [[{id: 'testIdName', name: 'test1'}],[]],
         gameMaster: 'dlkmgdkldfs',
-        gameIsReady: true,
+        gameStarted: true,
         round: 0,
         set: 1,
         setFinished: false,

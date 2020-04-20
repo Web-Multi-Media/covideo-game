@@ -1,6 +1,6 @@
 let rootingFunction = {
   'updateState': updateState,
-  'gameIsReady': gameIsReady
+  'gameStarted': gameStarted
 };
 
 export default function handleServerResponse(message, state, setState) {
@@ -30,7 +30,7 @@ function updateState(message, gameState, setGameState) {
   });
 }
 
-function gameIsReady(message, gameState, setGameState) {
+function gameStarted(message, gameState, setGameState) {
   setGameState({
     global: {
       // playerTeam: 0,

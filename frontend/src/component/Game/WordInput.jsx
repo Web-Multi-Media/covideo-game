@@ -8,12 +8,12 @@ function WordInput(props) {
   return (<React.Fragment>
     {
       props.startTimer && <React.Fragment>
-        <Fab className="margButt" variant="contained" color="primary" onClick={props.validation}>
+        <Fab className="margButt" variant="extended" color="primary" onClick={props.validation}>
           <DoneAllIcon/>
           Validate
         </Fab>
         &nbsp;
-        <Fab className="margButt" variant="contained" color="primary" onClick={props.next}>
+        <Fab className="margButt" variant="extended" color="primary" onClick={props.next}>
           <SkipNextIcon/>
           Skip
         </Fab>
@@ -21,7 +21,7 @@ function WordInput(props) {
     }
     {
       !props.startTimer &&
-        <Fab className="margButt" variant="contained" color="primary" onClick={props.startRound}>
+        <Fab className="margButt" variant="extended" color="primary" onClick={props.startRound}>
           <PlayCircleFilledIcon/>&nbsp;
           Start round
         </Fab>

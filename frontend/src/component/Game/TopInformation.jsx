@@ -37,7 +37,7 @@ function TopInformation(props) {
         <Grid container direction="row" justify="center" spacing={2}>
 
           {/* Active player card */}
-          <Grid item xs={3} justify="left" alignItems="center">
+          <Grid item xs={3}>
             <Paper className={classes.paper} elevation={2}>
               <Typography className={classes.typography}>
                 <b>Active player</b>

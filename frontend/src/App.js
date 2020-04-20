@@ -56,6 +56,7 @@ function App() {
       wordsValidated: [],
       teams: [],
       gameMaster: null,
+      gameStarted: false,
       gameIsReady: false,
       round: 0,
       set: 1,
@@ -152,8 +153,8 @@ function App() {
     requestBackend({type: 'deleteWord', word: word});
   };
 
-  const sendGameIsReady = () => {
-    requestBackend({type: 'gameIsReady'});
+  const sendGameIsStarted = () => {
+    requestBackend({type: 'gameStarted'});
   };
 
   const startRound = () => {
@@ -198,7 +199,7 @@ function App() {
       {/*<p> gameState.global {JSON.stringify(gameState.global)}</p>*/}
       {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
       {
-        !gameState.room.gameIsReady && !gameState.global.joinedRoom && <React.Fragment>
+        !gameState.room.gameStarted && !gameState.global.joinedRoom && <React.Fragment>
             <Header/>
             <SelectRoomScreen
               currentPlayer={gameState.player}
@@ -209,18 +210,19 @@ function App() {
             </React.Fragment>
       }
       {
-        !gameState.room.gameIsReady && gameState.global.joinedRoom &&
+        !gameState.room.gameStarted && gameState.global.joinedRoom &&
           <RoomScreen
             players={gameState.room.players}
             currentPlayer={gameState.player}
             gameMaster={gameState.room.gameMaster}
             roomId={gameState.room.id}
             roomSettings={gameState.room.settings}
+            gameIsReady={gameState.room.gameIsReady}
             playerWords={gameState.player.words}
             isGameMaster={isGameMaster}
             kickPlayer={kickPlayer}
             leaveRoom={leaveRoom}
-            onGameReady={sendGameIsReady}
+            onGameReady={sendGameIsStarted}
             onChangeSettings={sendRoomSettings}
             onSendUsername={sendUsername}
             onSendWord={sendWord}
@@ -228,7 +230,7 @@ function App() {
             onDeleteWord={deleteWord}/>
       }
       {
-        gameState.room.gameIsReady && gameState.global.joinedRoom &&
+        gameState.room.gameStarted && gameState.global.joinedRoom &&
           <GameScreen
             currentPlayer={gameState.player}
             gameMaster={gameState.room.gameMaster}

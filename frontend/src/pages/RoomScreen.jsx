@@ -43,7 +43,7 @@ function RoomScreen(props) {
   const room_url = `http://localhost:3000/${props.roomId}`;
   const currentPlayer = props.currentPlayer;
   const disabledWordAdd = currentPlayer.name === '' || props.playerWords.length >= props.roomSettings.numWordsPerPlayer;
-  const disabledStartGame = props.isGameMaster === false || props.players.length < 2 || props.playerWords.length < props.roomSettings.numWordsPerPlayer;
+  const disabledStartGame = props.isGameMaster === false || !props.gameIsReady;
 
   const sendWord = () => {
     if (wordInput !== '') {

@@ -11,7 +11,7 @@ let rootingFunction = {
   'addWord': addWord,
   'deleteWord': deleteWord,
   'changeRoomSettings': changeRoomSettings,
-  'gameIsReady': gameIsReady,
+  'gameStarted': gameStarted,
   'startRound': startRound,
   'validateWord': validateWord,
   'nextWord': nextWord,
@@ -150,6 +150,7 @@ function joinRoom(ws, obj) {
     ws.roomId = '';
     ws.send(JSON.stringify(response));
   }
+  notifyGameMaster(room);
 }
 
 /**
@@ -209,6 +210,7 @@ function leaveRoom(ws, obj) {
   }
   broadcast(response2, room);
   broadcastRoomsInfo();
+  notifyGameMaster(room);
 }
 
 /**
@@ -357,15 +359,15 @@ function startRound(ws, obj, room) {
  * @param  {object} obj  Message.
  * @param  {Room} room Current room.
  */
-function gameIsReady(ws, obj, room) {
+function gameStarted(ws, obj, room) {
   room.startGame();
   room.startRound();
   room.setActivePlayer();
-  room.gameIsReady = true;
+  room.gameStarted = true;
   let response = {
-    type: 'gameIsReady',
+    type: 'gameStarted',
     room: {
-      gameIsReady: true,
+      gameStarted: true,
       teams: room.teams,
       wordToGuess: room.wordsOfRound[0],
       activePlayer: room.activePlayer,
@@ -389,6 +391,7 @@ function addWord(ws, obj, room) {
     }
   };
   ws.send(JSON.stringify(response));
+  notifyGameMaster(room);
 }
 
 /**
@@ -405,7 +408,15 @@ function deleteWord(ws, obj, room) {
       words: room.wordsPerPlayer[ws.id]
     }
   };
+  let broadcastResponse = {
+    type: 'updateState',
+    room: {
+      gameIsReady: room.gameIsReady
+    }
+  }
   ws.send(JSON.stringify(response));
+  broadcast(broadcastResponse, room);
+  notifyGameMaster(room);
 }
 
 /**
@@ -457,7 +468,7 @@ function nextWord(ws, obj, room) {
         gifUrl: ''
       }
     };
-  broadCastTwoResponses(responseToBroadCast, response, ws.id, room);
+    broadCastTwoResponses(responseToBroadCast, response, ws.id, room);
   }
 }
 
@@ -492,6 +503,21 @@ function getClient(clientId){
     }
   });
   return ws;
+}
+
+/**
+ * Send room info to game master.
+ * @param  {Room} room Room.
+ */
+function notifyGameMaster(room){
+  room.checkGameReady();
+  let response = {
+    type: 'updateState',
+    room: {
+      gameIsReady: room.gameIsReady
+    }
+  }
+  sendMessage(response, room.gameMaster);
 }
 
 /**

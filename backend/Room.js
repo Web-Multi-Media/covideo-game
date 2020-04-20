@@ -20,6 +20,7 @@ function Room(id) {
   this.startTimer = false;
   this.activePlayer = {};
   this.gameIsReady = false;
+  this.gameStarted = false;
   this.setFinished = false;
   this.scoreFirstTeam = 0;
   this.scoreSecondTeam = 0;
@@ -87,14 +88,20 @@ Room.prototype = {
     ];
   },
   deleteWord: function(word, playerId) {
-    // delete only one occurence of the word to be deleted
     this.updateActivity();
-    this.wordsPerPlayer[playerId] = (function(words, wordToRemove) {
-      for (var i = words.length - 1; i >= 0; i--) {
-        if (words[i] === wordToRemove) {
-          words.splice(i, 1);
-          return words;
-        }}})(this.wordsPerPlayer[playerId], word);
+    let playerWords = this.wordsPerPlayer[playerId];
+    let wordIndex = playerWords.indexOf(word);
+    if (wordIndex > -1) {
+      playerWords.splice(wordIndex, 1);
+    }
+    this.wordsPerPlayer[playerId] = playerWords;
+  },
+  checkGameReady: function() {
+    let words = this.getWords();
+    let numberPlayers = this.players.length;
+    let wordsPerPlayer = this.settings.numWordsPerPlayer;
+    let check = numberPlayers >= 2 && (numberPlayers * wordsPerPlayer === words.length);
+    this.gameIsReady = check;
   },
   startGame: function() {
     this.updateActivity();
@@ -171,6 +178,7 @@ Room.prototype = {
     this.startTimer = false;
     this.activePlayer = {};
     this.gameIsReady = false;
+    this.gameStarted = false;
     this.setFinished = false;
     this.scoreFirstTeam = 0;
     this.scoreSecondTeam = 0;
@@ -182,12 +190,10 @@ Room.prototype = {
   updateTeam1: function() {
     this.updateActivity();
     this.team1Player = (this.team1Player + 1) % this.teams[0].length;
-    console.log('team1player = ' +this.team1Player);
   },
   updateTeam2: function() {
     this.updateActivity();
     this.team2Player = (this.team2Player + 1) % this.teams[1].length;
-    console.log('team2player = ' +this.team2Player);
   },
   serialize: function() {
     return {
@@ -205,7 +211,8 @@ Room.prototype = {
       players: this.players,
       lastActivity: this.lastActivity,
       settings: this.settings,
-      gameIsReady: this.gameIsReady
+      gameIsReady: this.gameIsReady,
+      gameStarted: this.gameStarted
     }
   }
 };
