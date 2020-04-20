@@ -25,9 +25,11 @@ const useStyles = makeStyles((theme) => ({
     height: '100%'
   },
   firstRow:{
+    padding: '20px',
     gridRow: '1 / 2'
   },
   secondRow:{
+    padding: '20px',
     gridRow: '2 / 3'
   }
 
@@ -57,7 +59,6 @@ function TeamPanel(props) {
     </React.Fragment>);
   });
   return (<React.Fragment>
-    <Paper className={classes.paper} elevation={2}>
       <div className={classes.grid}>
         <Paper className={classes.firstRow} elevation={1}>
           <Typography className={classes.typography}>
@@ -82,7 +83,6 @@ function TeamPanel(props) {
             </Grid>
           </Paper>
       </div>
-    </Paper>
   </React.Fragment>);
 }
 

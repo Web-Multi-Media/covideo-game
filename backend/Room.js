@@ -2,6 +2,8 @@ const utils = require('./utils')
 const _ = require('lodash');
 
 function Room(id) {
+  this.team1Player = 0;
+  this.team2Player = 0;
   this.name = "";
   this.id = id;
   this.gifUrl = "";
@@ -115,7 +117,7 @@ Room.prototype = {
   setActivePlayer: function() {
     this.updateActivity();
     this.wordsOfRound = utils.shuffle(this.wordsOfRound);
-    this.activePlayer = utils.getNextActivePlayer(this.round, this.teams, this.numberOfPlayer);
+    this.activePlayer = utils.getNextActivePlayer(this);
   },
   validateWord: function(team) {
     this.updateActivity();
@@ -163,6 +165,16 @@ Room.prototype = {
   },
   updateActivity: function() {
     this.lastActivity = Date.now();
+  },
+  updateTeam1: function() {
+    this.updateActivity();
+    this.team1Player = (this.team1Player + 1) % this.teams[0].length;
+    console.log('team1player = ' +this.team1Player);
+  },
+  updateTeam2: function() {
+    this.updateActivity();
+    this.team2Player = (this.team2Player + 1) % this.teams[1].length;
+    console.log('team2player = ' +this.team2Player);
   },
   serialize: function() {
     return {

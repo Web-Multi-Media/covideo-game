@@ -13,7 +13,8 @@ const useStyles = makeStyles(({ palette }) => ({
   header: {
     padding: '0px',
     marginTop: '2px',
-    marginBottom: '2px'
+    marginBottom: '2px',
+    display: 'flex'
   },
   avatar: {
     marginRight: '0px !important'
