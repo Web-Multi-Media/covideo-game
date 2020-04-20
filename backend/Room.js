@@ -158,7 +158,11 @@ Room.prototype = {
     this.gifUrl = "";
     this.words = [];
     this.wordToGuess = "";
-    this.wordsPerPlayer = {};
+    let wordsPerPlayer = {};
+    this.players.map(function(player){
+      wordsPerPlayer[player.id] = [];
+    })
+    this.wordsPerPlayer = wordsPerPlayer;
     this.wordsOfRound = [];
     this.wordsValidated = [];
     this.teams = [];
