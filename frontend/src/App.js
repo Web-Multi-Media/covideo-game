@@ -83,7 +83,7 @@ function App() {
     ws.send(JSON.stringify(request));
   }
 
-  function parseBackendResponse(response){
+  function processBackendResponse(response){
     const obj = JSON.parse(response.data);
     console.log("Backend response: ", obj);
     handleServerResponse(obj, gameState, setGameState);
@@ -121,7 +121,7 @@ function App() {
   }, [gameState.socketConnected]);
 
   useEffect(() => {
-    ws.onmessage = parseBackendResponse;
+    ws.onmessage = processBackendResponse;
   });
 
   const getRooms = () => {
