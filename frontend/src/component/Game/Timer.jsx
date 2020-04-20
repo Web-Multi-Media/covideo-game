@@ -57,6 +57,7 @@ function Timer(props) {
     if (props.startTimer === false) {
       setSeconds(0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.startTimer, props.duration]);
 
   useEffect(() => {
@@ -65,6 +66,7 @@ function Timer(props) {
     } else if (isActive && seconds === 0) {
       props.playSound('endRoundlooser');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seconds]);
 
   return (<React.Fragment>

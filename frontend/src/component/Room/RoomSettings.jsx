@@ -33,6 +33,7 @@ function RoomSettings(props) {
       private: privateRoom
     };
     onChangeSettings(settings);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeToGuess1stRound, timeToGuess2ndRound, timeToGuess3rdRound, numWordsPerPlayer, numMaxPlayers, privateRoom]);
 
   return (<React.Fragment>

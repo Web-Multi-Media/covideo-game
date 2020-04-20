@@ -37,12 +37,14 @@ function GameScreen(props) {
     if (props.currentPlayer.id === props.activePlayer.id) {
       setTimeout(() => props.playSound('startRoundActivePlayer'), 500)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.activePlayer.id]);
 
   useEffect(() => {
     if (props.team1Score > 0 || props.team2Score > 0) {
       props.playSound('guessWord');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.team1Score, props.team2Score]);
 
   return (<React.Fragment>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import "./RoomScreen.css";
 import {makeStyles} from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
@@ -10,7 +10,6 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import AddIcon from '@material-ui/icons/Add';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import Players from "../component/Player/Players";
@@ -138,9 +137,8 @@ function RoomScreen(props) {
           Add word ({props.playerWords.length}/{props.roomSettings.numWordsPerPlayer})
         </Button>
       </div>
-      {currentPlayer.name !== '' && props.playerWords.map((word) => (<React.Fragment>
+      {currentPlayer.name !== '' && props.playerWords.map((word) => (<React.Fragment key={word}>
         <Chip
-          key={word}
           label={word}
           onDelete={handleWordDelete(word)}
           color="primary"/>

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import _ from 'lodash';
 import handleServerResponse from "./webSocket/rootedFunctions";
 import {useLocation} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
@@ -44,7 +43,8 @@ function App() {
     player: {
       id: '',
       name: '',
-      status: ''
+      status: '',
+      words: []
     },
     room: {
       name: '',
@@ -52,7 +52,6 @@ function App() {
       gifUrl: '',
       players: [],
       activePlayer: {},
-      wordsPerPlayer: {},
       wordToGuess: '',
       wordsValidated: [],
       teams: [],
@@ -77,16 +76,17 @@ function App() {
   const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
   const location = useLocation();
   const isGameMaster = gameState.room.gameMaster === gameState.player.id;
-  const debug = process.env.NODE_ENV === 'development';
+  const debug = process.env.DEBUG === '1';
 
-  function getPlayerWords(){
-    let playerId = gameState.player.id;
-    let wordsPerPlayer = gameState.room.wordsPerPlayer;
-    let playerWords = [];
-    if (playerId in wordsPerPlayer){
-      playerWords = wordsPerPlayer[playerId];
-    }
-    return playerWords;
+  function requestBackend(request){
+    console.log("Backend request: ", request);
+    ws.send(JSON.stringify(request));
+  }
+
+  function parseBackendResponse(response){
+    const obj = JSON.parse(response.data);
+    console.log("Backend response: ", obj);
+    handleServerResponse(obj, gameState, setGameState);
   }
 
   useEffect(() => {
@@ -96,6 +96,7 @@ function App() {
     URL += cookies.roomId !== undefined ? `&roomId=${cookies.roomId}` : '';
     URL += cookies.playerName !== undefined ? `&playerName=${cookies.playerName}` : '';
     ws = new WebSocket(URL);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -108,88 +109,81 @@ function App() {
     if (gameState.player.name !== cookies.playerName) {
       setCookie('playerName', gameState.player.name, { path: '/' });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.room.id, gameState.player.id, gameState.player.name]);
 
   useEffect(() => {
     if (location.pathname !== '/' && gameState.global.socketConnected) {
-      console.log('has path name');
-      console.log(location.pathname);
-      ws.send(JSON.stringify({type: 'joinRoom', roomId: location.pathname.substring(1)}));
+      console.log(`Location: ${location.pathname}`);
+      requestBackend({type: 'joinRoom', roomId: location.pathname.substring(1)});
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.socketConnected]);
 
   useEffect(() => {
-    ws.onmessage = (message) => {
-      const obj = JSON.parse(message.data);
-      console.log('new event : ' + obj.type);
-      console.log(obj);
-      handleServerResponse(obj, gameState, setGameState);
-    };
+    ws.onmessage = parseBackendResponse;
   });
 
   const getRooms = () => {
-    ws.send(JSON.stringify({type: 'getRooms'}));
+    requestBackend({type: 'getRooms'});
   };
 
   const createNewRoom = () => {
-    ws.send(JSON.stringify({type: 'createRoom'}));
+    requestBackend({type: 'createRoom'});
   };
 
   const joinRoom = (roomId) => {
-    ws.send(JSON.stringify({type: 'joinRoom', roomId: roomId}));
+    requestBackend({type: 'joinRoom', roomId: roomId});
   };
 
   const sendUsername = (name) => {
-    ws.send(JSON.stringify({type: 'changePlayerName', playerName: name}));
+    requestBackend({type: 'changePlayerName', playerName: name});
   };
 
   const sendRoomSettings = (settings) => {
-    ws.send(JSON.stringify({
-      type: 'changeRoomSettings', settings: settings}));
+    requestBackend({type: 'changeRoomSettings', settings: settings});
   };
 
   const sendWord = (word) => {
-    ws.send(JSON.stringify({type: 'addWord', word: word}));
+    requestBackend({type: 'addWord', word: word});
   };
 
   const deleteWord = (word) => {
-    ws.send(JSON.stringify({type: 'deleteWord', word: word}));
+    requestBackend({type: 'deleteWord', word: word});
   };
 
   const sendGameIsReady = () => {
-    ws.send(JSON.stringify({type: 'gameIsReady'}));
+    requestBackend({type: 'gameIsReady'});
   };
 
   const startRound = () => {
-    ws.send(JSON.stringify({type: 'startRound'}));
+    requestBackend({type: 'startRound'});
   };
 
   const nextWord = () => {
-    ws.send(JSON.stringify({type: 'nextWord'}));
+    requestBackend({type: 'nextWord'});
   };
 
   const validateWord = () => {
-    ws.send(JSON.stringify({type: 'validateWord', team: gameState.global.playerTeam}));
+    requestBackend({type: 'validateWord', team: gameState.global.playerTeam});
   };
 
   const leaveRoom = (playerId) => {
-    ws.send(JSON.stringify({type: 'leaveRoom', playerId: playerId}));
+    requestBackend({type: 'leaveRoom', playerId: playerId});
   };
 
   const kickPlayer = (playerId) => {
-    console.log("Kicking player " + playerId);
-    ws.send(JSON.stringify({type: 'leaveRoom', playerId: playerId}))
+    console.log(`Kicking player ${playerId}`);
+    requestBackend({type: 'leaveRoom', playerId: playerId})
   };
 
   const chooseGif = (gifUrl) => {
-    ws.send(JSON.stringify({type: 'setGif', gifUrl: gifUrl}));
+    requestBackend({type: 'setGif', gifUrl: gifUrl});
   };
 
   // DEBUG
-  let debugGameState = _.cloneDeep(gameState);
-  delete debugGameState.global.rooms;
   if (debug) {
-    console.log(debugGameState);
+    console.log("Game state: ", gameState);
   }
 
   return (<React.Fragment>
@@ -222,7 +216,7 @@ function App() {
             gameMaster={gameState.room.gameMaster}
             roomId={gameState.room.id}
             roomSettings={gameState.room.settings}
-            playerWords={getPlayerWords()}
+            playerWords={gameState.player.words}
             isGameMaster={isGameMaster}
             kickPlayer={kickPlayer}
             leaveRoom={leaveRoom}

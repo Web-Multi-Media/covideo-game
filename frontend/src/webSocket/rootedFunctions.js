@@ -4,7 +4,6 @@ let rootingFunction = {
 };
 
 export default function handleServerResponse(message, state, setState) {
-  console.log('server response ' + message.type);
   return rootingFunction[message.type](message, state, setState);
 }
 
