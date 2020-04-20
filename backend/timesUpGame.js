@@ -321,6 +321,20 @@ function startRound(ws, obj, room) {
     if (counter <= 0 || isSetfinished === true) {
       if (isSetfinished === true) {
         room.startSet();
+        console.log("Current set : ", room.set);
+        if (room.set > 3){
+          room.resetGame();
+          let response = {
+            type: 'updateState',
+            player: {
+              words: []
+            },
+            room: room.serialize()
+          }
+          broadcast(response, room);
+          clearInterval(WinnerCountdown);
+          return;
+        }
         counter = 0;
       }
       room.setActivePlayer();

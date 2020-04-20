@@ -8,6 +8,7 @@ function Room(id) {
   this.id = id;
   this.gifUrl = "";
   this.players = [];
+  this.wordToGuess = ""
   this.words = [];
   this.wordsPerPlayer = {};
   this.wordsOfRound = [];
@@ -101,14 +102,10 @@ Room.prototype = {
     this.wordsOfRound = utils.shuffle(this.getWords());
   },
   startSet: function() {
-    this.wordsOfRound = utils.shuffle(this.getWords());
     this.updateActivity();
+    this.wordsOfRound = utils.shuffle(this.getWords());
     this.setFinished = false;
-    if(this.set < 3){
-      this.set++;
-    }else{
-      this.resetGame();
-    }
+    this.set++;
   },
   startRound: function() {
     this.updateActivity();
@@ -156,13 +153,24 @@ Room.prototype = {
   },
   resetGame: function() {
     this.updateActivity();
+    this.team1Player = 0;
+    this.team2Player = 0;
+    this.gifUrl = "";
+    this.words = [];
+    this.wordToGuess = "";
     this.wordsPerPlayer = {};
     this.wordsOfRound = [];
     this.wordsValidated = [];
+    this.teams = [];
     this.round = 0;
-    this.set = 0;
+    this.set = 1;
+    this.startTimer = false;
+    this.activePlayer = {};
+    this.gameIsReady = false;
+    this.setFinished = false;
     this.scoreFirstTeam = 0;
     this.scoreSecondTeam = 0;
+    this.lastActivity = Date.now();
   },
   updateActivity: function() {
     this.lastActivity = Date.now();
