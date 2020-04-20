@@ -8,10 +8,10 @@ function Room(id) {
   this.id = id;
   this.gifUrl = "";
   this.players = [];
+  this.words = [];
   this.wordsPerPlayer = {};
   this.wordsOfRound = [];
   this.wordsValidated = [];
-  this.words = [];
   this.teams = [];
   this.gameMaster = null;
   this.round = 0;
@@ -29,13 +29,14 @@ function Room(id) {
 
 Room.prototype = {
   getWords: function() {
+    let words = []
     for (const playerId in this.wordsPerPlayer) {
-      this.words = [
-        ...this.words,
+      words = [
+        ...words,
         ...this.wordsPerPlayer[playerId]
       ];
     }
-    return this.words;
+    return words;
   },
   setName: function(name) {
     this.updateActivity();
@@ -79,32 +80,33 @@ Room.prototype = {
   },
   addWord: function(word, playerId) {
     this.updateActivity();
-    let wp = this.wordsPerPlayer[playerId];
-    if (wp.includes(word)){ return true; }
-    this.wordsPerPlayer[playerId] = [...wp, word];
-    this.words = this.getWords();
+    this.wordsPerPlayer[playerId] = [
+      ...this.wordsPerPlayer[playerId],
+      word
+    ];
   },
   deleteWord: function(word, playerId) {
+    // delete only one occurence of the word to be deleted
     this.updateActivity();
-    let wp = this.wordsPerPlayer[playerId];
-    if (!wp.includes(word)){ return true; }
-    this.wordsPerPlayer[playerId] = _.filter(wp, function(item){
-      return word != item
-    });
-    this.words = this.getWords();
+    this.wordsPerPlayer[playerId] = (function(words, wordToRemove) {
+      for (var i = words.length - 1; i >= 0; i--) {
+        if (words[i] === wordToRemove) {
+          words.splice(i, 1);
+          return words;
+        }}})(this.wordsPerPlayer[playerId], word);
   },
   startGame: function() {
     this.updateActivity();
     this.teams = utils.sortTeam(this.players);
-    this.wordsOfRound = utils.shuffle(this.words);
+    this.wordsOfRound = utils.shuffle(this.getWords());
   },
   startSet: function() {
-    this.wordsOfRound = utils.shuffle(this.words);
+    this.wordsOfRound = utils.shuffle(this.getWords());
     this.updateActivity();
     this.setFinished = false;
-    if (this.set < 3){
+    if(this.set < 3){
       this.set++;
-    } else {
+    }else{
       this.resetGame();
     }
   },
@@ -157,7 +159,6 @@ Room.prototype = {
     this.wordsPerPlayer = {};
     this.wordsOfRound = [];
     this.wordsValidated = [];
-    this.words = [];
     this.round = 0;
     this.set = 0;
     this.scoreFirstTeam = 0;

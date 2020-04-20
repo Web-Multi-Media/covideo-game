@@ -105,6 +105,9 @@ function createRoom(ws, obj) {
     global: {
       joinedRoom: true,
     },
+    player: {
+      words: []
+    },
     room: room.serialize()
   };
   ws.send(JSON.stringify(response));
@@ -165,12 +168,13 @@ function leaveRoom(ws, obj) {
   let room = rooms.get(roomId);
   let gameMaster = room.gameMaster;
   room.removePlayer(clientId);
+  console.log(`Player ${ws.playerName} left room ${room.id}`);
+
+  // If room empty, delete it.
   if (room.players.length === 0){
     console.log(`No more players in room. Deleting room ${room.id}`);
-    rooms.remove(room.id);
-    return;
+    rooms.delete(room.id);
   }
-  console.log(`Player ${ws.playerName} left room ${room.id}`);
   let response = {
     type: 'updateState',
     global: {
@@ -204,6 +208,7 @@ function leaveRoom(ws, obj) {
     }
   }
   broadcast(response2, room);
+  broadcastRoomsInfo();
 }
 
 /**
@@ -305,8 +310,7 @@ function startRound(ws, obj, room) {
     room: {
       wordsValidated: [],
       gifUrl: ''
-    },
-    global: {}
+    }
   };
   response.room.wordToGuess = room.wordsOfRound[0];
   let counter = room.settings.timesToGuessPerSet[room.set-1];
@@ -386,7 +390,7 @@ function deleteWord(ws, obj, room) {
     player: {
       words: room.wordsPerPlayer[ws.id]
     }
-  }
+  };
   ws.send(JSON.stringify(response));
 }
 
@@ -402,7 +406,6 @@ function validateWord(ws, obj, room) {
   const responseToBroadCast = {
     type: 'updateState',
       room: {
-        wordToGuess: room.wordsOfRound[0],
         wordsValidated: room.wordsValidated.length,
         team1Score: room.scoreFirstTeam,
         team2Score: room.scoreSecondTeam,
