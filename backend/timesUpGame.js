@@ -137,7 +137,7 @@ function joinRoom(ws, obj) {
     broadcast(response, room);
     broadcastRoomsInfo();
   } else { // room does not exist - can happen if trying to access deleted room URL
-    console.log(`Player ${ws.playerName} tried to join room ${room.id} that does not exist anymore`);
+    console.log(`Player ${ws.playerName} tried to join room that does not exist anymore`);
     let response = {
       type: 'updateState',
       global: {
@@ -209,8 +209,10 @@ function leaveRoom(ws, obj) {
     }
   }
   broadcast(response2, room);
+  if (room.gameMaster){
+    notifyGameMaster(room);
+  }
   broadcastRoomsInfo();
-  notifyGameMaster(room);
 }
 
 /**
