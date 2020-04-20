@@ -31,7 +31,7 @@ let rootingFunction = {
 function messageHandler(message, ws, wss) {
   webSockets = wss;
   const obj = JSON.parse(message);
-  console.log(`ws client: ${ws.id} | React request: ${obj}`);
+  console.log(`ws client: ${ws.id} | React request: ${JSON.stringify(obj, null)}`);
   const room = ws.roomId ? rooms.get(ws.roomId) : {};
   rootingFunction[obj.type](ws, obj, room);
 }
@@ -165,6 +165,11 @@ function leaveRoom(ws, obj) {
   let room = rooms.get(roomId);
   let gameMaster = room.gameMaster;
   room.removePlayer(clientId);
+  if (room.players.length === 0){
+    console.log(`No more players in room. Deleting room ${room.id}`);
+    rooms.remove(room.id);
+    return;
+  }
   console.log(`Player ${ws.playerName} left room ${room.id}`);
   let response = {
     type: 'updateState',
