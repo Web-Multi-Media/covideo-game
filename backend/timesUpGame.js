@@ -31,10 +31,8 @@ let rootingFunction = {
 function messageHandler(message, ws, wss) {
   webSockets = wss;
   const obj = JSON.parse(message);
-  console.log(ws.id + ' React request : ' + obj.type);
-  const room = ws.roomId
-    ? rooms.get(ws.roomId)
-    : {};
+  console.log(`ws client: ${ws.id} | React request: ${obj}`);
+  const room = ws.roomId ? rooms.get(ws.roomId) : {};
   rootingFunction[obj.type](ws, obj, room);
 }
 
@@ -363,8 +361,8 @@ function addWord(ws, obj, room) {
   room.addWord(obj.word, ws.id);
   let response = {
     type: 'updateState',
-    room: {
-      wordsPerPlayer: room.wordsPerPlayer
+    player: {
+      words: room.wordsPerPlayer[ws.id]
     }
   };
   ws.send(JSON.stringify(response));
@@ -380,8 +378,8 @@ function deleteWord(ws, obj, room) {
   room.deleteWord(obj.word, ws.id);
   let response = {
     type: 'updateState',
-    room: {
-      wordsPerPlayer: room.wordsPerPlayer
+    player: {
+      words: room.wordsPerPlayer[ws.id]
     }
   }
   ws.send(JSON.stringify(response));
@@ -428,9 +426,9 @@ function nextWord(ws, obj, room) {
       gifUrl: ''
     }
   };
-  if(room.set <= 2){
+  if (room.set <= 2){
     sendMessage(response, ws.id);
-  }else{
+  } else {
     let responseToBroadCast = {
       type: 'updateState',
       room: {

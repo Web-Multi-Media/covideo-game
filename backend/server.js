@@ -47,9 +47,10 @@ app.get('*', (req, res) => {
 wss.on('connection', function connection(ws, sed) {
   const urlParams = new URLSearchParams(sed.url.substring(1));
   game.connectPlayer(ws, urlParams);
-
   ws.on('message', function incoming(message) {
-    game.messageHandler(message, ws, wss);
+    if (ws.readyState === WebSocket.OPEN) {
+      game.messageHandler(message, ws, wss);
+    }
   });
 });
 
