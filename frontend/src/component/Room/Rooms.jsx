@@ -1,5 +1,4 @@
 import React from 'react';
-import './Rooms.css'
 import PlayerAvatar from "../Player/PlayerAvatar";
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -58,7 +57,7 @@ function Rooms(props) {
               <TableCell align="left">{new Date(room.lastActivity).toDateString()}</TableCell>
               <TableCell align="left">{room.scoreFirstTeam} - {room.scoreSecondTeam}</TableCell>
               <TableCell align="left">
-                <AvatarGroup max={5}>
+                <AvatarGroup max={2} spacing='small'>
                 {
                   room.players.map((player) => (
                     <PlayerAvatar

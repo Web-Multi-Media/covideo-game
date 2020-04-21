@@ -5,7 +5,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {makeStyles} from '@material-ui/core/styles';
 import SettingsIcon from '@material-ui/icons/Settings';
 import TextIcon from '../TextIcon/TextIcon';
-import './Rooms.css'
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -79,6 +79,13 @@ Room.prototype = {
     });
     delete this.wordsPerPlayer[id];
     this.numberOfPlayer = this.players.length;
+    if (id == this.gameMaster){
+      if (this.numberOfPlayer > 0){
+        this.setGameMaster(this.players[0].id);
+      } else {
+        this.setGameMaster(null);
+      }
+    }
   },
   addWord: function(word, playerId) {
     this.updateActivity();
