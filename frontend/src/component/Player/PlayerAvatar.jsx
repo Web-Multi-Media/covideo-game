@@ -112,14 +112,20 @@ function PlayerAvatar(props){
     </Typography>);
   };
 
-  return (
+  return (<React.Fragment>
+    {props.displayPlayerName &&
     <CardHeader
       className={classes.header}
       avatar={getAvatar(props.player, props.isGameMaster)}
       title={getDisplayName(props.player, props.isCurrentPlayer, editMode)}
       subheader={props.player.status}
       titleTypographyProps={{className: classes.noPadding}}/>
-  );
+  }
+  {!props.displayPlayerName && <React.Fragment>
+    {getAvatar(props.player, props.isGameMaster)}
+    </React.Fragment>
+  }
+  </React.Fragment>);
 };
 
 

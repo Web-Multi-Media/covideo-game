@@ -12,6 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import TextIcon from '../TextIcon/TextIcon';
+import AvatarGroup from '@material-ui/lab/AvatarGroup';
 
 const useStyles = makeStyles({
   table: {
@@ -57,17 +58,20 @@ function Rooms(props) {
               <TableCell align="left">{new Date(room.lastActivity).toDateString()}</TableCell>
               <TableCell align="left">{room.scoreFirstTeam} - {room.scoreSecondTeam}</TableCell>
               <TableCell align="left">
-              {
-                room.players.map((player) => (
-                  <PlayerAvatar
-                    key={player.id}
-                    player={player}
-                    isGameMaster={player.id === room.gameMaster}
-                    isCurrentPlayer={player.id === currentPlayer.id}
-                    gridContainerProps={{'justify': 'flex-start'}}
-                    onSendUsername={props.onSendUsername}/>
-                ))
-              }
+                <AvatarGroup max={5}>
+                {
+                  room.players.map((player) => (
+                    <PlayerAvatar
+                      key={player.id}
+                      player={player}
+                      isGameMaster={player.id === room.gameMaster}
+                      isCurrentPlayer={player.id === currentPlayer.id}
+                      gridContainerProps={{'justify': 'flex-start'}}
+                      displayPlayerName={false}
+                      onSendUsername={props.onSendUsername}/>
+                  ))
+                }
+                </AvatarGroup>
               </TableCell>
               <TableCell align="left">
                 <Button
