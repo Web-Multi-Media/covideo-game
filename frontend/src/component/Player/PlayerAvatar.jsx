@@ -7,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import './PlayerAvatar.css'
 
 const useStyles = makeStyles(({ palette }) => ({
   header: {
@@ -69,7 +68,7 @@ function PlayerAvatar(props){
         </Avatar>
       }
       {isGameMaster &&
-        <Avatar src='https://api.iconify.design/mdi-crown.svg' style={{'backgroundColor': 'yellow'}} className={classes.avatar}/>
+        <Avatar src='https://api.iconify.design/mdi-crown.svg' className={classes.avatar} style={{'backgroundColor': 'yellow'}}/>
       }
       </React.Fragment>);
   };
@@ -112,14 +111,20 @@ function PlayerAvatar(props){
     </Typography>);
   };
 
-  return (
+  return (<React.Fragment>
+    {props.displayPlayerName &&
     <CardHeader
       className={classes.header}
       avatar={getAvatar(props.player, props.isGameMaster)}
       title={getDisplayName(props.player, props.isCurrentPlayer, editMode)}
       subheader={props.player.status}
       titleTypographyProps={{className: classes.noPadding}}/>
-  );
+    }
+    {!props.displayPlayerName && <React.Fragment>
+      {getAvatar(props.player, props.isGameMaster)}
+      </React.Fragment>
+    }
+    </React.Fragment>);
 };
 
 

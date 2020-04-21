@@ -125,33 +125,19 @@ function createRoom(ws, obj) {
 function joinRoom(ws, obj) {
   let roomId = obj.roomId;
   let room = rooms.get(roomId);
-  if (room !== undefined) { // room already exists
-    ws.roomId = roomId;
-    addPlayerToRoom(ws, room);
-    let response = {
-      type: 'updateState',
-      global: {
-        joinedRoom: true,
-      },
-      room: room.serialize()
-    };
-    broadcast(response, room);
-    broadcastRoomsInfo();
-  } else { // room does not exist - can happen if trying to access deleted room URL
-    console.log(`Player ${ws.playerName} tried to join room that does not exist anymore`);
-    let response = {
-      type: 'updateState',
-      global: {
-        joinedRoom: false,
-      },
-      room: {
-        id: ''
-      }
-    };
-    ws.roomId = '';
-    ws.send(JSON.stringify(response));
-  }
+  if (room === undefined){ return; }
+  ws.roomId = roomId;
+  addPlayerToRoom(ws, room);
+  let response = {
+    type: 'updateState',
+    global: {
+      joinedRoom: true,
+    },
+    room: room.serialize()
+  };
   notifyGameMaster(room);
+  broadcast(response, room);
+  broadcastRoomsInfo();
 }
 
 /**
@@ -170,50 +156,36 @@ function leaveRoom(ws, obj) {
   let room = rooms.get(roomId);
   let gameMaster = room.gameMaster;
   room.removePlayer(clientId);
+  client = getClient(clientId);
+  client.roomId = '';
   console.log(`Player ${ws.playerName} left room ${room.id}`);
 
-  // If room empty, delete it.
-  if (room.players.length === 0){
-    console.log(`No more players in room. Deleting room ${room.id}`);
-    rooms.delete(room.id);
-  }
+  // Send individual response to client to disconnect from room
   let response = {
     type: 'updateState',
     global: {
       joinedRoom: false,
-      rooms: serializeRooms()
-    },
-    room: {
-      id: ''
     }
   };
   sendMessage(response, clientId);
 
-  let response2 = {
-    type:'updateState',
-    room: {
-      players: room.players
+  // Send broadcast response to other clients.
+  if (room.players.length === 0){ // no players left in room, delete room
+    console.log(`No more players in room. Deleting room ${room.id}`);
+    rooms.delete(room.id);
+    broadcastRoomsInfo();
+  } else {
+    console.log(`Updating players in room and broadcasting to clients.`);
+    let response2 = {
+      type:'updateState',
+      room: {
+        players: room.players
+      }
     }
-  };
-  // If player leaving is the game master, appoint a new game master
-  // If no more players are left, set gameMaster to null.
-  if (clientId == gameMaster) {
-    if (room.players.length > 0) {
-      newGameMaster = room.players[0].id;
-      console.log("Game master left the room. Appointing " + newGameMaster + " as gameMaster.");
-      room.setGameMaster(newGameMaster);
-      response2.room.gameMaster = newGameMaster;
-    } else {
-      console.log("No more players in room. Room gameMaster set to null.")
-      room.setGameMaster(null);
-      response2.room.gameMaster = null;
-    }
-  }
-  broadcast(response2, room);
-  if (room.gameMaster){
     notifyGameMaster(room);
-  }
-  broadcastRoomsInfo();
+    broadcast(response2, room);
+    broadcastRoomsInfo();
+  };
 }
 
 /**

@@ -27,7 +27,7 @@ function Chat (props) {
     if (props.incomingChatMessage) {
       setMessages(messages.concat(props.incomingChatMessage));
     }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.incomingChatMessage]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function Chat (props) {
 
 
   const submitMessage = function (messageString) {
-      if(messageString !== '') {
+      if (messageString !== '') {
           props.sendChatMessage(messageString);
       }
   }

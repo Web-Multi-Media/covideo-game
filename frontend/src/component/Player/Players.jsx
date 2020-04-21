@@ -42,6 +42,7 @@ function Players(props) {
                 isCurrentPlayer={p.id === currentPlayer.id}
                 isGameMaster={p.id === gameMaster}
                 gameMaster={gameMaster}
+                displayPlayerName={true}
                 onSendUsername={props.onSendUsername}/>
             </TableCell>
             <TableCell align="left">

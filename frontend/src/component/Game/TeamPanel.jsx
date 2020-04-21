@@ -41,10 +41,11 @@ function TeamPanel(props) {
   const teamMembers1 = teams[0].map(player => {
     return (<React.Fragment key={player.name}>
       <Grid item>
-      <PlayerAvatar
-        player = {player}
-        gameMaster = {props.gameMaster}
-        currentPlayer = {props.currentPlayer}/>
+        <PlayerAvatar
+          player = {player}
+          gameMaster = {props.gameMaster}
+          displayPlayerName = {true}
+          currentPlayer = {props.currentPlayer}/>
       </Grid>
     </React.Fragment>);
   });
@@ -52,9 +53,10 @@ function TeamPanel(props) {
     return (<React.Fragment key={player.name}>
       <Grid item>
         <PlayerAvatar
-            player = {player}
-            gameMaster = {props.gameMaster}
-            currentPlayer = {props.currentPlayer}/>
+          player = {player}
+          gameMaster = {props.gameMaster}
+          displayPlayerName = {true}
+          currentPlayer = {props.currentPlayer}/>
       </Grid>
     </React.Fragment>);
   });
