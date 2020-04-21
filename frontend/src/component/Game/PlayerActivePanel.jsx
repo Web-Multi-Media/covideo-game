@@ -4,6 +4,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import GifPanel from "./GifPanel";
+import ChatMessage from "../Chat/ChatMessage";
 
 const useStyles = makeStyles((theme) => ({
   loader: {
@@ -20,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     borderRadius: '10px',
-    minHeight: '67vh'
+    minHeight: '61vh',
+    marginBottom: '5px'
   },
 }));
 
@@ -46,6 +48,13 @@ function PlayerActivePanel(props){
       <div className={classes.loader}>
         <CircularProgress />
       </div>
+        {props.roundDescription.map((message, index) =>
+            <ChatMessage
+                key={index}
+                message={message.message}
+                username={message.username}
+            />,
+        )}
       </React.Fragment>
     }
 

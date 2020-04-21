@@ -4,6 +4,8 @@ import Paper from "@material-ui/core/Paper";
 import PlayerActivePanel from "./PlayerActivePanel";
 import PlayerInactivePanel from "./PlayerInactivePanel";
 import TopInformation from "./TopInformation";
+import Grid from "@material-ui/core/Grid";
+import WordInput from "./WordInput";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,6 +39,7 @@ function CenterPanel(props) {
           gameMaster={props.gameMaster}
           roomSettings={props.roomSettings}
           set={props.set}
+          roundDescription={props.roundDescription}
           startTimer={props.startTimer}
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}
@@ -49,11 +52,34 @@ function CenterPanel(props) {
           gameMaster={props.gameMaster}
           roomSettings={props.roomSettings}
           set={props.set}
+          roundDescription={props.roundDescription}
           startTimer={props.startTimer}
           gifUrl={props.gifUrl}
           sendGif={props.sendGif}/>
         </React.Fragment>
       }
+      {props.currentPlayer.id === props.activePlayer.id &&
+      <Grid item xs={12}>
+        <Paper className={classes.paper} elevation={2}>
+          <Grid container direction="row" justify="center" spacing={2}>
+
+            <Grid item xs={12}>
+              {
+                props.currentPlayer.id === props.activePlayer.id && <React.Fragment>
+                  <WordInput
+                      startTimer={props.startTimer}
+                      startRound={props.startRound}
+                      validation={props.validateWord}
+                      next={props.next}/>
+                </React.Fragment>
+              }
+            </Grid>
+            <Grid item xs={4}>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+        }
     </Paper>
   </React.Fragment>);
 }

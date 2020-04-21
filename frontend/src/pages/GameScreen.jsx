@@ -74,46 +74,23 @@ function GameScreen(props) {
           gifUrl={props.gifUrl}
           wordToGuess={props.wordToGuess}
           sendGif={props.sendGif}
-          playSound={props.playSound}/>
+          playSound={props.playSound}
+          roundDescription={props.roundDescription}
+          startRound={props.startRound}
+          validation={props.validateWord}
+          next={props.nextWord}/>
       </Grid>
 
       <Grid item xs={4}>
         <Chat
           sendChatMessage={props.sendChatMessage}
           incomingChatMessage={props.incomingChatMessage}
+          height={'82vh'}
+          sendInput={true}
         />
       </Grid>
       {/* Bottom bar */}
-      <Grid item xs={12}>
-        <Paper className={classes.paper} elevation={2}>
-          <Grid container direction="row" justify="center" spacing={2}>
-            <Grid item xs={4}>
-              {props.wordsValidated.length > 0 && <React.Fragment>
-              <TextIcon size="h8" icon={<CheckCircleIcon fontSize="large"/>} text="Validated words"/>
-                {
-                  props.wordsValidated.map((word) => (<React.Fragment>
-                    <Typography>{word}</Typography>
-                    </React.Fragment>))
-                }
-              </React.Fragment>
-              }
-            </Grid>
-            <Grid item xs={4}>
-              {
-                props.currentPlayer.id === props.activePlayer.id && <React.Fragment>
-                  <WordInput
-                    startTimer={props.startTimer}
-                    startRound={props.startRound}
-                    validation={props.validateWord}
-                    next={props.nextWord}/>
-                </React.Fragment>
-              }
-            </Grid>
-            <Grid item xs={4}>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Grid>
+
     </Grid>
   </React.Fragment>);
 }

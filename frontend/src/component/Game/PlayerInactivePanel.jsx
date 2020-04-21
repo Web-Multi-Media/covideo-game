@@ -4,6 +4,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import './PlayerInactivePanel.css'
+import Chat from "../Chat/Chat";
+import Grid from "@material-ui/core/Grid";
+import ChatMessage from "../Chat/ChatMessage";
 
 const useStyles = makeStyles((theme) => ({
   loader: {
@@ -20,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     borderRadius: '10px',
-    minHeight: '67vh'
+    minHeight: '72vh'
   },
 }));
 
@@ -40,9 +43,18 @@ function PlayerInactivePanel(props) {
 
     {/* Round < 3 is using voice to guess words */}
     {props.startTimer && props.set < 3 &&
-      <Typography variant='h5'>
+    <>
+    <Typography variant='h5'>
         What is the word ? Make your guess !!!
       </Typography>
+      {props.roundDescription.map((message, index) =>
+          <ChatMessage
+              key={index}
+              message={message.message}
+              username={message.username}
+          />,
+      )}
+    </>
     }
 
     {/* Round >=3 is using GIFs to guess words */}

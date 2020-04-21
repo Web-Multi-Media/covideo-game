@@ -50,6 +50,7 @@ function App() {
       name: '',
       id: '',
       gifUrl: '',
+      roundDescription:[],
       players: [],
       activePlayer: {},
       wordToGuess: '',
@@ -186,7 +187,8 @@ function App() {
   const sendChatMessage = (message) => {
     ws.send(JSON.stringify({
       type: 'chatMessage',
-      message: message
+      message: message,
+      team: gameState.global.playerTeam
     }))
   };
 
@@ -247,6 +249,7 @@ function App() {
             team1Score={gameState.room.team1Score}
             team2Score={gameState.room.team2Score}
             startTimer={gameState.room.startTimer}
+            roundDescription={gameState.room.roundDescription}
             gifUrl={gameState.room.gifUrl}
             set={gameState.room.set}
             wordToGuess={gameState.room.wordToGuess}

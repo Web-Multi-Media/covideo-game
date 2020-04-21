@@ -5,7 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import {makeStyles} from "@material-ui/core/styles";
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme,test) => ({
     paper: {
         width: '100%',
         padding: theme.spacing(2),
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: '10px'
     },
     chatMessages:{
-    height: '77vh',
+    height: test,
     overflowY: 'auto'
     }
 }));
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 function Chat (props) {
   const [messages, setMessages] = useState([]);
   const classes = useStyles();
-
+    const {height} = props;
   useEffect(() => {
     if (props.incomingChatMessage) {
       setMessages(messages.concat(props.incomingChatMessage));
@@ -44,7 +44,7 @@ function Chat (props) {
 
 return (
     <Paper className={classes.paper} elevation={3}>
-        <div id="msgContainer" className={classes.chatMessages}>
+        <div id="msgContainer" className={classes.chatMessages} style={{height}}>
 
     {messages.map((message, index) =>
         <ChatMessage
@@ -54,11 +54,12 @@ return (
         />,
     )}
         </div>
-        <div className="chatInput">
-    <ChatInput
-        onSubmitMessage={submitMessage}
-    />
-        </div>
+
+        {props.sendInput && <div className="chatInput">
+            <ChatInput
+                onSubmitMessage={submitMessage}
+            />
+        </div>}
     </Paper>
 )
 }

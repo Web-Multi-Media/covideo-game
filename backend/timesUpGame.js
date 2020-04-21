@@ -344,8 +344,11 @@ function startRound(ws, obj, room) {
       }
       room.setActivePlayer();
       response.room.set = room.set;
+      room.startTimer = false;
       response.room.startTimer = false;
       response.room.activePlayer = room.activePlayer;
+      room.roundDescription = [];
+      response.room.roundDescription = [];
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
@@ -430,9 +433,9 @@ function deleteWord(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function validateWord(ws, obj, room) {
-  room.validateWord(obj.team);
-  const responseToBroadCast = {
-    type: 'updateState',
+  if(room.validateWord(obj.team, obj.message)) {
+    const responseToBroadCast = {
+      type: 'updateState',
       room: {
         wordsValidated: room.wordsValidated.length,
         team1Score: room.scoreFirstTeam,
@@ -442,7 +445,9 @@ function validateWord(ws, obj, room) {
     };
     let responseToSpecific = _.cloneDeep(responseToBroadCast);
     responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
+
     broadCastTwoResponses(responseToBroadCast, responseToSpecific, room.activePlayer.id, room);
+  }
 }
 
 /**
@@ -459,6 +464,7 @@ function nextWord(ws, obj, room) {
     type: 'updateState',
     room: {
       wordToGuess: room.wordsOfRound[0],
+      wordDescription: room.roundDescription,
       gifUrl: ''
     }
   };
@@ -501,17 +507,29 @@ function setGif(ws, obj, room) {
  * @param {Room}   room Current room.
  */
 function chatMessage(ws, obj, room) {
-  room.setGifUrl(obj.gifUrl);
-  console.log(ws.playerName)
   let response = {
     type: 'updateState',
-    room: {
-      incomingChatMessage: {
-        'username': ws.playerName,
-        'message': obj.message
-      }
-    }
+    room:{}
   };
+  console.log('room.setFinished' + room.startTimer);
+  if(room.startTimer){
+    if(ws.id === room.activePlayer.id){
+      room.roundDescription.push({username: ws.playerName,message: obj.message})
+      response.room.roundDescription = room.roundDescription;
+    } else{
+      response.room.incomingChatMessage= {
+          username: ws.playerName,
+              message: obj.message
+        };
+      validateWord(ws, obj, room);
+      }
+    }else {
+    response.room.incomingChatMessage= {
+      username: ws.playerName,
+      message: obj.message
+    };
+  }
+  console.log(JSON.stringify(response));
   broadcast(response, room);
 }
 
@@ -567,11 +585,11 @@ function sendMessage(msg, clientId){
  * @param  {Room}   room     Room.
  * @param  {String} senderId Send id.
  */
-function broadcast(msg, room) {
+function broadcast(msg, room, senderId= '') {
   webSockets.clients.forEach(function each(client) {
     if (room === undefined && !client.roomId) {
       client.send(JSON.stringify(msg));
-    } else if (room && room.id === client.roomId) {
+    } else if (client.id !== senderId && room && room.id === client.roomId) {
       client.send(JSON.stringify(msg));
     }
   });

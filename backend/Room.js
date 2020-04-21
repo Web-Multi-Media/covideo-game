@@ -16,6 +16,7 @@ function Room(id) {
   this.teams = [];
   this.gameMaster = null;
   this.round = 0;
+  this.roundDescription = [];
   this.set = 1;
   this.startTimer = false;
   this.activePlayer = {};
@@ -124,10 +125,9 @@ Room.prototype = {
     this.wordsOfRound = utils.shuffle(this.wordsOfRound);
     this.activePlayer = utils.getNextActivePlayer(this);
   },
-  validateWord: function(team) {
+  validateWord: function(team, message) {
     this.updateActivity();
-    if (this.wordsOfRound.length > 0) {
-
+    if (this.wordsOfRound.length > 0 && message === this.wordsOfRound[0]) {
       // Increase team score
       if (team === 1) {
         this.scoreFirstTeam++;
@@ -144,15 +144,19 @@ Room.prototype = {
 
       // Set gif URL if needed
       this.gifUrl = this.gifUrl === '' ? this.gifUrl : '';
-    }
-    // If no more words, set is finished
-    if (this.wordsOfRound.length === 0) {
-      this.setFinished = true;
+      // If no more words, set is finished
+      if (this.wordsOfRound.length === 0) {
+        this.setFinished = true;
+      }
+      return true;
+    }else{
+      return false;
     }
   },
   skipWord: function() {
     this.updateActivity();
     this.wordsOfRound = utils.firstToLastIndex(this.wordsOfRound);
+    this.roundDescription = [];
   },
   setGifUrl: function(gifUrl) {
     this.updateActivity();

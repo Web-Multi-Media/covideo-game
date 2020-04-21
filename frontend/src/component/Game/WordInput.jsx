@@ -8,11 +8,6 @@ function WordInput(props) {
   return (<React.Fragment>
     {
       props.startTimer && <React.Fragment>
-        <Fab className="margButt" variant="extended" color="primary" onClick={props.validation}>
-          <DoneAllIcon/>
-          Validate
-        </Fab>
-        &nbsp;
         <Fab className="margButt" variant="extended" color="primary" onClick={props.next}>
           <SkipNextIcon/>
           Skip
