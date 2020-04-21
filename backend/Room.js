@@ -2,19 +2,21 @@ const utils = require('./utils')
 const _ = require('lodash');
 
 function Room(id) {
+  this.id = id;
+  this.name = "";
+  this.players = [];
+  this.numberOfPlayer = 0;
+  this.gameMaster = null;
+  this.settings = this.getDefaultSettings();
   this.team1Player = 0;
   this.team2Player = 0;
-  this.name = "";
-  this.id = id;
   this.gifUrl = "";
-  this.players = [];
   this.wordToGuess = ""
   this.words = [];
   this.wordsPerPlayer = {};
   this.wordsOfRound = [];
   this.wordsValidated = [];
   this.teams = [];
-  this.gameMaster = null;
   this.round = 0;
   this.set = 1;
   this.startTimer = false;
@@ -24,9 +26,7 @@ function Room(id) {
   this.setFinished = false;
   this.scoreFirstTeam = 0;
   this.scoreSecondTeam = 0;
-  this.numberOfPlayer = 0;
   this.lastActivity = Date.now();
-  this.settings = this.getDefaultSettings();
 }
 
 Room.prototype = {
@@ -170,8 +170,8 @@ Room.prototype = {
     this.team1Player = 0;
     this.team2Player = 0;
     this.gifUrl = "";
-    this.words = [];
     this.wordToGuess = "";
+    this.words = [];
     let wordsPerPlayer = {};
     this.players.map(function(player){
       wordsPerPlayer[player.id] = [];
