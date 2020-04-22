@@ -214,14 +214,38 @@ function addPlayerToRoom(ws, room){
  */
 function changeRoomSettings(ws, obj, room) {
   console.log('Receive new settings for room: ' + room.id);
+
+  // remove excedent words when num word setting has been decreased
+  if (room.settings.numWordsPerPlayer > obj.settings.numWordsPerPlayer) {
+    room.players.forEach(function each(player) {
+      var numWordsToRemove = player.words.length - obj.settings.numWordsPerPlayer;
+      if (numWordsToRemove > 0) {
+        player.words.splice(-1, numWordsToRemove);
+      }
+    });
+  }
+  
   room.settings = obj.settings;
-  let response = {
+
+  // send different responses to all players in the room with their respective word count
+  let baseResponse = {
     type: 'updateState',
     room: {
-      settings: room.settings
+      settings: room.settings,
+      players: room.players.map(player => player.sendPlayerInfos())
+    },
+  }
+  let clientIdinRoom = room.players.map(player => player.id);
+  webSockets.clients.forEach(function each(client) {
+    if (clientIdinRoom.includes(client.id)) {
+      var response = baseResponse;
+      response.player = {
+        words: room.players.find(player => player.id === client.id).words
+      };
+      client.send(JSON.stringify(response));
     }
-  };
-  broadcast(response, room);
+  });
+
   broadcastRoomsInfo();
 }
 
