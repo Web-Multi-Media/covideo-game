@@ -165,6 +165,7 @@ function App() {
 
   const nextWord = () => {
     requestBackend({type: 'nextWord'});
+    playSound('skipWord');
   };
 
   const validateWord = () => {

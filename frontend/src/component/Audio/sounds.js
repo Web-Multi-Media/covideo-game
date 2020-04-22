@@ -34,5 +34,8 @@ export const soundPlayers = {
   ),
   endRoundlooser: create_player(
     "//freesound.org/data/previews/404/404767_140737-lq.mp3"
+  ),
+  skipWord: create_player(
+    "//freesound.org/data/previews/177/177849_3299593-lq.mp3"
   )
 }
