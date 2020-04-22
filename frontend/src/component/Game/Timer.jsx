@@ -39,11 +39,22 @@ function Timer(props) {
     setIsActive(true);
   }
 
+  function playTickTock() {
+    props.playSound("tick", 0.005);
+    setTimeout(() => {
+      props.playSound("tock", 0.005);
+    }, 500);
+  }
+
   useEffect(() => {
     let interval = null;
     if (isActive && seconds > 0) {
       interval = setInterval(() => {
         setSeconds(seconds => seconds - 1);
+        // play tick tock until timer has 3 second left
+        if (seconds > 3) {
+          playTickTock();
+        }
       }, 1000);
     }
     return() => clearInterval(interval);

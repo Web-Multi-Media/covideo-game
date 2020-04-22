@@ -37,5 +37,11 @@ export const soundPlayers = {
   ),
   skipWord: create_player(
     "//freesound.org/data/previews/177/177849_3299593-lq.mp3"
+  ),
+  tick: create_player(
+    "//freesound.org/data/previews/243/243748_1038806-lq.mp3"
+  ),
+  tock: create_player(
+    "//freesound.org/data/previews/243/243749_1038806-lq.mp3"
   )
 }
