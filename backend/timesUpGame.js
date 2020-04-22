@@ -167,12 +167,12 @@ function leaveRoom(ws, obj) {
       joinedRoom: false,
     }
   };
-  sendMessage(response, clientId);
 
   // Send broadcast response to other clients.
   if (room.players.length === 0){ // no players left in room, delete room
     console.log(`No more players in room. Deleting room ${room.id}`);
     rooms.delete(room.id);
+    sendMessage(response, clientId);
     broadcastRoomsInfo();
   } else {
     console.log(`Updating players in room and broadcasting to clients.`);
@@ -182,7 +182,7 @@ function leaveRoom(ws, obj) {
         players: room.players.map(player => player.sendPlayerInfos())
       }
     }
-    broadcast(response2, room);
+    broadCastTwoResponses(response2, response, clientId, room);
     broadcastRoomsInfo();
   }
 }
