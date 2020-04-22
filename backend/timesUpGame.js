@@ -179,7 +179,7 @@ function leaveRoom(ws, obj) {
     let response2 = {
       type:'updateState',
       room: {
-        players: room.players.map(player => player.sendPlayerInfos())
+        players: room.players.map(player => player.serialize())
       }
     }
     broadCastTwoResponses(response2, response, clientId, room);
@@ -232,7 +232,7 @@ function changeRoomSettings(ws, obj, room) {
     type: 'updateState',
     room: {
       settings: room.settings,
-      players: room.players.map(player => player.sendPlayerInfos())
+      players: room.players.map(player => player.serialize())
     },
   }
   let clientIdinRoom = room.players.map(player => player.id);
@@ -283,7 +283,7 @@ function changePlayerName(ws, obj){
   let response = {
     type: 'updateState',
     room: {
-      players: room.players.map(player => player.sendPlayerInfos())
+      players: room.players.map(player => player.serialize())
     }
   }
   let response2 = {
@@ -390,7 +390,7 @@ function addWord(ws, obj, room) {
   let responseToBroadCast = {
     type: 'updateState',
     room:{
-      players: room.players.map(player => player.sendPlayerInfos())
+      players: room.players.map(player => player.serialize())
     }
   }
   let specificResponse = _.cloneDeep(responseToBroadCast)
@@ -409,7 +409,7 @@ function deleteWord(ws, obj, room) {
   let responseToBroadCast = {
     type: 'updateState',
     room:{
-      players: room.players.map(player => player.sendPlayerInfos())
+      players: room.players.map(player => player.serialize())
     }
   }
   let specificResponse = _.cloneDeep(responseToBroadCast)

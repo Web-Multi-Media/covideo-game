@@ -46,7 +46,7 @@ function Players(props) {
                 onSendUsername={props.onSendUsername}/>
             </TableCell>
             <TableCell component="th" scope="row">
-              <p> {p.words}/{props.wordNumber}</p>
+              <p> {p.numWords}/{props.wordNumber}</p>
             </TableCell>
             <TableCell align="left">
               {

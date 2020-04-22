@@ -44,7 +44,7 @@ function RoomScreen(props) {
   const room_url = `http://localhost:3000/${props.roomId}`;
   const currentPlayer = props.currentPlayer;
   const disabledWordAdd = currentPlayer.name === '' || props.playerWords.length >= props.roomSettings.numWordsPerPlayer;
-  const numberOfwords = props.players ? props.players.map(player => player.words).reduce((acc, currentValue) => acc + currentValue) : [];
+  const numberOfwords = props.players ? props.players.map(player => player.numWords).reduce((acc, currentValue) => acc + currentValue) : [];
 
   useEffect(() => {
     if((numberOfwords === props.players.length * props.roomSettings.numWordsPerPlayer) && props.isGameMaster && props.players.length >= 2){

@@ -214,7 +214,7 @@ Room.prototype = {
       scoreFirstTeam: this.scoreFirstTeam,
       scoreSecondTeam: this.scoreSecondTeam,
       numberOfPlayer: this.numberOfPlayer,
-      players: this.players.map(player => player.sendPlayerInfos()),
+      players: this.players.map(player => player.serialize()),
       lastActivity: this.lastActivity,
       settings: this.settings,
       gameIsReady: this.gameIsReady,

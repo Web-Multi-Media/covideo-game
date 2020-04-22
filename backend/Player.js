@@ -7,11 +7,13 @@ function Player(id, name, status) {
 
 Player.prototype = {
   serialize: function() {
-    return {name: this.name, id: this.id, status: this.status}
+    return {
+      name: this.name, 
+      id: this.id, 
+      status: this.status, 
+      numWords: this.words.length
+    }
   },
-  sendPlayerInfos: function () {
-    return {name: this.name, id: this.id, words: this.words.length}
-  }
 };
 
 module.exports.Player = Player;
