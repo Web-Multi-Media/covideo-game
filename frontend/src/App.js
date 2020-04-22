@@ -160,7 +160,7 @@ function App() {
   };
 
   const startRound = () => {
-    requestBackend({type: 'startRound'});
+    requestBackend({type: 'startRound',  team: gameState.global.playerTeam});
   };
 
   const nextWord = () => {

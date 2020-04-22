@@ -135,7 +135,7 @@ function joinRoom(ws, obj) {
     },
     room: room.serialize()
   };
-  notifyGameMaster(room);
+  //BUG ?? we send the joinedRoom To EveryOne in the room
   broadcast(response, room);
   broadcastRoomsInfo();
 }
@@ -179,13 +179,12 @@ function leaveRoom(ws, obj) {
     let response2 = {
       type:'updateState',
       room: {
-        players: room.players
+        players: room.players.map(player => player.sendPlayerInfos())
       }
     }
-    notifyGameMaster(room);
     broadcast(response2, room);
     broadcastRoomsInfo();
-  };
+  }
 }
 
 /**
@@ -260,7 +259,7 @@ function changePlayerName(ws, obj){
   let response = {
     type: 'updateState',
     room: {
-      players: room.players
+      players: room.players.map(player => player.sendPlayerInfos())
     }
   }
   let response2 = {
@@ -281,7 +280,8 @@ function changePlayerName(ws, obj){
  * @param  {Room}   room Current room.
  */
 function startRound(ws, obj, room) {
-  room.startRound();
+
+  room.startRound(obj.team);
   let response = {
     type: 'updateState',
     room: {
@@ -362,15 +362,16 @@ function gameStarted(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function addWord(ws, obj, room) {
-  room.addWord(obj.word, ws.id);
-  let response = {
+  const playerWords = room.addWord(obj.word, ws.id);
+  let responseToBroadCast = {
     type: 'updateState',
-    player: {
-      words: room.wordsPerPlayer[ws.id]
+    room:{
+      players: room.players.map(player => player.sendPlayerInfos())
     }
-  };
-  ws.send(JSON.stringify(response));
-  notifyGameMaster(room);
+  }
+  let specificResponse = _.cloneDeep(responseToBroadCast)
+  specificResponse.player = {words: playerWords};
+  broadCastTwoResponses(responseToBroadCast, specificResponse, ws.id, room);
 }
 
 /**
@@ -380,22 +381,16 @@ function addWord(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function deleteWord(ws, obj, room) {
-  room.deleteWord(obj.word, ws.id);
-  let response = {
+  const playerWords = room.deleteWord(obj.word, ws.id);
+  let responseToBroadCast = {
     type: 'updateState',
-    player: {
-      words: room.wordsPerPlayer[ws.id]
-    }
-  };
-  let broadcastResponse = {
-    type: 'updateState',
-    room: {
-      gameIsReady: room.gameIsReady
+    room:{
+      players: room.players.map(player => player.sendPlayerInfos())
     }
   }
-  ws.send(JSON.stringify(response));
-  broadcast(broadcastResponse, room);
-  notifyGameMaster(room);
+  let specificResponse = _.cloneDeep(responseToBroadCast)
+  specificResponse.player = {words: playerWords};
+  broadCastTwoResponses(responseToBroadCast, specificResponse, ws.id, room);
 }
 
 /**
@@ -521,20 +516,6 @@ function getClient(clientId){
   return ws;
 }
 
-/**
- * Send room info to game master.
- * @param  {Room} room Room.
- */
-function notifyGameMaster(room){
-  room.checkGameReady();
-  let response = {
-    type: 'updateState',
-    room: {
-      gameIsReady: room.gameIsReady
-    }
-  }
-  sendMessage(response, room.gameMaster);
-}
 
 /**
  * Send a message to a specific client identified by clientId.
