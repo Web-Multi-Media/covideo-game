@@ -127,6 +127,10 @@ function App() {
     ws.onmessage = processBackendResponse;
   });
 
+  useEffect(() => {
+    playSound('userConnect', 0.01);
+  }, [gameState.room.players.length]);
+
   const getRooms = () => {
     requestBackend({type: 'getRooms'});
   };
