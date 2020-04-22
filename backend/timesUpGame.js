@@ -289,7 +289,7 @@ function startRound(ws, obj, room) {
       gifUrl: ''
     }
   };
-  response.room.wordToGuess = room.wordsOfRound[0];
+
   let counter = room.settings.timesToGuessPerSet[room.set-1];
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
@@ -298,7 +298,6 @@ function startRound(ws, obj, room) {
     if (counter <= 0 || isSetfinished === true) {
       if (isSetfinished === true) {
         room.startSet();
-        console.log("Current set : ", room.set);
         if (room.set > 3){
           room.resetGame();
           let response = {
@@ -316,18 +315,21 @@ function startRound(ws, obj, room) {
       }
       room.setActivePlayer();
       response.room.set = room.set;
-      room.startTimer = false;
       response.room.startTimer = false;
       response.room.activePlayer = room.activePlayer;
-      room.roundDescription = [];
       response.room.roundDescription = [];
+      room.startTimer = false;
+      room.roundDescription = [];
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
   }, 100);
+
   room.startTimer = true;
   response.room.startTimer = room.startTimer;
-  broadcast(response, room);
+  let responseToSpecific = _.cloneDeep(response);
+  responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
+  broadCastTwoResponses(response, responseToSpecific, room.activePlayer.id, room);
 }
 
 /**
@@ -347,7 +349,6 @@ function gameStarted(ws, obj, room) {
     room: {
       gameStarted: true,
       teams: room.teams,
-      wordToGuess: room.wordsOfRound[0],
       activePlayer: room.activePlayer,
     }
   };
