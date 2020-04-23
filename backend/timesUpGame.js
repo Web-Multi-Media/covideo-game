@@ -235,10 +235,9 @@ function changeRoomSettings(ws, obj, room) {
       players: room.players.map(player => player.serialize())
     },
   }
-  let clientIdinRoom = room.players.map(player => player.id);
-  webSockets.clients.forEach(function each(client) {
-    if (clientIdinRoom.includes(client.id)) {
-      var response = baseResponse;
+  webSockets.clients.forEach((client) =>{
+    if (room.players.map(player => player.id).includes(client.id)) {
+      let response = _.cloneDeep(baseResponse);
       response.player = {
         words: room.players.find(player => player.id === client.id).words
       };

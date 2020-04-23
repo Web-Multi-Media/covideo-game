@@ -16,7 +16,6 @@ function Room(id) {
   this.gifUrl = "";
   this.wordToGuess = ""
   this.words = [];
-  this.wordsPerPlayer = {};
   this.wordsOfRound = [];
   this.wordsValidated = [];
   this.teams = [];
@@ -67,7 +66,6 @@ Room.prototype = {
     this.players = _.uniqBy(this.players, function (p) {
       return p.id;
     });
-    this.wordsPerPlayer[player.id] = [];
     this.numberOfPlayer = this.players.length;
   },
   removePlayer: function(id) {
@@ -75,7 +73,7 @@ Room.prototype = {
     this.players = _.filter(this.players, function(item) {
       return item.id !== id;
     });
-    delete this.wordsPerPlayer[id];
+    // delete this.wordsPerPlayer[id];
     this.numberOfPlayer = this.players.length;
     if (id ===this.gameMaster){
       if (this.numberOfPlayer > 0){
@@ -171,11 +169,10 @@ Room.prototype = {
     this.gifUrl = "";
     this.wordToGuess = "";
     this.words = [];
-    let wordsPerPlayer = {};
-    this.players.map(function(player){
-      wordsPerPlayer[player.id] = [];
-    })
-    this.wordsPerPlayer = wordsPerPlayer;
+    // this.players.map(function(player){
+    //   wordsPerPlayer[player.id] = [];
+    // })
+    // this.wordsPerPlayer = wordsPerPlayer;
     this.wordsOfRound = [];
     this.wordsValidated = [];
     this.teams = [];
