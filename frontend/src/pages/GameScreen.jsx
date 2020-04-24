@@ -85,8 +85,9 @@ function GameScreen(props) {
         <Chat
           sendChatMessage={props.sendChatMessage}
           incomingChatMessage={props.incomingChatMessage}
-          height={'82vh'}
+          height={'78vh'}
           sendInput={true}
+          set={props.set}
         />
       </Grid>
       {/* Bottom bar */}

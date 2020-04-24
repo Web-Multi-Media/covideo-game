@@ -135,7 +135,7 @@ function joinRoom(ws, obj) {
     },
     room: room.serialize()
   };
-  notifyGameMaster(room);
+  //BUG ?? we send the joinedRoom To EveryOne in the room
   broadcast(response, room);
   broadcastRoomsInfo();
 }
@@ -167,25 +167,24 @@ function leaveRoom(ws, obj) {
       joinedRoom: false,
     }
   };
-  sendMessage(response, clientId);
 
   // Send broadcast response to other clients.
   if (room.players.length === 0){ // no players left in room, delete room
     console.log(`No more players in room. Deleting room ${room.id}`);
     rooms.delete(room.id);
+    sendMessage(response, clientId);
     broadcastRoomsInfo();
   } else {
     console.log(`Updating players in room and broadcasting to clients.`);
     let response2 = {
       type:'updateState',
       room: {
-        players: room.players
+        players: room.players.map(player => player.serialize())
       }
     }
-    notifyGameMaster(room);
-    broadcast(response2, room);
+    broadCastTwoResponses(response2, response, clientId, room);
     broadcastRoomsInfo();
-  };
+  }
 }
 
 /**
@@ -215,14 +214,37 @@ function addPlayerToRoom(ws, room){
  */
 function changeRoomSettings(ws, obj, room) {
   console.log('Receive new settings for room: ' + room.id);
+
+  // remove excedent words when num word setting has been decreased
+  if (room.settings.numWordsPerPlayer > obj.settings.numWordsPerPlayer) {
+    room.players.forEach(function each(player) {
+      var numWordsToRemove = player.words.length - obj.settings.numWordsPerPlayer;
+      if (numWordsToRemove > 0) {
+        player.words.splice(-1, numWordsToRemove);
+      }
+    });
+  }
+  
   room.settings = obj.settings;
-  let response = {
+
+  // send different responses to all players in the room with their respective word count
+  let baseResponse = {
     type: 'updateState',
     room: {
-      settings: room.settings
+      settings: room.settings,
+      players: room.players.map(player => player.serialize())
+    },
+  }
+  webSockets.clients.forEach((client) =>{
+    if (room.players.map(player => player.id).includes(client.id)) {
+      let response = _.cloneDeep(baseResponse);
+      response.player = {
+        words: room.players.find(player => player.id === client.id).words
+      };
+      client.send(JSON.stringify(response));
     }
-  };
-  broadcast(response, room);
+  });
+
   broadcastRoomsInfo();
 }
 
@@ -260,7 +282,7 @@ function changePlayerName(ws, obj){
   let response = {
     type: 'updateState',
     room: {
-      players: room.players
+      players: room.players.map(player => player.serialize())
     }
   }
   let response2 = {
@@ -281,7 +303,8 @@ function changePlayerName(ws, obj){
  * @param  {Room}   room Current room.
  */
 function startRound(ws, obj, room) {
-  room.startRound();
+
+  room.startRound(obj.team);
   let response = {
     type: 'updateState',
     room: {
@@ -289,7 +312,7 @@ function startRound(ws, obj, room) {
       gifUrl: ''
     }
   };
-  response.room.wordToGuess = room.wordsOfRound[0];
+
   let counter = room.settings.timesToGuessPerSet[room.set-1];
   let WinnerCountdown = setInterval(function() {
     counter = counter - 0.1;
@@ -298,7 +321,6 @@ function startRound(ws, obj, room) {
     if (counter <= 0 || isSetfinished === true) {
       if (isSetfinished === true) {
         room.startSet();
-        console.log("Current set : ", room.set);
         if (room.set > 3){
           room.resetGame();
           let response = {
@@ -316,18 +338,21 @@ function startRound(ws, obj, room) {
       }
       room.setActivePlayer();
       response.room.set = room.set;
-      room.startTimer = false;
       response.room.startTimer = false;
       response.room.activePlayer = room.activePlayer;
-      room.roundDescription = [];
       response.room.roundDescription = [];
+      room.startTimer = false;
+      room.roundDescription = [];
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
   }, 100);
+
   room.startTimer = true;
   response.room.startTimer = room.startTimer;
-  broadcast(response, room);
+  let responseToSpecific = _.cloneDeep(response);
+  responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
+  broadCastTwoResponses(response, responseToSpecific, room.activePlayer.id, room);
 }
 
 /**
@@ -347,7 +372,6 @@ function gameStarted(ws, obj, room) {
     room: {
       gameStarted: true,
       teams: room.teams,
-      wordToGuess: room.wordsOfRound[0],
       activePlayer: room.activePlayer,
     }
   };
@@ -361,15 +385,16 @@ function gameStarted(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function addWord(ws, obj, room) {
-  room.addWord(obj.word, ws.id);
-  let response = {
+  const playerWords = room.addWord(obj.word, ws.id);
+  let responseToBroadCast = {
     type: 'updateState',
-    player: {
-      words: room.wordsPerPlayer[ws.id]
+    room:{
+      players: room.players.map(player => player.serialize())
     }
-  };
-  ws.send(JSON.stringify(response));
-  notifyGameMaster(room);
+  }
+  let specificResponse = _.cloneDeep(responseToBroadCast)
+  specificResponse.player = {words: playerWords};
+  broadCastTwoResponses(responseToBroadCast, specificResponse, ws.id, room);
 }
 
 /**
@@ -379,22 +404,16 @@ function addWord(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function deleteWord(ws, obj, room) {
-  room.deleteWord(obj.word, ws.id);
-  let response = {
+  const playerWords = room.deleteWord(obj.word, ws.id);
+  let responseToBroadCast = {
     type: 'updateState',
-    player: {
-      words: room.wordsPerPlayer[ws.id]
-    }
-  };
-  let broadcastResponse = {
-    type: 'updateState',
-    room: {
-      gameIsReady: room.gameIsReady
+    room:{
+      players: room.players.map(player => player.serialize())
     }
   }
-  ws.send(JSON.stringify(response));
-  broadcast(broadcastResponse, room);
-  notifyGameMaster(room);
+  let specificResponse = _.cloneDeep(responseToBroadCast)
+  specificResponse.player = {words: playerWords};
+  broadCastTwoResponses(responseToBroadCast, specificResponse, ws.id, room);
 }
 
 /**
@@ -520,20 +539,6 @@ function getClient(clientId){
   return ws;
 }
 
-/**
- * Send room info to game master.
- * @param  {Room} room Room.
- */
-function notifyGameMaster(room){
-  room.checkGameReady();
-  let response = {
-    type: 'updateState',
-    room: {
-      gameIsReady: room.gameIsReady
-    }
-  }
-  sendMessage(response, room.gameMaster);
-}
 
 /**
  * Send a message to a specific client identified by clientId.

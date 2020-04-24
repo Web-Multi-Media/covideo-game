@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./RoomScreen.css";
 import {makeStyles} from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
@@ -40,10 +40,19 @@ const useStyles = makeStyles((theme) => ({
 function RoomScreen(props) {
   const classes = useStyles();
   const [wordInput, setWordInput] = useState('');
-  const room_url = `http://localhost:3000/${props.roomId}`;
+  const [disabledStartGame, setDisabledStartGame] = useState(true);
+  const room_url = `${props.url}${props.roomId}`;
   const currentPlayer = props.currentPlayer;
   const disabledWordAdd = currentPlayer.name === '' || props.playerWords.length >= props.roomSettings.numWordsPerPlayer;
-  const disabledStartGame = props.isGameMaster === false || !props.gameIsReady;
+  const numberOfwords = props.players ? props.players.map(player => player.numWords).reduce((acc, currentValue) => acc + currentValue) : [];
+
+  useEffect(() => {
+    if((numberOfwords === props.players.length * props.roomSettings.numWordsPerPlayer) && props.isGameMaster && props.players.length >= 2){
+      setDisabledStartGame(false);
+    }else{
+      setDisabledStartGame(true);
+    }
+  }, [numberOfwords]);
 
   const sendWord = () => {
     if (wordInput !== '') {
@@ -101,7 +110,9 @@ function RoomScreen(props) {
         gameMaster={props.gameMaster}
         isGameMaster={props.isGameMaster}
         kickPlayer={props.kickPlayer}
-        onSendUsername={props.onSendUsername}/>
+        onSendUsername={props.onSendUsername}
+        wordNumber={props.roomSettings.numWordsPerPlayer}
+      />
       </Grid>
       <Divider flexItem />
 

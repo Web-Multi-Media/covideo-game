@@ -13,14 +13,16 @@ const useStyles = makeStyles((theme,test) => ({
         borderRadius: '10px'
     },
     chatMessages:{
-    height: test,
-    overflowY: 'auto'
+        height: test,
+        overflowY: 'auto',
+        wordBreak: 'break-all'
     }
 }));
 
 
 function Chat (props) {
   const [messages, setMessages] = useState([]);
+  const [set, setSet] = useState(0);
   const classes = useStyles();
     const {height} = props;
   useEffect(() => {
@@ -29,6 +31,14 @@ function Chat (props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.incomingChatMessage]);
+
+  useEffect(() => {
+      if (set !== props.set) {
+          setMessages([]);
+          setSet(props.set);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.set]);
 
   useEffect(() => {
      const container = document.getElementById("msgContainer");

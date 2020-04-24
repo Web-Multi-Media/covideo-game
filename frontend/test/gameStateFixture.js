@@ -15,7 +15,6 @@ const [gameState, setGameState] = useState({
         id: 'testId',
         gifUrl: '',
         players: [{id: 'testIdName', name: 'test1'}],
-        wordsPerPlayer: {},
         wordsOfRound: ['wordTest'],
         wordsValidated: [],
         teams: [[{id: 'testIdName', name: 'test1'}],[]],

@@ -45,6 +45,9 @@ function Players(props) {
                 displayPlayerName={true}
                 onSendUsername={props.onSendUsername}/>
             </TableCell>
+            <TableCell component="th" scope="row">
+              <p> {p.numWords}/{props.wordNumber}</p>
+            </TableCell>
             <TableCell align="left">
               {
                 isGameMaster && p.id !== currentPlayer.id &&

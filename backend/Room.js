@@ -1,6 +1,9 @@
 const utils = require('./utils');
 const dict = require('./dictionary');
 const _ = require('lodash');
+const stringSimilarity = require('string-similarity');
+const similarity = require('similarity')
+
 
 dictionary = new dict.Dictionary();
 
@@ -16,7 +19,6 @@ function Room(id) {
   this.gifUrl = "";
   this.wordToGuess = ""
   this.words = [];
-  this.wordsPerPlayer = {};
   this.wordsOfRound = [];
   this.wordsValidated = [];
   this.teams = [];
@@ -30,19 +32,13 @@ function Room(id) {
   this.setFinished = false;
   this.scoreFirstTeam = 0;
   this.scoreSecondTeam = 0;
+  this.teamScoring = 0;
   this.lastActivity = Date.now();
 }
 
 Room.prototype = {
   getWords: function() {
-    let words = []
-    for (const playerId in this.wordsPerPlayer) {
-      words = [
-        ...words,
-        ...this.wordsPerPlayer[playerId]
-      ];
-    }
-    return words;
+    return _.flatten(this.players.map(player => player.words));
   },
   setName: function(name) {
     this.updateActivity();
@@ -73,17 +69,16 @@ Room.prototype = {
     this.players = _.uniqBy(this.players, function (p) {
       return p.id;
     });
-    this.wordsPerPlayer[player.id] = [];
     this.numberOfPlayer = this.players.length;
   },
   removePlayer: function(id) {
     this.updateActivity();
     this.players = _.filter(this.players, function(item) {
-      return item.id != id;
+      return item.id !== id;
     });
-    delete this.wordsPerPlayer[id];
+    // delete this.wordsPerPlayer[id];
     this.numberOfPlayer = this.players.length;
-    if (id == this.gameMaster){
+    if (id ===this.gameMaster){
       if (this.numberOfPlayer > 0){
         this.setGameMaster(this.players[0].id);
       } else {
@@ -93,27 +88,20 @@ Room.prototype = {
   },
   addWord: function(word, playerId) {
     this.updateActivity();
-    this.wordsPerPlayer[playerId] = [
-      ...this.wordsPerPlayer[playerId],
-      word
-    ];
+    let player = this.players.find(player => player.id === playerId)
+    player.words = [...player.words, word];
+    return player.words;
   },
   deleteWord: function(word, playerId) {
     this.updateActivity();
-    let playerWords = this.wordsPerPlayer[playerId];
+    let playerWords = this.players.find(player => player.id === playerId).words
     let wordIndex = playerWords.indexOf(word);
     if (wordIndex > -1) {
       playerWords.splice(wordIndex, 1);
     }
-    this.wordsPerPlayer[playerId] = playerWords;
+    return playerWords;
   },
-  checkGameReady: function() {
-    let words = this.getWords();
-    let numberPlayers = this.players.length;
-    let wordsPerPlayer = this.settings.numWordsPerPlayer;
-    let check = numberPlayers >= 2 && (numberPlayers * wordsPerPlayer === words.length);
-    this.gameIsReady = check;
-  },
+
   startGame: function() {
     this.updateActivity();
     this.teams = utils.sortTeam(this.players);
@@ -125,10 +113,11 @@ Room.prototype = {
     this.setFinished = false;
     this.set++;
   },
-  startRound: function() {
+  startRound: function(team) {
     this.updateActivity();
     this.round++;
     this.setFinished = false;
+    this.teamScoring = team;
   },
   setActivePlayer: function() {
     this.updateActivity();
@@ -137,9 +126,13 @@ Room.prototype = {
   },
   validateWord: function(team, message) {
     this.updateActivity();
+    const similarity1 = stringSimilarity.compareTwoStrings(message, this.wordsOfRound[0]);
+    const similarity2 = similarity(message, this.wordsOfRound[0]);
+    console.log(message, this.wordsOfRound[0], similarity1);
+    console.log(message, this.wordsOfRound[0], similarity2);
     if (this.wordsOfRound.length > 0 && message === this.wordsOfRound[0]) {
       // Increase team score
-      if (team === 1) {
+      if (this.teamScoring === 1) {
         this.scoreFirstTeam++;
       } else {
         this.scoreSecondTeam++;
@@ -179,11 +172,6 @@ Room.prototype = {
     this.gifUrl = "";
     this.wordToGuess = "";
     this.words = [];
-    let wordsPerPlayer = {};
-    this.players.map(function(player){
-      wordsPerPlayer[player.id] = [];
-    })
-    this.wordsPerPlayer = wordsPerPlayer;
     this.wordsOfRound = [];
     this.wordsValidated = [];
     this.teams = [];
@@ -222,7 +210,7 @@ Room.prototype = {
       scoreFirstTeam: this.scoreFirstTeam,
       scoreSecondTeam: this.scoreSecondTeam,
       numberOfPlayer: this.numberOfPlayer,
-      players: this.players,
+      players: this.players.map(player => player.serialize()),
       lastActivity: this.lastActivity,
       settings: this.settings,
       gameIsReady: this.gameIsReady,
