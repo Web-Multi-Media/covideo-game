@@ -431,7 +431,9 @@ function validateWord(ws, obj, room) {
         wordsValidated: room.wordsValidated.length,
         team1Score: room.scoreFirstTeam,
         team2Score: room.scoreSecondTeam,
-        gifUrl: room.gifUrl
+        gifUrl: room.gifUrl,
+        playerScoring: ws.playerName,
+        wordScoring: true
       }
     };
     let responseToSpecific = _.cloneDeep(responseToBroadCast);
