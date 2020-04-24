@@ -95,7 +95,7 @@ function App() {
     handleServerResponse(obj, gameState, setGameState);
   }
 
-  function updateState(message){
+  function updateGameState(message){
     updateState(message, gameState, setGameState);
   }
 
@@ -255,7 +255,7 @@ function App() {
       {
         gameState.room.gameStarted && gameState.global.joinedRoom &&
           <GameScreen
-            updateState={updateState}
+            updateState={updateGameState}
             wordScoring={gameState.room.wordScoring}
             playerScoring={gameState.room.playerScoring}
             currentPlayer={gameState.player}
