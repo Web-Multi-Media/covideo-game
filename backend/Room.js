@@ -1,5 +1,8 @@
-const utils = require('./utils')
+const utils = require('./utils');
+const dict = require('./dictionary');
 const _ = require('lodash');
+
+dictionary = new dict.Dictionary();
 
 function Room(id) {
   this.id = id;
