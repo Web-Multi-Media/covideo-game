@@ -29,7 +29,7 @@ function Room(id) {
   this.setFinished = false;
   this.scoreFirstTeam = 0;
   this.scoreSecondTeam = 0;
-  this.teamPlaying = 0;
+  this.teamScoring = 0;
   this.lastActivity = Date.now();
 }
 
@@ -114,7 +114,7 @@ Room.prototype = {
     this.updateActivity();
     this.round++;
     this.setFinished = false;
-    this.teamPlaying = team;
+    this.teamScoring = team;
   },
   setActivePlayer: function() {
     this.updateActivity();
@@ -129,7 +129,7 @@ Room.prototype = {
     console.log(message, this.wordsOfRound[0], similarity2);
     if (this.wordsOfRound.length > 0 && message === this.wordsOfRound[0]) {
       // Increase team score
-      if (team === 1) {
+      if (this.teamScoring === 1) {
         this.scoreFirstTeam++;
       } else {
         this.scoreSecondTeam++;
@@ -169,10 +169,6 @@ Room.prototype = {
     this.gifUrl = "";
     this.wordToGuess = "";
     this.words = [];
-    // this.players.map(function(player){
-    //   wordsPerPlayer[player.id] = [];
-    // })
-    // this.wordsPerPlayer = wordsPerPlayer;
     this.wordsOfRound = [];
     this.wordsValidated = [];
     this.teams = [];

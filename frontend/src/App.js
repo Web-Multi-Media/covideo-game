@@ -17,6 +17,7 @@ import { useCookies } from 'react-cookie';
 const config = require('./env.json')[process.env.NODE_ENV || 'development']
 const WS_PORT = config.WS_PORT;
 const HOST = config.HOST;
+const URL = config.URL;
 let ws = {};
 
 const useStyles = makeStyles((theme) => ({
@@ -242,6 +243,7 @@ function App() {
             onSendUsername={sendUsername}
             onSendWord={sendWord}
             playSound={playSound}
+            url={URL}
             onDeleteWord={deleteWord}/>
       }
       {

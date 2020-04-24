@@ -41,7 +41,7 @@ function RoomScreen(props) {
   const classes = useStyles();
   const [wordInput, setWordInput] = useState('');
   const [disabledStartGame, setDisabledStartGame] = useState(true);
-  const room_url = `http://localhost:3000/${props.roomId}`;
+  const room_url = `${props.url}${props.roomId}`;
   const currentPlayer = props.currentPlayer;
   const disabledWordAdd = currentPlayer.name === '' || props.playerWords.length >= props.roomSettings.numWordsPerPlayer;
   const numberOfwords = props.players ? props.players.map(player => player.numWords).reduce((acc, currentValue) => acc + currentValue) : [];
