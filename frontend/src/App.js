@@ -49,6 +49,7 @@ function App() {
     },
     room: {
       name: '',
+      lastWordValidated: '',
       playerScoring: '',
       wordScoring: false,
       id: '',
@@ -256,6 +257,7 @@ function App() {
         gameState.room.gameStarted && gameState.global.joinedRoom &&
           <GameScreen
             updateState={updateGameState}
+            lastWordValidated={gameState.room.lastWordValidated}
             wordScoring={gameState.room.wordScoring}
             playerScoring={gameState.room.playerScoring}
             currentPlayer={gameState.player}

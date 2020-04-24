@@ -52,6 +52,7 @@ function CenterPanel(props) {
   const [open, setOpen] = React.useState(isActivePlayer);
   const [openScoring, setOpenScoring] = React.useState(false);
   const [playerScoringName, setPlayerScoringName] = React.useState('');
+  const [playerScoringWord, setPlayerScoringWord] = React.useState('');
   const handleClose = (event, reason) => {
     setOpen(false);
     setOpenScoring(false);
@@ -65,7 +66,8 @@ function CenterPanel(props) {
     if(props.wordScoring){
       setOpenScoring(true);
       setPlayerScoringName(props.playerScoring);
-      props.updateState({room: {wordScoring: false, playerScoring: ''}})
+      setPlayerScoringWord(props.lastWordValidated);
+      props.updateState({room: {wordScoring: false, playerScoring: '', lastWordValidated:''}})
     }
   }, [props.wordScoring]);
 
@@ -139,7 +141,7 @@ function CenterPanel(props) {
             onClose={handleClose}
             TransitionComponent={TransitionRight}>
           <Alert onClose={handleClose} severity="success">
-            <p>{playerScoringName} scored</p>
+            <p>{playerScoringName} found {playerScoringWord}</p>
           </Alert>
         </Snackbar>
       </div>

@@ -66,6 +66,7 @@ function GameScreen(props) {
       <Grid item xs={8}>
         <CenterPanel
           updateState={props.updateState}
+          lastWordValidated={props.lastWordValidated}
           playerScoring={props.playerScoring}
           wordScoring={props.wordScoring}
           currentPlayer={props.currentPlayer}
