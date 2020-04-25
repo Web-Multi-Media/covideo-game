@@ -1,16 +1,21 @@
 var Typo = require("typo-js");
-var similarity = require("similarity");
+const stringSimilarity = require('string-similarity');
+const similarity = require('similarity');
 
 function Dictionary(locale){
   if (!locale){
-    locale = "fr_FR"
+    locale = "fr_FR";
   }
-  this.dictionary = Typo(locale, false, false, { dictionaryPath: "typo/dictionaries" });
+  // this.dictionary = Typo(locale, false, false, { dictionaryPath: "typo/dictionaries" });
 }
 
 Dictionary.prototype = {
   calculateSimilarity: function(word, otherWord){
-    return similarity(word, otherWord);
+    const sim1 = similarity(word, otherWord);
+    const sim2 = stringSimilarity.compareTwoStrings(word, otherWord);
+    console.log(`Sim 1 (${word}, ${otherWord}): ${sim1}`);
+    console.log(`Sim 2 (${word}, ${otherWord}): ${sim2}`);
+    return Math.max(sim1, sim2);
   },
   checkSpelling: function(word){
     var correctSpelling = dictionary.check(word);

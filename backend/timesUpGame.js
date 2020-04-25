@@ -224,7 +224,7 @@ function changeRoomSettings(ws, obj, room) {
       }
     });
   }
-  
+
   room.settings = obj.settings;
 
   // send different responses to all players in the room with their respective word count
@@ -235,7 +235,7 @@ function changeRoomSettings(ws, obj, room) {
       players: room.players.map(player => player.serialize())
     },
   }
-  webSockets.clients.forEach((client) =>{
+  webSockets.clients.forEach((client) => {
     if (room.players.map(player => player.id).includes(client.id)) {
       let response = _.cloneDeep(baseResponse);
       response.player = {
@@ -303,7 +303,6 @@ function changePlayerName(ws, obj){
  * @param  {Room}   room Current room.
  */
 function startRound(ws, obj, room) {
-
   room.startRound(obj.team);
   let response = {
     type: 'updateState',
@@ -424,7 +423,8 @@ function deleteWord(ws, obj, room) {
  * @param  {Room}   room Current room.
  */
 function validateWord(ws, obj, room) {
-  if(room.validateWord(obj.team, obj.message)) {
+  let result = room.validateWord(obj.team, obj.message);
+  if (result.valid) {
     const responseToBroadCast = {
       type: 'updateState',
       room: {
@@ -439,8 +439,19 @@ function validateWord(ws, obj, room) {
     };
     let responseToSpecific = _.cloneDeep(responseToBroadCast);
     responseToSpecific.room.wordToGuess = room.wordsOfRound[0];
-
     broadCastTwoResponses(responseToBroadCast, responseToSpecific, room.activePlayer.id, room);
+  }
+  else if (result.close) {
+    const responseToSpecific = {
+      type: 'updateState',
+      room: {
+        incomingChatMessage: {
+          username: ws.playerName,
+          message: "Your guess is close !",
+        }
+      }
+    }
+    sendMessage(responseToSpecific, ws.id);
   }
 }
 
@@ -501,27 +512,24 @@ function setGif(ws, obj, room) {
  * @param {Room}   room Current room.
  */
 function chatMessage(ws, obj, room) {
+  if (!room.startTimer){ return false; }
   let response = {
     type: 'updateState',
-    room:{}
+    room: {}
   };
-  console.log('room.setFinished' + room.startTimer);
-  if(room.startTimer){
-    if(ws.id === room.activePlayer.id){
-      room.roundDescription.push({username: ws.playerName,message: obj.message})
-      response.room.roundDescription = room.roundDescription;
-    } else{
-      response.room.incomingChatMessage= {
-          username: ws.playerName,
-              message: obj.message
-        };
-      validateWord(ws, obj, room);
-      }
-    }else {
-    response.room.incomingChatMessage= {
+  if (ws.id === room.activePlayer.id) {
+    room.roundDescription.push({
+      username: ws.playerName,
+      message: obj.message
+    });
+    response.room.roundDescription = room.roundDescription;
+  }
+  else {
+    response.room.incomingChatMessage = {
       username: ws.playerName,
       message: obj.message
     };
+    validateWord(ws, obj, room);
   }
   console.log(JSON.stringify(response));
   broadcast(response, room);

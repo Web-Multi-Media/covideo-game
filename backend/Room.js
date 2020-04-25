@@ -1,9 +1,6 @@
 const utils = require('./utils');
 const dict = require('./dictionary');
 const _ = require('lodash');
-const stringSimilarity = require('string-similarity');
-const similarity = require('similarity')
-
 
 dictionary = new dict.Dictionary();
 
@@ -126,11 +123,10 @@ Room.prototype = {
   },
   validateWord: function(team, message) {
     this.updateActivity();
-    const similarity1 = stringSimilarity.compareTwoStrings(message, this.wordsOfRound[0]);
-    const similarity2 = similarity(message, this.wordsOfRound[0]);
-    console.log(message, this.wordsOfRound[0], similarity1);
-    console.log(message, this.wordsOfRound[0], similarity2);
-    if (this.wordsOfRound.length > 0 && message === this.wordsOfRound[0]) {
+    const similarity = dictionary.calculateSimilarity(message, this.wordsOfRound[0]);
+    let result = {};
+    if (this.wordsOfRound.length == 0){ return false; }
+    if (message === this.wordsOfRound[0] || similarity >= 0.9) {
       // Increase team score
       if (this.teamScoring === 1) {
         this.scoreFirstTeam++;
@@ -151,10 +147,17 @@ Room.prototype = {
       if (this.wordsOfRound.length === 0) {
         this.setFinished = true;
       }
-      return true;
-    }else{
-      return false;
+      result.valid = true;
     }
+    else if (0.75 < similarity < 0.9){
+      result.valid = false;
+      result.close = true;
+    }
+    else {
+      result.valid = false;
+      result.close = false;
+    }
+    return result;
   },
   skipWord: function() {
     this.updateActivity();
