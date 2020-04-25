@@ -7,7 +7,7 @@ import {makeStyles} from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   text:{
     width: '70%',
-    paddingRight: '30px'
+    paddingRight: '10px'
   }
 }));
 
@@ -32,7 +32,7 @@ function ChatInput(props) {
   return (
   <div className="inputLine">
     <TextField
-        // className={classes.text}
+        className={classes.text}
         id="standard-basic"
         size="small"
         label="Chat message"
@@ -52,7 +52,7 @@ function ChatInput(props) {
         onClick={handleSubmit}
         // disabled={disabledWordAdd}
         startIcon={<AddIcon/>}>
-      Send message
+      Send
     </Button>
   </div>
 

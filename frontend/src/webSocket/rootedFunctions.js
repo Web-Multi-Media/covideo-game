@@ -13,7 +13,7 @@ export default function handleServerResponse(message, state, setState) {
  * @param
  * @param  The room identifier
  */
-function updateState(message, gameState, setGameState) {
+export function updateState(message, gameState, setGameState) {
   setGameState({
     global: {
       ...gameState.global,
