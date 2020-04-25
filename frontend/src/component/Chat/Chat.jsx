@@ -4,27 +4,25 @@ import ChatMessage from './ChatMessage'
 import Paper from "@material-ui/core/Paper";
 import {makeStyles} from "@material-ui/core/styles";
 
-
 const useStyles = makeStyles((theme,test) => ({
-    paper: {
-        width: '100%',
-        padding: theme.spacing(2),
-        color: theme.palette.text.secondary,
-        borderRadius: '10px'
-    },
-    chatMessages:{
-        height: test,
-        overflowY: 'auto',
-        wordBreak: 'break-all'
-    }
+  paper: {
+    width: '100%',
+    padding: theme.spacing(2),
+    color: theme.palette.text.secondary,
+    borderRadius: '10px'
+  },
+  chatMessages:{
+    height: test,
+    overflowY: 'auto',
+    wordBreak: 'break-all'
+  }
 }));
-
 
 function Chat (props) {
   const [messages, setMessages] = useState([]);
   const [set, setSet] = useState(0);
   const classes = useStyles();
-    const {height} = props;
+  const {height} = props;
   useEffect(() => {
     if (props.incomingChatMessage) {
       setMessages(messages.concat(props.incomingChatMessage));
@@ -33,45 +31,39 @@ function Chat (props) {
   }, [props.incomingChatMessage]);
 
   useEffect(() => {
-      if (set !== props.set) {
-          setMessages([]);
-          setSet(props.set);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (set !== props.set) {
+        setMessages([]);
+        setSet(props.set);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.set]);
 
   useEffect(() => {
-     const container = document.getElementById("msgContainer");
-        container.scrollTop = container.scrollHeight;
+    const container = document.getElementById("msgContainer");
+    container.scrollTop = container.scrollHeight;
   }, [messages]);
 
-
   const submitMessage = function (messageString) {
-      if (messageString !== '') {
-          props.sendChatMessage(messageString);
-      }
+    if (messageString !== '') {
+      props.sendChatMessage(messageString);
+    }
   }
 
-return (
+  return (
     <Paper className={classes.paper} elevation={3}>
-        <div id="msgContainer" className={classes.chatMessages} style={{height}}>
-
-    {messages.map((message, index) =>
+      <div id="msgContainer" className={classes.chatMessages} style={{height}}>
+      {messages.map((message, index) =>
         <ChatMessage
           key={index}
           message={message.message}
-          username={message.username}
-        />,
-    )}
-        </div>
-
-        {props.sendInput && <div className="chatInput">
-            <ChatInput
-                onSubmitMessage={submitMessage}
-            />
-        </div>}
+          username={message.username}/>
+      )}
+      </div>
+      {props.sendInput &&
+        <ChatInput onSubmitMessage={submitMessage}/>
+      }
     </Paper>
-)
+  )
 }
 
-export default Chat
+export default Chat;

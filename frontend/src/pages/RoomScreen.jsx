@@ -47,11 +47,12 @@ function RoomScreen(props) {
   const numberOfwords = props.players ? props.players.map(player => player.numWords).reduce((acc, currentValue) => acc + currentValue) : [];
 
   useEffect(() => {
-    if((numberOfwords === props.players.length * props.roomSettings.numWordsPerPlayer) && props.isGameMaster && props.players.length >= 2){
+    if ((numberOfwords === props.players.length * props.roomSettings.numWordsPerPlayer) && props.isGameMaster && props.players.length >= 2){
       setDisabledStartGame(false);
-    }else{
+    } else {
       setDisabledStartGame(true);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfwords]);
 
   const sendWord = () => {

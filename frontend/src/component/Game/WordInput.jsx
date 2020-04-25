@@ -2,7 +2,6 @@ import React from 'react';
 import Fab from "@material-ui/core/Fab";
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 function WordInput(props) {
   return (<React.Fragment>

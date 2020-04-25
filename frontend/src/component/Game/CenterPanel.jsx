@@ -41,6 +41,16 @@ function CenterPanel(props) {
     setOpen(isActivePlayer);
   }, [isActivePlayer]);
 
+  React.useEffect(() => {
+    if(props.wordScoring){
+      setOpenScoring(true);
+      setPlayerScoringName(props.playerScoring);
+      setPlayerScoringWord(props.lastWordValidated);
+      props.updateState({room: {wordScoring: false, playerScoring: '', lastWordValidated:''}})
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.wordScoring]);
+
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>
       {/* <p>props.currentPlayer {JSON.stringify(props.currentPlayer)}</p> */}

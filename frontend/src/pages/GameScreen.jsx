@@ -1,13 +1,8 @@
 import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import Typography from "@material-ui/core/Typography";
 import CenterPanel from "../component/Game/CenterPanel";
 import TeamPanel from "../component/Game/TeamPanel";
-import WordInput from "../component/Game/WordInput";
-import TextIcon from "../component/TextIcon/TextIcon";
 import Chat from "../component/Chat/Chat";
 
 const useStyles = makeStyles((theme) => ({
@@ -32,8 +27,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function GameScreen(props) {
-  const classes = useStyles();
-
   useEffect(() => {
     if (props.currentPlayer.id === props.activePlayer.id) {
       setTimeout(() => props.playSound('startRoundActivePlayer'), 500)
