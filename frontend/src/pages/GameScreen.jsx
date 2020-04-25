@@ -63,8 +63,12 @@ function GameScreen(props) {
       </Grid>
 
       {/* Game panel (center) */}
-      <Grid item xs={6}>
+      <Grid item xs={8}>
         <CenterPanel
+          updateState={props.updateState}
+          lastWordValidated={props.lastWordValidated}
+          playerScoring={props.playerScoring}
+          wordScoring={props.wordScoring}
           currentPlayer={props.currentPlayer}
           gameMaster={props.gameMaster}
           set={props.set}
@@ -81,7 +85,7 @@ function GameScreen(props) {
           next={props.nextWord}/>
       </Grid>
 
-      <Grid item xs={4}>
+      <Grid item xs={2}>
         <Chat
           sendChatMessage={props.sendChatMessage}
           incomingChatMessage={props.incomingChatMessage}

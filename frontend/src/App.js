@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import handleServerResponse from "./webSocket/rootedFunctions";
+import handleServerResponse, {updateState} from "./webSocket/rootedFunctions";
 import {useLocation} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -49,6 +49,9 @@ function App() {
     },
     room: {
       name: '',
+      lastWordValidated: '',
+      playerScoring: '',
+      wordScoring: false,
       id: '',
       gifUrl: '',
       roundDescription:[],
@@ -91,6 +94,10 @@ function App() {
     const obj = JSON.parse(response.data);
     console.log("Backend response: ", obj);
     handleServerResponse(obj, gameState, setGameState);
+  }
+
+  function updateGameState(message){
+    updateState(message, gameState, setGameState);
   }
 
   useEffect(() => {
@@ -249,6 +256,10 @@ function App() {
       {
         gameState.room.gameStarted && gameState.global.joinedRoom &&
           <GameScreen
+            updateState={updateGameState}
+            lastWordValidated={gameState.room.lastWordValidated}
+            wordScoring={gameState.room.wordScoring}
+            playerScoring={gameState.room.playerScoring}
             currentPlayer={gameState.player}
             gameMaster={gameState.room.gameMaster}
             activePlayer={gameState.room.activePlayer}

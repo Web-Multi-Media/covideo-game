@@ -8,6 +8,7 @@ import PlayerInactivePanel from "./PlayerInactivePanel";
 import TopInformation from "./TopInformation";
 import Grid from "@material-ui/core/Grid";
 import WordInput from "./WordInput";
+import Alert from "@material-ui/lab/Alert";
 
 function TransitionRight(props) {
   return <Slide {...props} direction="right" />;
@@ -26,6 +27,22 @@ const useStyles = makeStyles((theme) => ({
   },
   snackbar: {
     textAlign: 'center'
+  },
+  snackbarScoring:{
+    position: 'initial',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%'
+  },
+  screenCenter: {
+    width:'50%',
+    height:'50%',
+    position:'fixed',
+    top:'25%',
+    left:'25%',
+    zIndex:100,
+    textAlign:'center'
   }
 }));
 
@@ -33,13 +50,27 @@ function CenterPanel(props) {
   const classes = useStyles();
   const isActivePlayer = props.currentPlayer.id === props.activePlayer.id;
   const [open, setOpen] = React.useState(isActivePlayer);
+  const [openScoring, setOpenScoring] = React.useState(false);
+  const [playerScoringName, setPlayerScoringName] = React.useState('');
+  const [playerScoringWord, setPlayerScoringWord] = React.useState('');
   const handleClose = (event, reason) => {
     setOpen(false);
+    setOpenScoring(false);
   };
 
   React.useEffect(() => {
     setOpen(isActivePlayer);
   }, [isActivePlayer]);
+
+  React.useEffect(() => {
+    if(props.wordScoring){
+      setOpenScoring(true);
+      setPlayerScoringName(props.playerScoring);
+      setPlayerScoringWord(props.lastWordValidated);
+      props.updateState({room: {wordScoring: false, playerScoring: '', lastWordValidated:''}})
+    }
+  }, [props.wordScoring]);
+
 
   return (<React.Fragment>
     <Paper className={classes.paper} elevation={3}>
@@ -99,11 +130,27 @@ function CenterPanel(props) {
         </Paper>
       </Grid>
         }
+    <>
+
+      <div className={classes.screenCenter}>
+        <Snackbar
+            className={classes.snackbarScoring}
+            anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
+            open={openScoring}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            TransitionComponent={TransitionRight}>
+          <Alert onClose={handleClose} severity="success">
+            <p>{playerScoringName} found {playerScoringWord}</p>
+          </Alert>
+        </Snackbar>
+      </div>
+    </>
       <Snackbar
         className={classes.snackbar}
         anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
         open={open}
-        autoHideDuration={1000}
+        autoHideDuration={3000}
         onClose={handleClose}
         TransitionComponent={TransitionRight}
         message="It's your turn !"/>
