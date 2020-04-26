@@ -174,6 +174,7 @@ Room.prototype = {
     this.teams = [];
     this.round = 0;
     this.set = 1;
+    this.players.forEach(player => player.words = []);
     this.startTimer = false;
     this.activePlayer = {};
     this.gameIsReady = false;

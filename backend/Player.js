@@ -14,6 +14,9 @@ Player.prototype = {
       numWords: this.words.length
     }
   },
+  resetPlayer: function() {
+    this.words = [];
+  },
 };
 
 module.exports.Player = Player;

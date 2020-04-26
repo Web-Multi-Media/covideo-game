@@ -330,6 +330,8 @@ function startRound(ws, obj, room) {
             },
             room: room.serialize()
           }
+          response.room.startTimer = false;
+          // response.room.roundDescription = [];
           broadcast(response, room);
           clearInterval(WinnerCountdown);
           return;
@@ -340,9 +342,9 @@ function startRound(ws, obj, room) {
       response.room.set = room.set;
       response.room.startTimer = false;
       response.room.activePlayer = room.activePlayer;
-      response.room.roundDescription = [];
+      // response.room.roundDescription = [];
       room.startTimer = false;
-      room.roundDescription = [];
+      // room.roundDescription = [];
       broadcast(response, room);
       clearInterval(WinnerCountdown);
     }
@@ -458,7 +460,7 @@ function nextWord(ws, obj, room) {
     type: 'updateState',
     room: {
       wordToGuess: room.wordsOfRound[0],
-      wordDescription: room.roundDescription,
+      // wordDescription: room.roundDescription,
       gifUrl: ''
     }
   };
@@ -502,23 +504,23 @@ function setGif(ws, obj, room) {
  */
 function chatMessage(ws, obj, room) {
   let response = {
-    type: 'updateState',
-    room:{}
+    type: 'updateChat',
+    chat:{}
   };
   console.log('room.setFinished' + room.startTimer);
   if(room.startTimer){
     if(ws.id === room.activePlayer.id){
       room.roundDescription.push({username: ws.playerName,message: obj.message})
-      response.room.roundDescription = room.roundDescription;
+      response.chat.roundDescription = room.roundDescription;
     } else{
-      response.room.incomingChatMessage= {
+      response.chat.incomingChatMessage= {
           username: ws.playerName,
               message: obj.message
         };
       validateWord(ws, obj, room);
       }
     }else {
-    response.room.incomingChatMessage= {
+    response.chat.incomingChatMessage= {
       username: ws.playerName,
       message: obj.message
     };
@@ -570,6 +572,7 @@ function broadcast(msg, room, senderId= '') {
     if (room === undefined && !client.roomId) {
       client.send(JSON.stringify(msg));
     } else if (client.id !== senderId && room && room.id === client.roomId) {
+      console.log('broadCast to ', client.id, client.playerName);
       client.send(JSON.stringify(msg));
     }
   });

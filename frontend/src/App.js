@@ -54,7 +54,6 @@ function App() {
       wordScoring: false,
       id: '',
       gifUrl: '',
-      roundDescription:[],
       players: [],
       activePlayer: {},
       wordToGuess: '',
@@ -77,7 +76,12 @@ function App() {
         numMaxPlayers: 10,
         private: false,
       },
+    }
+  });
+  const [chatState, setChatState] = useState({
+    chat: {
       incomingChatMessage: {},
+      roundDescription:[]
     }
   });
   const [cookies, setCookie] = useCookies(['playerId', 'player', 'roomId']);
@@ -93,7 +97,12 @@ function App() {
   function processBackendResponse(response){
     const obj = JSON.parse(response.data);
     console.log("Backend response: ", obj);
-    handleServerResponse(obj, gameState, setGameState);
+    if(obj.type === 'updateChat'){
+      handleServerResponse(obj, chatState, setChatState);
+    }
+    else{
+      handleServerResponse(obj, gameState, setGameState);
+    }
   }
 
   function updateGameState(message){
@@ -220,7 +229,8 @@ function App() {
       {/*UNCOMMENT IF YOU NEED IT BUT DO NOT COMMIT !!!*/}
       {/*<p> gameState.playerTeam {JSON.stringify(gameState.global.playerTeam)}</p>*/}
       {/*<p> gameState.global {JSON.stringify(gameState.global)}</p>*/}
-      {/*<p> gameState.player {JSON.stringify(gameState.player)}</p>*/}
+      <p> gameState.player {JSON.stringify(gameState.player)}</p>
+      <p> gameState.room {JSON.stringify(gameState.room)}</p>
       {
         !gameState.room.gameStarted && !gameState.global.joinedRoom && <React.Fragment>
             <Header/>
@@ -267,7 +277,7 @@ function App() {
             team1Score={gameState.room.team1Score}
             team2Score={gameState.room.team2Score}
             startTimer={gameState.room.startTimer}
-            roundDescription={gameState.room.roundDescription}
+            roundDescription={chatState.chat.roundDescription}
             gifUrl={gameState.room.gifUrl}
             set={gameState.room.set}
             wordToGuess={gameState.room.wordToGuess}
@@ -278,7 +288,7 @@ function App() {
             nextWord={nextWord}
             sendGif={chooseGif}
             sendChatMessage={sendChatMessage}
-            incomingChatMessage={gameState.room.incomingChatMessage}
+            incomingChatMessage={chatState.chat.incomingChatMessage}
             playSound={playSound}
           />
       }

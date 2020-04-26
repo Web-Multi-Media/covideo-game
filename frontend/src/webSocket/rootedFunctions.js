@@ -1,6 +1,7 @@
 let rootingFunction = {
   'updateState': updateState,
-  'gameStarted': gameStarted
+  'gameStarted': gameStarted,
+  'updateChat': updateChat,
 };
 
 export default function handleServerResponse(message, state, setState) {
@@ -48,3 +49,13 @@ function gameStarted(message, gameState, setGameState) {
     }
   });
 }
+
+function updateChat(message, chatState, setChatState) {
+  setChatState({
+    chat: {
+      ...chatState.chat,
+      ...message.chat
+    }
+  });
+}
+
